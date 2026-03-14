@@ -510,7 +510,7 @@ All milestones status=paid
 
 | Table | Key Fields |
 | --- | --- |
-| `users` | id, name, email, password, role (owner |
+| `users` | id, name, email, password, role (owner, team, client), agency_id, created_at
 | `agencies` | id, name, owner_id, logo_url, created_at |
 | `team_members` | id, agency_id, user_id, role (owner, member), designation (designer, developer, HR, project_manager) |
 | `project_members` | id, project_id, user_id, role (admin, member, viewer), added_at |

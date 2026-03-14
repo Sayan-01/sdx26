@@ -85,7 +85,7 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(21% 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -126,4 +126,29 @@
   html {
     @apply font-sans;
   }
+}
+
+.selection_color::selection {
+  background-color: #716fff57;
+  color: hsl(var(--foreground));
+}
+
+.box::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Scrollbar styling */
+
+.box-1::-webkit-scrollbar {
+  width: 6px;
+  position: absolute; /* Ensures the scrollbar behaves like an absolute element */
+}
+
+.box-1::-webkit-scrollbar-track {
+  background: #27272700;
+  /* border-radius: 50px; */
+}
+.box-1::-webkit-scrollbar-thumb {
+  background: #515151;
+  border-radius: 50px;
 }
