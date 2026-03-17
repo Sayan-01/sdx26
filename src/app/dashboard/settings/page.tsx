@@ -14,14 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import DashboardHeading from "../_components/dashboard-heading";
 
 export default function SettingsPage() {
   return (
     <div className="space-y-8 max-w-4xl animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-zinc-500">Manage your agency profile, billing, and notification preferences.</p>
-      </div>
+      <DashboardHeading title="Settings" description="Manage your agency profile, billing, and notification preferences." />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
          <div className="space-y-1">

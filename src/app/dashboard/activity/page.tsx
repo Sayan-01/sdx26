@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import DashboardHeading from "../_components/dashboard-heading";
 
 export default function ActivityPage() {
   const activities = [
@@ -43,10 +44,7 @@ export default function ActivityPage() {
   return (
     <div className="space-y-8 max-w-4xl animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">Activity Feed</h2>
-          <p className="text-zinc-500">Stay updated with everything happening across your agency.</p>
-        </div>
+        <DashboardHeading title="Activity Feed" description="Stay updated with everything happening across your agency." />
         <Button variant="outline" className="border-zinc-800 hover:bg-zinc-900">
           Mark all as read
         </Button>

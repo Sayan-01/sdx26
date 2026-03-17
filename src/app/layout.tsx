@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Google_Sans } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
 
 
 const main = Google_Sans({
@@ -34,8 +35,7 @@ export default function RootLayout({
           height={2}
           showSpinner={false}
         />
-        {children}
-        <Toaster />
+        <SessionProvider>{children}</SessionProvider> <Toaster />
       </body>
     </html>
   );

@@ -23,10 +23,10 @@ export default function ProjectLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const pathname = usePathname();
-  const { id } = params;
+  const { id } = React.use(params);
 
   const tabs = [
     { label: "Overview", icon: <Activity className="h-4 w-4" />, href: `/dashboard/projects/${id}` },
@@ -42,10 +42,7 @@ export default function ProjectLayout({
       {/* Project Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-4">
-          <Link href="/dashboard/projects" className="text-sm text-zinc-500 hover:text-white transition-colors flex items-center gap-2 group">
-            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Projects
-          </Link>
+          
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
               <span className="font-bold text-lg">AW</span>
@@ -93,7 +90,7 @@ export default function ProjectLayout({
       </div>
 
       {/* Tab Content */}
-      <div className="grow">
+      <div className="grow pb-5">
         {children}
       </div>
     </div>
