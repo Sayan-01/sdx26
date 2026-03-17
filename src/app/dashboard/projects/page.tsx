@@ -37,7 +37,7 @@ export default function ProjectsPage() {
             key={project.id}
             href={`/dashboard/projects/${project.id}`}
           >
-            <Card className="bg-[#19191b] border-zinc-800/60 shadow-none hover:bg-zinc-900/70 transition-colors group h-full overflow-hidden p-0">
+            <Card className="bg-[#19191b] border-zinc-800/60 shadow-none  transition-colors group h-full overflow-hidden p-0">
               <CardContent className="p-5 flex flex-col h-full space-y-5">
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-xl bg-zinc-800/50 border border-zinc-700/50 flex items-center justify-center text-zinc-400 group-hover:text-white transition-colors shrink-0">

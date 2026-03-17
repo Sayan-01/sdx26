@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
-  ArrowLeft, 
   Settings, 
   Users, 
   CheckSquare, 
@@ -13,7 +12,8 @@ import {
   Activity,
   MoreVertical,
   ExternalLink,
-  AlertCircle
+  AlertCircle,
+  Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,55 +38,76 @@ export default function ProjectLayout({
   ];
 
   return (
-    <div className="flex flex-col h-full space-y-8 animate-in fade-in duration-500">
+    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
+      
       {/* Project Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-4">
-          
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-              <span className="font-bold text-lg">AW</span>
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold tracking-tight">Acme Web Redesign</h1>
-                <div className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-bold tracking-wider uppercase">ACTIVE</div>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-2">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-zinc-800/80 border border-dashboard-border flex items-center justify-center shrink-0">
+            <Briefcase className="h-6 w-6 text-zinc-300" />
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-bold tracking-tight text-zinc-100">
+                Acme Web Redesign
+              </h1>
+              <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
+                Active
               </div>
-              <p className="text-zinc-500 flex items-center gap-2 mt-1">
-                Client: Acme Corp <span className="text-zinc-800">•</span> <span className="text-zinc-500 flex items-center gap-1"><CheckSquare className="h-3 w-3" /> 4/12 Items Approved</span>
-              </p>
             </div>
+            <p className="text-zinc-500 flex items-center gap-2 mt-1 text-xs font-medium">
+              <span className="flex items-center gap-1.5">
+                <Users className="h-3.5 w-3.5" />
+                Client: <span className="text-zinc-300">Acme Corp</span>
+              </span>
+              <span className="w-1 h-1 rounded-full bg-zinc-700" />
+              <span className="flex items-center gap-1.5 text-zinc-400">
+                <CheckSquare className="h-3.5 w-3.5" /> 
+                4/12 Items Approved
+              </span>
+            </p>
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-           <Button variant="outline" className="border-zinc-800 hover:bg-zinc-900 gap-2">
+        <div className="flex items-center gap-2">
+           <Button variant="outline" className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 gap-2 font-medium">
              <ExternalLink className="h-4 w-4" />
              Client Portal
            </Button>
-           <Button variant="outline" size="icon" className="border-zinc-800 hover:bg-zinc-900">
-             <MoreVertical className="h-4 w-4" />
+           <Button variant="outline" size="icon" className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 w-10">
+             <MoreVertical className="h-4 w-4 text-zinc-400" />
            </Button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-zinc-800/50">
-        {tabs.map((tab) => (
-          <Link 
-            key={tab.href}
-            href={tab.href}
-            className={cn(
-              "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all",
-              pathname === tab.href 
-                ? "border-white text-white" 
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
-            )}
-          >
-            {tab.icon}
-            {tab.label}
-          </Link>
-        ))}
+      {/* Modern Tabs */}
+      <div className="border-b border-dashboard-border relative">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+          {tabs.map((tab) => {
+            const isActive = pathname === tab.href;
+            return (
+              <Link 
+                key={tab.href}
+                href={tab.href}
+                className={cn(
+                  "relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap",
+                  isActive ? "text-white" : "text-zinc-500 hover:text-zinc-300"
+                )}
+              >
+                <div className={cn(
+                  "flex items-center gap-2",
+                  isActive ? "text-zinc-100" : "text-zinc-500"
+                )}>
+                  {tab.icon}
+                  {tab.label}
+                </div>
+                {isActive && (
+                  <div className="absolute -bottom-px left-0 w-full h-[2px] bg-white rounded-t-full" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tab Content */}

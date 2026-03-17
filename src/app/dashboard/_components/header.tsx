@@ -16,7 +16,7 @@ const Header = () => {
   const formattedCurrent = current.charAt(0).toUpperCase() + current.slice(1).replace(/-/g, " ");
 
   return (
-    <header className="border-b-2 border-dashed border-gray-200 dark:border-zinc-800 max-md:fixed top-0 z-40">
+    <header className="border-b-2 border-dashed border-dashboard-border max-md:fixed top-0 z-40">
       <div className="flex items-center h-16 md:px-4 px-5 ">
         {/* Breadcrumb */}
         <Breadcrumb className="lg:flex hidden">

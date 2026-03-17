@@ -36,24 +36,24 @@ export default function AgencyTeamPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <Input
             placeholder="Search by name or email..."
-            className="pl-10 h-10 bg-zinc-900 border-zinc-800 focus:ring-zinc-700 w-full"
+            className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full"
           />
         </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="sm"
-            className="bg-[#19191b] border-zinc-800/60 text-zinc-400 hover:text-white hover:bg-zinc-800 gap-2 h-10 px-4 transition-colors hidden sm:flex"
+            className="bg-[#19191b] border-dashboard-border text-zinc-400 hover:text-white hover:bg-zinc-800 gap-2 h-10 px-4 transition-colors hidden sm:flex"
           >
             Export CSV
           </Button>
         </div>
       </div>
 
-      <div className="rounded-xl border border-zinc-800  overflow-hidden">
+      <div className="rounded-xl border border-dashboard-border overflow-hidden">
         <Table>
           <TableHeader className="bg-[#19191b]">
-            <TableRow className="border-zinc-800 hover:bg-transparent">
+            <TableRow className="border-dashboard-border hover:bg-transparent">
               <TableHead className="w-[300px] text-zinc-400 font-bold uppercase tracking-widest text-[10px] p-5">Member</TableHead>
               <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Designation</TableHead>
               <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Role</TableHead>
@@ -62,15 +62,15 @@ export default function AgencyTeamPage() {
               <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-[#151518]">
             {team.map((member, i) => (
               <TableRow
                 key={i}
-                className="border-zinc-800 hover:bg-[#19191b] transition-colors group"
+                className="border-dashboard-border hover:bg-[#19191b] transition-colors group"
               >
                 <TableCell className="px-5 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center font-bold text-xs text-zinc-400 group-hover:bg-zinc-700 group-hover:text-white transition-colors">
+                    <div className="w-9 h-9 rounded-lg bg-zinc-800/50 border border-dashboard-border flex items-center justify-center font-bold text-xs text-zinc-400 group-hover:bg-zinc-800 group-hover:text-white transition-colors">
                       {member.name
                         .split(" ")
                         .map((n) => n[0])
@@ -109,9 +109,9 @@ export default function AgencyTeamPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-zinc-900 border-zinc-800 shadow-none p-0">
+        <Card className="bg-[#19191b] border-dashboard-border shadow-none p-0">
           <CardContent className="p-5 space-y-4">
-            <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-500">
+            <div className="w-10 h-10 rounded-xl bg-zinc-800/50 border border-dashboard-border/50 flex items-center justify-center text-zinc-500">
               <Shield className="h-5 w-5" />
             </div>
             <div className="space-y-1">

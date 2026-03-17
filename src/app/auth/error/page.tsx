@@ -1,4 +1,4 @@
-import Button from "@/components/buttons/Button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 
@@ -8,7 +8,6 @@ const page = () => {
       <h1 className="font-bold md:text-[40px] text-[25px] text-center mx-5 mb-8 max-w-3xl">Some Thing Was Wrong or You Already Have a Account With This Email</h1>
       <Link href={`${process.env.NEXT_URL}/auth/login`}>
         <Button
-          bigBlue
           className="py-3"
         >
           Log in

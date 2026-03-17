@@ -18,13 +18,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   
 
   return (
-    <div className={`flex h-screen bg-zinc-900/80 ${roboto_Mono.className}`}>
-      <aside className="md:w-[240px]">
+    <div className={`flex h-dvh bg-zinc-900/80 ${roboto_Mono.className}`}>
+      <aside className="md:w-[260px]">
         <Sidebar userId={session?.user?.id || ""} />
       </aside>
-      <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed dark:border-zinc-800">
+      <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed border-dashboard-border">
         <Header />
-        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-5">
+        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-6">
           <div className="mx-auto w-full">{children}</div>
         </main>
       </div>

@@ -34,7 +34,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-5 animate-in fade-in duration-500  h-full">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-500  h-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <DashboardHeading title="Welcome back, John" description="Here's what's happening with your agency today." />
         <Link href="/dashboard/projects/new">
@@ -46,7 +46,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0">
         {stats.map((stat, i) => (
           <Card
             key={i}
@@ -67,16 +67,16 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         {/* Recent Projects */}
-        <div className="lg:col-span-2 flex flex-col gap-2 min-h-0  border border-zinc-800 rounded-xl bg-[#19191b]">
+        <div className="lg:col-span-2 flex flex-col gap-3 min-h-0  border border-dashboard-border rounded-xl bg-[#19191b]">
           <div className="flex items-center justify-between px-5 pt-3">
-            <h2 className="text-lg font-bold flex items-center gap-2">Recent Projects</h2>
+            <h2 className="text-md font-semibold flex items-center gap-2">Recent Projects</h2>
             <Link href="/dashboard/projects">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs text-zinc-500 hover:text-white h-8"
+                className="text-xs text-zinc-500 hover:text-white h-6"
               >
                 View all <ArrowUpRight className="ml-1.5 h-3 w-3" />
               </Button>
@@ -89,11 +89,11 @@ export default function DashboardPage() {
                 <Link
                   key={i}
                   href={`/dashboard/projects/${i + 1}`}
-                  className="flex w-full hover:bg-zinc-900/50 transition-colors group px-5 min-h-[85px] items-center border-b "
+                  className="flex w-full hover:bg-zinc-900/50 transition-colors group px-5 min-h-[85px] items-center border-b border-b-dashboard-border"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-1">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-zinc-800/50 border border-zinc-700/50 flex items-center justify-center text-zinc-400 group-hover:text-white transition-colors shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-zinc-800/50 border border-dashboard-border/50 flex items-center justify-center text-zinc-400 group-hover:text-white transition-colors shrink-0">
                         <Briefcase className="h-4 w-4" />
                       </div>
                       <div>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                                 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                                 : project.status === "Onboarding"
                                   ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                                  : "bg-zinc-800/50 text-zinc-400 border-zinc-700/50",
+                                  : "bg-zinc-800/50 text-zinc-400 border-dashboard-border/50",
                           )}
                         >
                           {project.status}
@@ -144,28 +144,28 @@ export default function DashboardPage() {
         </div>
 
         {/* Activity Feed Snippet */}
-        <div className="flex flex-col gap-2 min-h-0 border-zinc-800 border rounded-xl bg-[#19191b]">
+        <div className="flex flex-col gap-3 min-h-0 border-dashboard-border border rounded-xl bg-[#19191b]">
           <div className="flex items-center justify-between px-5 pt-3">
-            <h2 className="text-lg font-bold flex items-center gap-2">Activity Log</h2>
+            <h2 className="text-md font-semibold flex items-center gap-2">Activity Log</h2>
             <Link href="/dashboard/activity">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs text-zinc-500 hover:text-white h-8"
+                className="text-xs text-zinc-500 hover:text-white h-6"
               >
                 Full log <ArrowUpRight className="ml-1.5 h-3 w-3" />
               </Button>
             </Link>
           </div>
 
-          <Card className="border-zinc-800/60 bg-[#151518] shadow-none flex-1 flex flex-col justify-between overflow-hidden min-h-0 p-0">
+          <Card className="border-dashboard-border/60 bg-[#151518] shadow-none flex-1 flex flex-col justify-between overflow-hidden min-h-0 p-0">
             <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box-1">
               {activities.map((item, i) => (
                 <div
                   key={i}
-                  className="flex gap-4 px-5 min-h-[85px] items-center hover:bg-zinc-900/50 transition-colors group border-b"
+                  className="flex gap-4 px-5 min-h-[85px] items-center hover:bg-zinc-900/50 transition-colors group border-b border-b-dashboard-border"
                 >
-                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-zinc-800/30", item.bg, item.color)}>{item.icon}</div>
+                  <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-dashboard-border/30", item.bg, item.color)}>{item.icon}</div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm text-zinc-300 group-hover:text-white transition-colors leading-snug">{item.text}</p>
                     <p className="text-[10px] text-zinc-500 font-medium flex items-center gap-1.5">
@@ -176,11 +176,11 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-zinc-800/60 bg-zinc-900/20 mt-auto">
+            <div className="p-4 border-t border-dashboard-border/60 bg-zinc-900/20 mt-auto">
               <Link href="/dashboard/activity">
                 <Button
                   variant="outline"
-                  className="w-full text-xs font-medium border-zinc-800 hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
+                  className="w-full text-xs font-medium border-dashboard-border hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
                 >
                   View All Activity
                 </Button>
