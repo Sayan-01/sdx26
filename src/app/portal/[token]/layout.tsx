@@ -21,10 +21,10 @@ export default function PortalLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) {
   const pathname = usePathname();
-  const token = params.token;
+  const { token } = React.use(params);
 
   const tabs = [
     { label: "Onboarding", icon: <CheckSquare className="h-4 w-4" />, href: `/portal/${token}/onboarding` },

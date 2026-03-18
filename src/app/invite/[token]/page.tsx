@@ -4,9 +4,9 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Layers } from "lucide-react";
 
-export default function InvitePage({ params }: { params: { token: string } }) {
+export default function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const router = useRouter();
-  const token = params.token;
+  const { token } = React.use(params);
 
   useEffect(() => {
     // Simulated token verification
