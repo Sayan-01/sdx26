@@ -33,6 +33,7 @@ export default function ProjectLayout({
     { label: "Onboarding", icon: <CheckSquare className="h-4 w-4" />, href: `/dashboard/projects/${id}/onboarding` },
     { label: "Milestones", icon: <Milestone className="h-4 w-4" />, href: `/dashboard/projects/${id}/milestones` },
     { label: "Files", icon: <FileBox className="h-4 w-4" />, href: `/dashboard/projects/${id}/files` },
+    { label: "Portal", icon: <ExternalLink className="h-4 w-4" />, href: `/dashboard/projects/${id}/portal` },
     { label: "Scope Log", icon: <AlertCircle className="h-4 w-4" />, href: `/dashboard/projects/${id}/scope` },
     { label: "Members", icon: <Users className="h-4 w-4" />, href: `/dashboard/projects/${id}/members` },
   ];

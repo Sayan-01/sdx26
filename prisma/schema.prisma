@@ -166,7 +166,7 @@ model Agency {
   owner         User           @relation("AgencyOwner", fields: [ownerId], references: [id])
   users         User[]         @relation("AgencyUsers")
   teamMembers   TeamMember[]
-  clients       Client[]
+  clients       Client[]  
   projects      Project[]
   invitations   Invitation[]
   notifications Notification[]
@@ -200,7 +200,7 @@ model User {
   reviewedOnboardingItems OnboardingItem[] @relation("ReviewedBy")
   messages                Message[]
   sentMessages            Message[]        @relation("UserMessages")
-  agency                  Agency?          @relation("AgencyUsers", fields: [agencyId], references: [id])
+  agency                  Agency?          @relation("AgencyUsers", fields: [agencyId], references: [id], onDelete: Cascade)
   ownedAgency             Agency?          @relation("AgencyOwner")
 }
 

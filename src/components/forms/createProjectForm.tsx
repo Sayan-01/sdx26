@@ -19,12 +19,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { createProject } from "@/lib/queries";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { createProject } from "../../../server/projects";
 
 const projectSchema = z.object({
   projectName: z.string().min(3, "Project name must be at least 3 characters"),

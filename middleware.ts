@@ -21,9 +21,16 @@ export default auth(async function middleware(req) {
     return NextResponse.next();
   }
 
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-pathname", pathname);
+
   const res = NextResponse.next({
-    request: { headers: new Headers(req.headers) },
+    request: { 
+      headers: requestHeaders 
+    },
   });
+
+
 
   // ─────────────────────────────────────────
   // STEP 1: Subdomain → agencyId resolve

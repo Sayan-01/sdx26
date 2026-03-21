@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, LogOut } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Sign_Out } from "../../../server/auth";
+import { Sign_Out } from "../../../server/auth/auth";
 
 const UserButton = () => {
   const { data: session } = useSession();
@@ -40,7 +40,10 @@ const UserButton = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="dark:bg-zinc-700" />
         <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200">
-          <Link href="/dashboard/settings" className="flex items-center">
+          <Link
+            href="/dashboard/settings"
+            className="flex items-center"
+          >
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </Link>

@@ -1,13 +1,12 @@
 import React from "react";
-import { Git_login, Goo_login } from "../../../server/auth";
+import { Git_login, Goo_login } from "../../../server/auth/auth";
 import { Google } from "@/icons";
 import { FaGithub } from "react-icons/fa";
-
 
 const Socials = () => {
   return (
     <div className="flex flex-col space-y-4">
-      <form action={Goo_login}> 
+      <form action={Goo_login}>
         <button
           className="bg-[#111111] relative group/btn flex space-x-2 items-center justify-center px-4 w-full text-white rounded-lg border border-zinc-800 h-10 font-medium shadow-[0px_0px_1px_1px_var(--neutral-800)]"
           type="submit"
@@ -17,7 +16,6 @@ const Socials = () => {
           <BottomGradient />
         </button>
       </form>
-      
     </div>
   );
 };

@@ -32,6 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             password: true,
             role: true,
             agencyId: true,
+
           },
         });
         if (!user) {
@@ -107,6 +108,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: true,
             agencyId: true, // ✅
             avatarUrl: true,
+            agency: {
+              select: {
+                slug: true,
+              },
+            },
           },
         });
 
@@ -117,6 +123,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.role = alreadyUser.role; 
           token.avatarUrl = alreadyUser.avatarUrl;
           token.agencyId = alreadyUser.agencyId
+          token.agencySlug = alreadyUser.agency?.slug as string
         }
       }
       return token; // Return the updated token
@@ -128,6 +135,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role as string;
         session.user.avatarUrl = token.avatarUrl;
         session.user.agencyId = token.agencyId;
+        session.user.agencySlug = token.agencySlug;
       }
       return session;
     },

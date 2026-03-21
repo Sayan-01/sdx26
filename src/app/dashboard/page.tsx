@@ -33,12 +33,13 @@ export default function DashboardPage() {
     { time: "2d ago", text: "Added Mike to Mobile App project", type: "team", icon: <Users className="h-4 w-4" />, color: "text-amber-500", bg: "bg-amber-500/10" },
   ];
 
-  
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500  h-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <DashboardHeading title="Welcome back, John" description="Here's what's happening with your agency today." />
+        <DashboardHeading
+          title="Welcome back, John"
+          description="Here's what's happening with your agency today."
+        />
         <Link href="/dashboard/projects/new">
           <Button className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
             <Plus className="h-4 w-4" />
@@ -52,8 +53,10 @@ export default function DashboardPage() {
         {stats.map((stat, i) => (
           <Card
             key={i}
-            className="shadow-none  bg-[#151518] hover:bg-zinc-900/70 transition-colors overflow-hidden group"
+            className="relative hover:bg-zinc-900/70 transition-colors overflow-hidden group"
           >
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">{stat.label}</CardTitle>
               <div className={cn("p-2 rounded-lg transition-colors duration-300", stat.bg, stat.color)}>{stat.icon}</div>
@@ -71,7 +74,8 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         {/* Recent Projects */}
-        <div className="lg:col-span-2 flex flex-col gap-3 min-h-0  border border-dashboard-border rounded-xl bg-[#19191b]">
+        <div className="lg:col-span-2 flex flex-col gap-3 min-h-0  border border-dashboard-border rounded-xl bg-[#19191b] group relative shadow-xl shadow-black/20 transition-all duration-300">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex items-center justify-between px-5 pt-3">
             <h2 className="text-md font-semibold flex items-center gap-2">Recent Projects</h2>
             <Link href="/dashboard/projects">
@@ -146,7 +150,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Activity Feed Snippet */}
-        <div className="flex flex-col gap-3 min-h-0 border-dashboard-border border rounded-xl bg-[#19191b]">
+        <div className="flex flex-col gap-3 min-h-0 border-dashboard-border border rounded-xl bg-[#19191b] group relative">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex items-center justify-between px-5 pt-3">
             <h2 className="text-md font-semibold flex items-center gap-2">Activity Log</h2>
             <Link href="/dashboard/activity">
