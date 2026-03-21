@@ -16,7 +16,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         const email = credentials.email as string;
-        const password = credentials.password as string
+        const password = credentials.password as string;
 
         if (!email || !password) {
           throw new Error("Please fill all fields");
@@ -30,6 +30,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             name: true,
             email: true,
             password: true,
+            role: true,
+            agencyId: true,
           },
         });
         if (!user) {
@@ -54,52 +56,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/sign-in",
+    signIn: "/login",
     error: "/auth/error",
   },
   callbacks: {
-    jwt: async ({ token, user, trigger, session }) => {
-      // If the user is signing in for the first time, or there's an existing user
-      if (trigger === "update" && session) {
-        if (session.name) token.name = session.name;
-        if (session.avatarUrl) token.avatarUrl = session.avatarUrl;
-      }
-
-      if (user) {
-        const email = user.email;
-        let alreadyUser;
-
-        if (email) {
-          alreadyUser = await prisma.user.findUnique({
-            where: { email: email },
-          });
-        }
-
-        // If user exists, populate the token with user info
-        if (alreadyUser) {
-          token.id = alreadyUser.id;
-          token.name = alreadyUser.name;
-          token.role = alreadyUser.role; // Assign user's role
-          token.avatarUrl = alreadyUser.avatarUrl
-        }
-      }
-      return token; // Return the updated token
-    },
-    session: async ({ session, token }) => {
-      if (token.id && session.user) {
-        // @ts-ignore: Ignore type error for role
-        session.user.id = token.id;
-        // @ts-ignore: Ignore type error for role
-        session.user.name = token.name;
-        // @ts-ignore: Ignore type error for role
-        session.user.role = token.role;
-        // @ts-ignore: Ignore type error for role
-        session.user.avatarUrl = token.avatarUrl;
-      }
-      return session;
-    },
     signIn: async ({ user, account }) => {
-      if (account?.provider === "google") {
+      if (account?.provider === "google" || account?.provider === "github") {
         const { email, name, image } = user;
 
         if (email && name && image) {
@@ -117,14 +79,57 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 email,
                 name: name,
                 avatarUrl: image,
+                role: "OWNER",
+                agencyId: null
               },
             });
           }
           return true;
-        } else return false;
+        } 
+        else return false;
+      }
+      return true;
+    },
+    jwt: async ({ token, user, trigger, session }) => {
+      // If the user is signing in for the first time, or there's an existing user
+      if (trigger === "update" && session) {
+        if (session.name) token.name = session.name;
+        if (session.agencyId) token.agencyId = session.agencyId;
+        if (session.avatarUrl) token.avatarUrl = session.avatarUrl;
       }
 
-      return true;
+      if (user) {
+        const alreadyUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+          select: {
+            id: true,
+            name: true,
+            role: true,
+            agencyId: true, // ✅
+            avatarUrl: true,
+          },
+        });
+
+        // If user exists, populate the token with user info
+        if (alreadyUser) {
+          token.id = alreadyUser.id;
+          token.name = alreadyUser.name as string;
+          token.role = alreadyUser.role; 
+          token.avatarUrl = alreadyUser.avatarUrl;
+          token.agencyId = alreadyUser.agencyId
+        }
+      }
+      return token; // Return the updated token
+    },
+    session: async ({ session, token }) => {
+      if (token.id && session.user) {
+        session.user.id = token.id as string;
+        session.user.name = token.name;
+        session.user.role = token.role as string;
+        session.user.avatarUrl = token.avatarUrl;
+        session.user.agencyId = token.agencyId;
+      }
+      return session;
     },
   },
   session: {

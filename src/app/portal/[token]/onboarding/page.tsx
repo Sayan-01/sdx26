@@ -1,18 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  CheckCircle2, 
-  Circle, 
-  Clock, 
-  Upload, 
-  AlertCircle,
-  FileText,
-  Plus
-} from "lucide-react";
+import { CheckCircle2, Clock, Upload, FileText, Plus, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import DashboardHeading from "@/app/dashboard/_components/dashboard-heading";
 
 export default function ClientOnboardingPage() {
   const [items, setItems] = useState([
@@ -25,82 +18,103 @@ export default function ClientOnboardingPage() {
   ]);
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      <div className="max-w-2xl">
-         <h1 className="text-3xl font-bold">Welcome aboard, Acme Corp.</h1>
-         <p className="text-zinc-500 mt-3 text-lg leading-relaxed">
-            To get started with your project, we need a few things from your side. 
-            Upload them here and our team will review them within 24 hours.
-         </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4">
-        {items.map((item) => (
-          <div 
-            key={item.id} 
-            className={cn(
-              "p-6 rounded-2xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-6",
-              item.status === "approved" ? "bg-emerald-500/5 border-emerald-500/10" : 
-              item.status === "uploaded" ? "bg-zinc-900 border-zinc-800" : 
-              "bg-zinc-900/50 border-zinc-800 border-dashed"
-            )}
-          >
-            <div className="flex items-start gap-5">
-              <div className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-1",
-                item.status === "approved" ? "bg-emerald-500/20 text-emerald-500" : 
-                item.status === "uploaded" ? "bg-blue-500/10 text-blue-500" : 
-                "bg-zinc-800 text-zinc-600"
-              )}>
-                {item.status === "approved" ? <CheckCircle2 className="h-5 w-5" /> : 
-                 item.status === "uploaded" ? <Clock className="h-5 w-5" /> : 
-                 <FileText className="h-5 w-5" />}
-              </div>
-              <div>
-                <h3 className={cn(
-                  "text-lg font-bold",
-                  item.status === "approved" ? "text-emerald-500" : "text-white"
-                )}>
-                  {item.label}
-                </h3>
-                <p className="text-sm text-zinc-500 mt-1">{item.help}</p>
-                {item.file && (
-                   <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800 text-xs font-medium text-zinc-400">
-                      <Upload className="h-3 w-3" />
-                      {item.file}
-                   </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex-shrink-0">
-               {item.status === "pending" ? (
-                 <Button className="w-full md:w-auto bg-white text-zinc-950 hover:bg-zinc-200 gap-2 font-bold px-6 h-11 rounded-xl">
-                   <Upload className="h-4 w-4" />
-                   Upload File
-                 </Button>
-               ) : item.status === "uploaded" ? (
-                 <div className="text-xs font-bold text-blue-500 uppercase tracking-widest bg-blue-500/10 px-4 py-2 rounded-lg border border-blue-500/20">
-                    Awaiting Review
-                 </div>
-               ) : (
-                 <div className="text-xs font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-500/20">
-                    Approved
-                 </div>
-               )}
-            </div>
+    <div className="flex flex-col gap-8 animate-in fade-in duration-500 h-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <DashboardHeading
+          title="Onboarding & Resources"
+          description="Please provide the following assets to begin your project journey."
+        />
+        <div className="flex gap-2 p-1 bg-[#151518] rounded-xl border border-dashboard-border shadow-sm">
+          <div className="px-4 py-2 text-center border-r border-dashboard-border">
+            <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Approved</p>
+            <p className="text-lg font-bold text-emerald-500">{items.filter((i) => i.status === "approved").length}</p>
           </div>
-        ))}
+          <div className="px-4 py-2 text-center">
+            <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Pending</p>
+            <p className="text-lg font-bold text-amber-500">{items.filter((i) => i.status === "pending").length}</p>
+          </div>
+        </div>
       </div>
 
-      <div className="p-8 rounded-[32px] bg-emerald-500/5 border border-emerald-500/10 flex flex-col md:flex-row items-center gap-8 justify-between">
-         <div className="space-y-2 text-center md:text-left">
-            <h3 className="text-xl font-bold">Ready to proceed?</h3>
-            <p className="text-zinc-400 text-sm">Once you've uploaded all items, we'll schedule our kickoff call.</p>
-         </div>
-         <Button variant="outline" className="h-12 px-8 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 rounded-2xl font-bold">
-            Notify Agency
-         </Button>
+      <div className="flex flex-col gap-3 border border-dashboard-border rounded-xl bg-[#19191b] overflow-hidden">
+        <div className="flex items-center justify-between px-5 pt-4 pb-1">
+          <h2 className="text-md font-semibold flex items-center gap-2">Project Resources</h2>
+          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-[#151518] px-3 py-1 rounded-full border border-dashboard-border">{items.length} Items Total</span>
+        </div>
+
+        <Card className="bg-[#151518] shadow-none flex-1 flex flex-col overflow-hidden p-0 border-0 border-t border-dashboard-border rounded-none">
+          <div className="divide-y divide-zinc-800/60 overflow-y-auto box">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="flex w-full hover:bg-zinc-900/50 transition-colors group px-6 min-h-[95px] items-center border-b border-dashboard-border last:border-0"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 flex-1">
+                  <div className="flex items-center gap-5">
+                    <div
+                      className={cn(
+                        "w-11 h-11 rounded-xl border border-dashboard-border/50 flex items-center justify-center transition-all duration-300 shrink-0 shadow-inner",
+                        item.status === "approved" ? "bg-emerald-500/10 text-emerald-500" : item.status === "uploaded" ? "bg-indigo-500/10 text-indigo-400" : "bg-zinc-800/20 text-zinc-600",
+                      )}
+                    >
+                      {item.status === "approved" ? <CheckCircle2 className="h-5 w-5" /> : item.status === "uploaded" ? <Clock className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
+                    </div>
+                    <div>
+                      <h3 className={cn("font-semibold transition-colors text-sm sm:text-base", item.status === "approved" ? "text-emerald-500" : "text-zinc-200 group-hover:text-white")}>
+                        {item.label}
+                      </h3>
+                      <p className="text-xs text-zinc-500 mt-0.5 font-medium leading-relaxed">
+                        {item.help} {item.file && <span className="text-zinc-700 mx-1">•</span>} {item.file && <span className="text-indigo-400/80">{item.file}</span>}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full pl-16 sm:pl-0">
+                    <div className="flex items-center gap-4">
+                      {item.status === "pending" ? (
+                        <Button
+                          size="sm"
+                          className="h-9 px-5 bg-white text-zinc-950 hover:bg-zinc-200 font-bold rounded-lg shadow-sm transition-all active:scale-95 text-[11px] uppercase tracking-wider"
+                        >
+                          <Upload className="h-3.5 w-3.5 mr-2" />
+                          Upload
+                        </Button>
+                      ) : (
+                        <div
+                          className={cn(
+                            "w-24 h-7 flex items-center justify-center rounded-md text-[10px] font-bold uppercase tracking-wider border",
+                            item.status === "approved" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+                          )}
+                        >
+                          {item.status === "uploaded" ? "In Review" : "Approved"}
+                        </div>
+                      )}
+                      <ChevronRight className="h-4 w-4 text-zinc-700 group-hover:text-zinc-400 transition-colors" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      <div className="p-8 rounded-2xl bg-[#19191b] border border-dashboard-border relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+          <Plus className="h-20 w-20 text-indigo-500 rotate-12" />
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+          <div className="space-y-1.5 text-center md:text-left">
+            <h3 className="text-lg font-bold text-white tracking-tight">Need to provide something else?</h3>
+            <p className="text-zinc-500 text-sm font-medium">Add additional resources or notes for the project team.</p>
+          </div>
+          <Button
+            variant="outline"
+            className="h-11 px-6 border-dashboard-border bg-[#151518] hover:bg-zinc-800 text-zinc-400 hover:text-white font-bold rounded-xl transition-all"
+          >
+            Add Extra Resource
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -33,6 +33,8 @@ export default function DashboardPage() {
     { time: "2d ago", text: "Added Mike to Mobile App project", type: "team", icon: <Users className="h-4 w-4" />, color: "text-amber-500", bg: "bg-amber-500/10" },
   ];
 
+  
+
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-500  h-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

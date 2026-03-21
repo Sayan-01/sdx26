@@ -35,7 +35,7 @@ const projectSchema = z.object({
 
 type ProjectFormData = z.infer<typeof projectSchema>;
 
-export default function NewProjectPage() {
+export default function CreateProjectForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [createdData, setCreatedData] = useState<{ projectId: string; magicToken: string } | null>(null);
 
@@ -69,13 +69,13 @@ export default function NewProjectPage() {
 
   const copyMagicLink = () => {
     if (!createdData) return;
-    const link = `${window.location.origin}/portal/${createdData.magicToken}/onboarding`;
+    const link = `${window.location.origin}/portal/${createdData.magicToken}`;
     navigator.clipboard.writeText(link);
     toast.success("Magic link copied to clipboard");
   };
 
   if (createdData) {
-    const magicLink = `${window.location.origin}/portal/${createdData.magicToken}/onboarding`;
+    const magicLink = `${window.location.origin}/portal/${createdData.magicToken}`;
     
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-2xl mx-auto text-center space-y-10 animate-in zoom-in duration-500 pb-20">
