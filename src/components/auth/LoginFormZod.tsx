@@ -59,7 +59,7 @@ const LoginForm = () => {
     }
   };
   return (
-    <div className="z-20 sm:w-[310px] w-[300px]">
+    <div className="z-20 w-full">
       <div className="flex flex-col items-center gap-4 text-center">
         <Link
           href="/"

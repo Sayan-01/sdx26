@@ -33,7 +33,7 @@ export default function PortalEntryPage() {
           // Session cookie is now set by the API
           // Small delay so the user sees the success state
           setTimeout(() => {
-            router.replace(`/portal/${token}/dashboard`);
+            // router.replace(`/portal/${token}/dashboard`);
           }, 800);
           return;
         }

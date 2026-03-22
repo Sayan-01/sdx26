@@ -78,7 +78,7 @@ export default function CreateProjectForm() {
     const magicLink = `${window.location.origin}/portal/${createdData.magicToken}`;
     
     return (
-      <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-2xl mx-auto text-center space-y-10 animate-in zoom-in duration-500 pb-20">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-2xl mx-auto text-center space-y-10 animate-in zoom-in duration-500 py-20">
         <div className="relative">
           <div className="w-24 h-24 rounded-3xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.15)]">
             <CheckCircle2 className="h-12 w-12" />
@@ -90,7 +90,7 @@ export default function CreateProjectForm() {
         
         <div className="space-y-4">
           <h1 className="text-4xl font-bold tracking-tight text-white">Project Initialized</h1>
-          <p className="text-zinc-400 text-lg max-w-md mx-auto leading-relaxed">
+          <p className="text-zinc-400 max-w-md mx-auto leading-relaxed">
             The creative workspace is ready. You can now invite your client using the magic link below.
           </p>
         </div>

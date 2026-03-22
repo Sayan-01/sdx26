@@ -96,6 +96,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (trigger === "update" && session) {
         if (session.name) token.name = session.name;
         if (session.agencyId) token.agencyId = session.agencyId;
+        if (session.agencySlug) token.agencySlug = session.agencySlug;
         if (session.avatarUrl) token.avatarUrl = session.avatarUrl;
       }
 

@@ -10,34 +10,43 @@ import { createAgency } from "@/lib/queries";
 
 export default function CreateAgencyForm() {
   const router = useRouter();
+  const { data: session, update } = useSession();
 
   const [agencyName, setAgencyName] = useState("");
   const [agencyLogo, setAgencyLogo] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!agencyName) return setError("Agency name is required");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agencyName) return setError("Agency name is required");
 
-  setLoading(true);
-  const result = await createAgency({
-    name: agencyName,
-    logoUrl: agencyLogo || null,
-  });
+    setLoading(true);
+    const result = await createAgency({
+      name: agencyName,
+      logoUrl: agencyLogo || null,
+    });
 
-  if (result.error) {
-    setError(result.error);
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+      return;
+    }
+
+    // ✅ Update the session so the dashboard knows about the new agency
+    if (result.agency) {
+      await update({
+        agencyId: result.agency.id,
+        agencySlug: result.agency.slug,
+      });
+    }
+
+    router.push("/dashboard");
     setLoading(false);
-    return;
-  }
-
-  router.push("/dashboard");
-  setLoading(false);
-};
+  };
 
   return (
-    <div className="z-20 sm:w-[360px] w-[300px]">
+    <div className="z-20 max-w-[300px]">
       <div className="flex flex-col items-center gap-4 text-center mb-6">
         <Link
           href="/"
@@ -47,7 +56,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         </Link>
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight text-white">Setup your agency</h1>
-          <p className="text-zinc-400">Tell us a bit about your agency to get started.</p>
+          <p className="text-zinc-400">Tell us a bit about your agency to get start your journey.</p>
         </div>
       </div>
 
@@ -61,7 +70,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             placeholder="Pixel Perfect Studio"
             value={agencyName}
             onChange={(e) => setAgencyName(e.target.value)}
-            className="h-[42px] rounded-xl bg-zinc-900 border border-zinc-800 placeholder:opacity-40"
+            className=" bg-zinc-900 border border-zinc-800 placeholder:opacity-40 mt-1"
           />
         </div>
 
@@ -73,15 +82,16 @@ const handleSubmit = async (e: React.FormEvent) => {
             placeholder="https://example.com/logo.png"
             value={agencyLogo}
             onChange={(e) => setAgencyLogo(e.target.value)}
-            className="h-[42px] rounded-xl bg-zinc-900 border border-zinc-800 placeholder:opacity-40"
+            className=" bg-zinc-900 border border-zinc-800 placeholder:opacity-40 mt-1"
           />
         </div>
 
         {error && <p className="text-red-500 text-[0.8rem] font-medium">{error}</p>}
+        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-6 h-[1.5px] w-full" />
 
         <Button
           type="submit"
-          className="w-full h-12 bg-white text-zinc-950 hover:bg-zinc-200 mt-2"
+          className="w-full h-10 bg-white text-zinc-950 hover:bg-zinc-200 mt-2"
           disabled={loading}
         >
           {loading ? (

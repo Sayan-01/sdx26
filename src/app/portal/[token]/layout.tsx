@@ -50,7 +50,6 @@ export default async function PortalLayout({
   });
 
   if (!project) {
-    // Project not found - session invalid or project deleted
     redirect(entryPath);
   }
 

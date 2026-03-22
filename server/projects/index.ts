@@ -113,7 +113,7 @@ export async function createProject(data: { projectName: string; projectDescript
     });
 
     const agencySlug = session.user.agencySlug;
-    const portalUrl = `${process.env.NEXT_PUBLIC_URL_SCHEME}${agencySlug}.${process.env.NEXT_PUBLIC_DOMAIN}/portal/${token}`;
+    const portalUrl = `${process.env.NEXT_PUBLIC_URL_SCHEME}${agencySlug}.${process.env.NEXT_PUBLIC_URL_DOMAIN}/portal/${token}`;
     await sendPortalUrl(clientEmail, clientName, portalUrl);
 
     return { success: true, projectId: project.id, magicToken: token };

@@ -115,7 +115,7 @@ const RegisterForm = () => {
         </Link>
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{step === 1 ? "Create your account" : "Setup your agency"}</h1>
-          <p className="text-zinc-400">{step === 1 ? "Join Milestack to streamline your client collaboration in one place." : "Tell us a bit about your agency to get started."}</p>
+          <p className="text-zinc-400">{step === 1 ? "Join Milestack now to streamline your client collaboration in one place." : "Tell us a bit about your agency to get started."}</p>
         </div>
       </div>
       <form

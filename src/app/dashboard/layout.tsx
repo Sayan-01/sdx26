@@ -8,6 +8,7 @@ import Sidebar from "./_components/sidebar";
 import Header from "./_components/header";
 import { auth } from "../../../auth";
 import { Roboto_Mono } from "next/font/google";
+import { redirect } from "next/navigation";
 
 const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
 
@@ -15,7 +16,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const session = await auth();
 
-  
+  if (!session) {
+    redirect("/auth/login");
+  }
 
   return (
     <div className={`flex h-dvh bg-zinc-900/80 ${roboto_Mono.className}`}>
