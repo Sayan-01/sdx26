@@ -1,8 +1,6 @@
 import { auth } from "../auth";
 import { NextResponse } from "next/server";
 
-export const runtime = "nodejs";
-
 export default auth((req) => {
   const url = req.nextUrl;
   const pathname = url.pathname;
@@ -65,8 +63,3 @@ export default auth((req) => {
     },
   });
 });
-
-
-export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-};
