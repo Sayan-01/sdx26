@@ -23,6 +23,10 @@ import {
   Sparkles,
   TvMinimalPlay,
   Users,
+  LayoutDashboard,
+  CreditCard,
+  CheckSquare,
+  Milestone,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,12 +35,6 @@ import { Poppins } from "next/font/google";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DialogTitle } from "@/components/ui/dialog";
 
-interface NavItem {
-  title: string;
-  href: string;
-  icon: any;
-}
-
 export interface History {
   id?: string;
   contentId: string;
@@ -44,7 +42,23 @@ export interface History {
   userId?: string;
 }
 
-export function SidebarComp({ userId, defaultOption = false }: { userId: string | undefined; defaultOption?: boolean }) {
+const iconMap: Record<string, any> = {
+  Bell,
+  Briefcase,
+  ChartPie,
+  HelpCircle,
+  LogOut,
+  Settings,
+  Users,
+  Layers,
+  FileText,
+  CreditCard,
+  LayoutDashboard,
+  CheckSquare,
+  Milestone,
+};
+
+export function SidebarComp({ userId, defaultOption = false, sidebarNav, sidebarUtils }: { userId: string | undefined; defaultOption?: boolean; sidebarNav: any[]; sidebarUtils: any[] }) {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const openState = useMemo(() => (defaultOption ? { open: true } : {}), [defaultOption]);
@@ -56,34 +70,6 @@ export function SidebarComp({ userId, defaultOption = false }: { userId: string 
   if (!isMounted) {
     return null;
   }
-
-  const navItems: NavItem[] = [
-    {
-      title: "Dashboard",
-      href: "/dashboard",
-      icon: ChartPie,
-    },
-    {
-      title: "Projects",
-      href: "/dashboard/projects",
-      icon: Briefcase,
-    },
-    {
-      title: "Team",
-      href: "/dashboard/team",
-      icon: Users,
-    },
-    {
-      title: "Activity",
-      href: "/dashboard/activity",
-      icon: Bell,
-    },
-    {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: Settings,
-    },
-  ];
 
   return (
     <Sheet
@@ -108,9 +94,8 @@ export function SidebarComp({ userId, defaultOption = false }: { userId: string 
             href="/"
             className={`flex items-center p-2 justify-start rounded-xl`}
           >
-            <div className="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-orange-600/60 text-lg bg-orange-600/10 text-orange-600/60">
-              {" "}
-              <Layers size={18} />{" "}
+            <div className="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-zinc-700 text-lg bg-zinc-800 text-zinc-400">
+              <Layers size={18} />
             </div>
             <div>
               <h1 className={`px-3 text-black dark:text-white font-semibold`}>Milestack.</h1>
@@ -121,7 +106,7 @@ export function SidebarComp({ userId, defaultOption = false }: { userId: string 
         </div>
         <nav className=" overflow-y-auto px-0.5 relative mb-auto">
           <ul className="space-y-1 ">
-            {navItems.map((item, index) => (
+            {sidebarNav.map((item, index) => (
               <li key={index}>
                 <Link
                   href={item.href}
@@ -130,10 +115,15 @@ export function SidebarComp({ userId, defaultOption = false }: { userId: string 
                     pathname === item.href ? "bg-zinc-100 dark:bg-zinc-800/50 text-zinc-800 dark:text-zinc-300" : "hover:bg-gray-100 dark:hover:bg-zinc-800/50 text-zinc-700 dark:text-zinc-300",
                   )}
                 >
-                  <item.icon
-                    strokeWidth={2}
-                    className={cn("h-[18px] w-[18px] mr-2", pathname === item.href ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-700 dark:text-zinc-400")}
-                  />
+                  {(() => {
+                    const Icon = typeof item.icon === "string" ? iconMap[item.icon] || HelpCircle : item.icon;
+                    return (
+                      <Icon
+                        strokeWidth={2}
+                        className={cn("h-[18px] w-[18px] mr-2", pathname === item.href ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-700 dark:text-zinc-400")}
+                      />
+                    );
+                  })()}
                   {item.title}
                 </Link>
               </li>
@@ -146,26 +136,24 @@ export function SidebarComp({ userId, defaultOption = false }: { userId: string 
           <div className="h-[60px] bg-gradient-to-b from-transparent via-zinc-900 z-10 to-zinc-900 pointer-events-none absolute -top-[40px] left-0 w-full md:hidden block" />
 
           <UpgradeCard credits={0} />
-          <Link
-            href="/help"
-            className={cn("flex items-center px-[10px] py-[10px] text-sm rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400")}
-          >
-            <HelpCircle
-              strokeWidth={2.2}
-              className="mr-3 h-[18px] w-[18px]"
-            />
-            Help & Support
-          </Link>
-          <Link
-            href="/logout"
-            className={cn("flex items-center px-[10px] py-[10px] text-sm rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400")}
-          >
-            <LogOut
-              strokeWidth={2.2}
-              className="mr-3 h-[18px] w-[18px]"
-            />
-            Logout
-          </Link>
+          {sidebarUtils.map((item, index) => (
+            <Link
+              key={index}
+              href={item.href}
+              className={cn("flex items-center px-[10px] py-[10px] text-sm rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400")}
+            >
+              {(() => {
+                const Icon = typeof item.icon === "string" ? iconMap[item.icon] || HelpCircle : item.icon;
+                return (
+                  <Icon
+                    strokeWidth={2.2}
+                    className="mr-3 h-[18px] w-[18px]"
+                  />
+                );
+              })()}
+              {item.title}
+            </Link>
+          ))}
         </div>
       </SheetContent>
     </Sheet>

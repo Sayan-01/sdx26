@@ -379,7 +379,7 @@ Owner clicks "New Project"
 
 ```
 Client receives email: "You've been invited to your project portal"
-→ Client clicks Magic Link (/invite/:token)
+→ Client clicks Magic Link (/portal/:token)
 → SELECT magic_link WHERE token = :token
 → Check: expires_at not passed, used_at is NULL
 → UPDATE magic_link (used_at = now)

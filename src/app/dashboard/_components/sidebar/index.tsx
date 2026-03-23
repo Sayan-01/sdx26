@@ -1,11 +1,21 @@
 import React from "react";
-import { SidebarComp } from "./sidebar-comp";
+import { SidebarComp } from "../../../../components/global/sidebar-comp";
+import { sidebarNav, sidebarUtils } from "../../../../constants";
 
-const Sidebar = ({userId}: {userId: string}) => {
+const Sidebar = ({ userId }: { userId: string }) => {
   return (
     <>
-      <SidebarComp defaultOption={true} userId={userId} />
-      <SidebarComp userId={userId} />
+      <SidebarComp
+        defaultOption={true}
+        userId={userId}
+        sidebarNav={sidebarNav}
+        sidebarUtils={sidebarUtils}
+      />
+      <SidebarComp
+        userId={userId}
+        sidebarNav={sidebarNav}
+        sidebarUtils={sidebarUtils}
+      />
     </>
   );
 };

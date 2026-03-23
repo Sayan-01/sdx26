@@ -15,7 +15,7 @@ export default auth((req) => {
   // ─────────────────────────────────────────
   // STEP 1: Extract subdomain (robust)
   // ─────────────────────────────────────────
-  let subdomain: string | null = null;
+  let subdomain: string | null = null
 
   if (host && domain && host !== domain && host.endsWith(domain)) {
     const slug = host.replace(`.${domain}`, "");
