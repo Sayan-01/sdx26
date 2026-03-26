@@ -46,6 +46,14 @@ export const completeInvitation = async (token: string, password: string) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const user = await prisma.user.findUnique({
+    where: { email: invitation.email },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
   await prisma.$transaction([
     prisma.user.update({
       where: { email: invitation.email },
@@ -57,5 +65,21 @@ export const completeInvitation = async (token: string, password: string) => {
     }),
   ]);
 
+  await prisma.activityLog.create({
+    data: {
+      agencyId: invitation.agencyId,
+      actorUserId: user.id,
+      action: "team_member.accepted_invitation",
+      entityType: "TEAM_MEMBER",
+      entityId: user.id,
+      metadata: {
+        email: user.email,
+        name: user.name,
+        role: "TEAM",
+        designation: invitation.designation,
+      },
+    },
+  });
+  
   return { success: true };
 };

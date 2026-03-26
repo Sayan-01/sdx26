@@ -20,20 +20,18 @@ export default async function SettingsPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-500 pb-5">
-      <DashboardHeading
-        title="Settings"
-        description="Manage your agency profile, billing, and notification preferences."
-      />
-      <p>{JSON.stringify(session?.user)}</p>
-
-      <Tabs defaultValue="Profile" orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <TabsList className="flex flex-col h-auto bg-transparent p-0 justify-start items-stretch space-y-2 border-none">
+    <div className="flex flex-col gap-8 animate-in fade-in duration-500 h-[calc(100dvh-115px)] ">
+      <Tabs
+        defaultValue="Profile"
+        orientation="vertical"
+        className="flex md:flex-row flex-col gap-6 h-full"
+      >
+        <TabsList className="flex flex-col w-[230px] bg-transparent p-0 pr-6 justify-start items-stretch space-y-2 border-r-2 border-dashed border-dashboard-border rounded-none">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="justify-start font-medium gap-3 py-2.5 px-4 data-active:bg-[#19191b] data-active:text-white text-zinc-500 hover:text-white"
+              className="justify-start font-medium gap-3 py-2.5 px-4 data-active:bg-[#19191b] data-active:text-white text-zinc-500 hover:text-white grow-0"
             >
               {tab.icon}
               {tab.id}
@@ -41,9 +39,16 @@ export default async function SettingsPage() {
           ))}
         </TabsList>
 
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 space-y-6 overflow-y-auto h-full mx-auto px-0.5 box">
+          <DashboardHeading
+            title="Settings"
+            description="Manage your agency profile, billing, and notification preferences."
+          />
           {/* Profile Settings */}
-          <TabsContent value="Profile" className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <TabsContent
+            value="Profile"
+            className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
+          >
             <Card className="bg-[#19191b] border-dashboard-border shadow-none">
               <CardHeader className="border-b border-dashboard-border/50">
                 <CardTitle className="text-lg">Personal Information</CardTitle>
@@ -94,7 +99,10 @@ export default async function SettingsPage() {
           </TabsContent>
 
           {/* Agency Settings */}
-          <TabsContent value="Agency" className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <TabsContent
+            value="Agency"
+            className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
+          >
             <Card className="bg-[#19191b] border-dashboard-border shadow-none">
               <CardHeader className="border-b border-dashboard-border/50">
                 <CardTitle className="text-lg">Agency Profile</CardTitle>
@@ -145,7 +153,10 @@ export default async function SettingsPage() {
           </TabsContent>
 
           {/* Billing Settings */}
-          <TabsContent value="Billing" className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <TabsContent
+            value="Billing"
+            className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
+          >
             <Card className="bg-[#19191b] border-dashboard-border shadow-none border-dashed hover:border-solid transition-all">
               <CardHeader className="border-b border-dashboard-border/50">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -226,7 +237,10 @@ export default async function SettingsPage() {
           </TabsContent>
 
           {/* Security Settings */}
-          <TabsContent value="Security" className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <TabsContent
+            value="Security"
+            className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
+          >
             <Card className="bg-[#19191b] border-dashboard-border shadow-none">
               <CardHeader className="border-b border-dashboard-border/50">
                 <CardTitle className="text-lg">Change Password</CardTitle>
@@ -316,7 +330,10 @@ export default async function SettingsPage() {
           </TabsContent>
 
           {/* Notifications Settings */}
-          <TabsContent value="Notifications" className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <TabsContent
+            value="Notifications"
+            className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
+          >
             <Card className="bg-[#19191b] border-dashboard-border shadow-none">
               <CardHeader className="border-b border-dashboard-border/50">
                 <CardTitle className="text-lg">Email Notifications</CardTitle>
