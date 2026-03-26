@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/db";
 import { sendPortalUrl } from "@/lib/sendPortalUrl";
-import { auth } from "../../auth";
+import { auth } from "../auth";
 
 export const getAllProjects = async () => {
   const session = await auth();
@@ -40,15 +40,14 @@ export const getAllProjects = async () => {
       },
       _count: {
         select: {
-          projectMembers: true
-        }
-      }
+          projectMembers: true,
+        },
+      },
     },
   });
 
   return { success: true, projects };
 };
-
 
 export async function createProject(data: { projectName: string; projectDescription?: string; clientName: string; clientEmail: string }) {
   const session = await auth();

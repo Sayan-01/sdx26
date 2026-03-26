@@ -33,10 +33,11 @@ enum InvitationStatus {
 
 enum TeamRole {
   OWNER
-  MEMBER
+  TEAM
 }
 
 enum Designation {
+  FOUNDER
   DESIGNER
   DEVELOPER
   HR
@@ -210,7 +211,6 @@ model Invitation {
   email       String
   designation Designation
   token       String           @unique
-  status      InvitationStatus @default(PENDING)
   invitedById String
   expiresAt   DateTime // 48 hours from creation
   acceptedAt  DateTime?
@@ -220,7 +220,7 @@ model Invitation {
   invitedBy User   @relation("InvitedBy", fields: [invitedById], references: [id])
 
   // No duplicate pending invite to same email in same agency
-  @@unique([agencyId, email, status])
+  @@unique([agencyId, email])
   @@map("invitations")
 }
 
@@ -228,7 +228,7 @@ model TeamMember {
   id          String   @id @default(cuid())
   agencyId    String
   userId      String
-  role        TeamRole @default(MEMBER)
+  role        TeamRole @default(TEAM)
   designation String? // e.g., designer, developer, HR, PM
   joinedAt    DateTime @default(now())
 

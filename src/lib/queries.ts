@@ -3,7 +3,7 @@
 import { auth } from "../../auth";
 import prisma from "./db";
 import { sendOtpViaNodeMailer } from "./sendOtpViaNodeMailer";
-import { sendPortalUrl } from "./sendPortalUrl";
+import bcrypt from "bcryptjs";
 
 export const IsUserEmailExist = async (email: string) => {
   const response = await prisma.user.findFirst({
@@ -49,6 +49,16 @@ export async function createAgency(formData: { name: string; logoUrl?: string | 
     await prisma.user.update({
       where: { id: session.user.id },
       data: { agencyId: agency.id },
+    });
+
+    // Create team member record
+    await prisma.teamMember.create({
+      data: {
+        userId: session.user.id,
+        agencyId:agency.id,
+        role: "OWNER",
+        designation: "FOUNDER",
+      },
     });
 
     return { success: true, agency };

@@ -155,10 +155,7 @@ export default function NewProjectPage() {
                   <Input
                     {...register("projectName")}
                     placeholder="e.g. Q1 Brand Identity"
-                    className={cn(
-                      "bg-[#151518] border-dashboard-border focus-visible:ring-indigo-500/50 text-zinc-200",
-                      errors.projectName && "border-rose-500/50 focus-visible:ring-rose-500/20",
-                    )}
+                    className={cn("bg-[#151518] border-dashboard-border focus-visible:ring-indigo-500/50 text-zinc-200", errors.projectName && "border-rose-500/50 focus-visible:ring-rose-500/20")}
                   />
                   {errors.projectName && <p className="text-rose-500 text-[10px] font-bold uppercase tracking-wider mt-1 ml-1">{errors.projectName.message}</p>}
                 </div>
@@ -191,10 +188,7 @@ export default function NewProjectPage() {
                   <Input
                     {...register("clientName")}
                     placeholder="e.g. Sarah J. Parker"
-                    className={cn(
-                      "bg-[#151518] border-dashboard-border focus-visible:ring-blue-500/50 text-zinc-200",
-                      errors.clientName && "border-rose-500/50 focus-visible:ring-rose-500/20",
-                    )}
+                    className={cn("bg-[#151518] border-dashboard-border focus-visible:ring-blue-500/50 text-zinc-200", errors.clientName && "border-rose-500/50 focus-visible:ring-rose-500/20")}
                   />
                   {errors.clientName && <p className="text-rose-500 text-[10px] font-bold uppercase tracking-wider mt-1 ml-1">{errors.clientName.message}</p>}
                 </div>
@@ -205,10 +199,7 @@ export default function NewProjectPage() {
                     {...register("clientEmail")}
                     type="email"
                     placeholder="client@agency.com"
-                    className={cn(
-                      "bg-[#151518] border-dashboard-border focus-visible:ring-blue-500/50 text-zinc-200",
-                      errors.clientEmail && "border-rose-500/50 focus-visible:ring-rose-500/20",
-                    )}
+                    className={cn("bg-[#151518] border-dashboard-border focus-visible:ring-blue-500/50 text-zinc-200", errors.clientEmail && "border-rose-500/50 focus-visible:ring-rose-500/20")}
                   />
                   {errors.clientEmail && <p className="text-rose-500 text-[10px] font-bold uppercase tracking-wider mt-1 ml-1">{errors.clientEmail.message}</p>}
                 </div>
@@ -219,29 +210,29 @@ export default function NewProjectPage() {
 
         <div className="lg:col-span-2 space-y-6">
           <Card className="bg-[#19191b] border-dashboard-border shadow-xl border-dashed p-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Workspace Automation</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Workspace Automation</h3>
 
-              <div className="space-y-6">
-                <div className="flex gap-4 group/item">
-                  <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 group-hover/item:scale-110 transition-transform duration-300">
-                    <Zap className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1.5 flex-1">
-                    <p className="text-sm font-bold text-zinc-200 flex items-center gap-2">Magic Link Invite</p>
-                    <p className="text-xs text-zinc-500 leading-relaxed font-medium">System will instantly generate and send a secure access link to the client.</p>
-                  </div>
+            <div className="space-y-6">
+              <div className="flex gap-4 group/item">
+                <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 group-hover/item:scale-110 transition-transform duration-300">
+                  <Zap className="h-5 w-5" />
                 </div>
-
-                <div className="flex gap-4 group/item">
-                  <div className="h-10 w-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 border border-indigo-500/20 group-hover/item:scale-110 transition-transform duration-300">
-                    <BadgeCheck className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1.5 flex-1">
-                    <p className="text-sm font-bold text-zinc-200">Delivery Pipeline</p>
-                    <p className="text-xs text-zinc-500 leading-relaxed font-medium">Standard onboarding stages and file structure will be provisioned automatically.</p>
-                  </div>
+                <div className="space-y-1.5 flex-1">
+                  <p className="text-sm font-bold text-zinc-200 flex items-center gap-2">Magic Link Invite</p>
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium">System will instantly generate and send a secure access link to the client.</p>
                 </div>
               </div>
+
+              <div className="flex gap-4 group/item">
+                <div className="h-10 w-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 border border-indigo-500/20 group-hover/item:scale-110 transition-transform duration-300">
+                  <BadgeCheck className="h-5 w-5" />
+                </div>
+                <div className="space-y-1.5 flex-1">
+                  <p className="text-sm font-bold text-zinc-200">Delivery Pipeline</p>
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium">Standard onboarding stages and file structure will be provisioned automatically.</p>
+                </div>
+              </div>
+            </div>
           </Card>
 
           <div className="space-y-6">

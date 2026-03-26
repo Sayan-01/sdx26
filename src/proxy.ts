@@ -25,7 +25,6 @@ export default auth((req) => {
   }
 
   if (subdomain) {
-    console.log("Subdomain detected:", subdomain);
     requestHeaders.set("x-agency-slug", subdomain);
   }
 
@@ -39,10 +38,6 @@ export default auth((req) => {
   // STEP 3: Auth check
   // ─────────────────────────────────────────
   const isAuthenticated = !!req.auth;
-
-  console.error("DEBUG: Middleware Path:", pathname);
-  console.error("DEBUG: Is Public Route:", isPublicRoute);
-  console.error("DEBUG: Is Authenticated:", isAuthenticated);
 
   if (!isAuthenticated && !isPublicRoute) {
     console.log("Redirecting to login...");
@@ -63,3 +58,7 @@ export default auth((req) => {
     },
   });
 });
+
+export const config = {
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};

@@ -99,7 +99,7 @@ const RegisterForm = () => {
       } catch (error) {
         console.log("Error in sign up", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
   };
@@ -224,7 +224,7 @@ const RegisterForm = () => {
           </span>
         </h4>
       </form>
-      
+
       <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-6 h-[1.5px] w-full" />
       <Socials />
     </div>

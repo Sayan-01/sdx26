@@ -11,9 +11,26 @@ export const sendPortalUrl = async (email: string, name: string, portalUrl: stri
 
   try {
     await transporter.sendMail(mailOptions);
-    return { success: true, message: "Email error is" };
+    return { success: true, message: "Email sent successfully" };
   } catch (error) {
-    console.log("Email error is");
-    return { success: false, message: "Email error is" };
+    console.error("Email sending failed:", error);
+    return { success: false, message: "Email sending failed" };
   }
 }; 
+
+export const sendInviteEmaill = async (email: string, name: string, inviteLink: string) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Your Invitation Link",
+    text: `Hay ${name}, you've been invited to your agency, your invitation Link is: ${inviteLink}`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return { success: true, message: "Email sent successfully" };
+  } catch (error) {
+    console.error("Email sending failed:", error);
+    return { success: false, message: "Email sending failed" };
+  }
+};
