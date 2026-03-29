@@ -100,7 +100,7 @@ export async function createProject(data: { projectName: string; projectDescript
 
     // 3. Create a Magic Link for the client
     const token = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
-    const magicLink = await prisma.magicLink.create({
+    await prisma.magicLink.create({
       data: {
         token,
         agencyId: user.agencyId,
@@ -111,9 +111,26 @@ export async function createProject(data: { projectName: string; projectDescript
       },
     });
 
-    const agencySlug = session.user.agencySlug;
-    const portalUrl = `${process.env.NEXT_PUBLIC_URL_SCHEME}${agencySlug}.${process.env.NEXT_PUBLIC_URL_DOMAIN}/portal/${token}`;
+    const portalUrl = `${process.env.NEXT_PUBLIC_URL_SCHEME}${session.user.agencySlug}.${process.env.NEXT_PUBLIC_URL_DOMAIN}/portal/${token}`;
     await sendPortalUrl(clientEmail, clientName, portalUrl);
+
+    // 4. Initialize Onboarding Items
+    const defaultLabels = [
+      "Company Logo (SVG/PNG)",
+      "Brand Guidelines (PDF)",
+      "Website Copy/Content",
+      "Hosting Access Details",
+      "Domain Access Details",
+    ];
+
+    await prisma.onboardingItem.createMany({
+      data: defaultLabels.map((label) => ({
+        label,
+        projectId: project.id,
+        agencyId: user.agencyId as string,
+        status: "PENDING",
+      })),
+    });
 
     return { success: true, projectId: project.id, magicToken: token };
   } catch (error) {

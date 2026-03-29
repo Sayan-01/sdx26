@@ -150,7 +150,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Activity Feed Snippet */}
-        <div className="flex flex-col gap-3 min-h-0 border-dashboard-border border rounded-xl bg-[#19191b] group relative">
+        <div className="flex flex-col gap-3 min-h-0 border-dashboard-border border rounded-xl bg-[#19191b] group relative shadow-xl shadow-black/20">
           <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex items-center justify-between px-5 pt-3">
             <h2 className="text-md font-semibold flex items-center gap-2">Activity Log</h2>

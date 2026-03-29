@@ -23,10 +23,13 @@ export default async function SettingsPage() {
     <div className="flex flex-col gap-8 animate-in fade-in duration-500 h-[calc(100dvh-115px)] ">
       <Tabs
         defaultValue="Profile"
-        orientation="vertical"
         className="flex md:flex-row flex-col gap-6 h-full"
       >
-        <TabsList className="flex flex-col w-[230px] bg-transparent p-0 pr-6 justify-start items-stretch space-y-2 border-r-2 border-dashed border-dashboard-border rounded-none">
+        <DashboardHeading
+          title="Settings"
+          description="Manage your agency profile, billing, and notification preferences."
+        />
+        <TabsList className="flex w-full h-10! bg-transparent p-0  justify-start items-stretch space-y-2 rounded-none">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
@@ -39,18 +42,14 @@ export default async function SettingsPage() {
           ))}
         </TabsList>
 
-        <div className="md:col-span-3 space-y-6 overflow-y-auto h-full mx-auto px-0.5 box">
-          <DashboardHeading
-            title="Settings"
-            description="Manage your agency profile, billing, and notification preferences."
-          />
+        <div className="md:col-span-3 space-y-6 p-0.5 box pb-10">
           {/* Profile Settings */}
           <TabsContent
             value="Profile"
             className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
           >
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="boder-b border-dashboard-border/50">
                 <CardTitle className="text-lg">Personal Information</CardTitle>
                 <CardDescription className="text-zinc-500">Update your personal details and public profile.</CardDescription>
               </CardHeader>
@@ -103,8 +102,8 @@ export default async function SettingsPage() {
             value="Agency"
             className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
           >
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="border-dashboard-border/50 ">
                 <CardTitle className="text-lg">Agency Profile</CardTitle>
                 <CardDescription className="text-zinc-500">Your agency details, visible to clients and team members.</CardDescription>
               </CardHeader>
@@ -157,8 +156,8 @@ export default async function SettingsPage() {
             value="Billing"
             className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
           >
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none border-dashed hover:border-solid transition-all">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none border-dashed hover:border-solid transition-all pb-0">
+              <CardHeader className="border-dashboard-border/50">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-zinc-500" />
                   Subscription Plan
@@ -196,8 +195,8 @@ export default async function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="border-dashboard-border/50">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Globe className="h-5 w-5 text-zinc-500" />
                   Billing History
@@ -241,8 +240,8 @@ export default async function SettingsPage() {
             value="Security"
             className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
           >
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="border-dashboard-border/50">
                 <CardTitle className="text-lg">Change Password</CardTitle>
                 <CardDescription className="text-zinc-500">Ensure your account is using a long, random password.</CardDescription>
               </CardHeader>
@@ -282,8 +281,8 @@ export default async function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50 flex flex-row items-center justify-between">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="border-dashboard-border/50 flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-lg">Active Sessions</CardTitle>
                   <CardDescription className="text-zinc-500 mt-1">Manage and log out your active sessions on other devices.</CardDescription>
@@ -334,8 +333,8 @@ export default async function SettingsPage() {
             value="Notifications"
             className="mt-0 space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-300"
           >
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="border-dashboard-border/50">
                 <CardTitle className="text-lg">Email Notifications</CardTitle>
                 <CardDescription className="text-zinc-500">Choose what updates you want to receive via email.</CardDescription>
               </CardHeader>
@@ -363,8 +362,8 @@ export default async function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#19191b] border-dashboard-border shadow-none">
-              <CardHeader className="border-b border-dashboard-border/50">
+            <Card className="bg-[#19191b] border-dashboard-border shadow-none pb-0">
+              <CardHeader className="border-dashboard-border/50">
                 <CardTitle className="text-lg">In-App Notifications</CardTitle>
                 <CardDescription className="text-zinc-500">Configure your realtime alerts inside the dashboard.</CardDescription>
               </CardHeader>

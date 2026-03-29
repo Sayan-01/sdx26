@@ -59,7 +59,7 @@ export default function ActivityPage() {
       if (activeFilter === "All") return matchesSearch;
       if (activeFilter === "Files") return matchesSearch && log.entityType === "FILE";
       if (activeFilter === "Messages") return matchesSearch && (log.entityType === "MESSAGE" || log.action?.includes("comment"));
-      if (activeFilter === "Approvals") return matchesSearch && log.action?.includes("approved");
+      if (activeFilter === "Approvals") return matchesSearch && log.action?.includes("APPROVED");
 
       return matchesSearch;
     });
@@ -78,9 +78,21 @@ export default function ActivityPage() {
 
   // Stats
   const activityStats = useMemo(() => {
-    const fileCount = logs.filter((l) => l.entityType === "FILE").length;
-    const msgCount = logs.filter((l) => l.entityType === "MESSAGE").length;
-    const completedCount = logs.filter((l) => l.action?.includes("approved") || l.action?.includes("completed")).length;
+    const fileCount = logs.filter((l) => 
+      l.entityType === "FILE" || 
+      (l.entityType === "ONBOARDING" && l.action?.includes("Uploaded"))
+    ).length;
+    
+    const msgCount = logs.filter((l) => 
+      l.entityType === "MESSAGE" || 
+      l.action?.includes("MESSAGE") || 
+      l.action?.includes("comment")
+    ).length;
+    
+    const completedCount = logs.filter((l) => 
+      l.action?.includes("Approved") || 
+      l.action?.includes("Completed")
+    ).length;
 
     return [
       { label: "Files Uploaded", value: fileCount.toString(), icon: <FileBox className="text-blue-500 h-4 w-4" /> },
@@ -115,8 +127,8 @@ export default function ActivityPage() {
     const a = action.toLowerCase();
     const t = type.toLowerCase();
 
-    if (a.includes("file") || t === "file") return <FileBox className="h-4 w-4" />;
-    if (a.includes("approved") || a.includes("checklist")) return <CheckCircle2 className="h-4 w-4" />;
+    if (a.includes("file") || t === "file" || t === "onboarding" && a.includes("uploaded")) return <FileBox className="h-4 w-4" />;
+    if (a.includes("approved") || a.includes("checklist") || a.includes("onboarding")) return <CheckCircle2 className="h-4 w-4" />;
     if (a.includes("payment") || t === "payment") return <CreditCard className="h-4 w-4" />;
     if (a.includes("message") || a.includes("comment") || t === "message") return <MessageSquare className="h-4 w-4" />;
     if (a.includes("team") || t === "team_member") return <UserPlus className="h-4 w-4" />;
@@ -126,13 +138,13 @@ export default function ActivityPage() {
 
   const getLogContent = (log: any) => {
     const actor = log.actorUser?.name || log.actorClient?.name || "Someone";
-    const target = log.metadata?.name || log.metadata?.email || log.entityId || "item";
-    let actionTxt = log.action.split(".").pop()?.replace("_", " ") || "performed action on";
+    const target = log.metadata?.label || log.metadata?.name || log.metadata?.email || log.entityId || "item";
+    let actionTxt = log.action.split("_").join(" ").toLowerCase();
 
     return (
       <p className="text-sm leading-relaxed">
         <span className="font-bold text-white">{actor}</span> <span className="text-zinc-400">{actionTxt}</span>{" "}
-        <span className="font-bold text-white uppercase tracking-tight text-[11px]">{target}</span>{" "}
+        <span className="font-bold text-zinc-300 uppercase tracking-tight text-[11px]">{target}</span>{" "}
         {log.project && (
           <>
             <span className="text-zinc-500 text-xs">in</span> <span className="text-zinc-300 font-medium cursor-pointer hover:text-white transition-colors">{log.project.name}</span>
@@ -145,8 +157,8 @@ export default function ActivityPage() {
   const ActivityItem = ({ activity }: { activity: any }) => (
     <div
       className={cn(
-        "p-4 rounded-xl border transition-all flex items-start gap-4 group",
-        !activity.isRead ? "bg-[#19191b] border-dashboard-border" : "bg-[#151518] border-dashboard-border/50 hover:bg-[#19191b]",
+        "p-4 rounded-xl border transition-all flex items-start gap-4 group ",
+        !activity.isRead ? "bg-[#19191b] border-dashboard-border shadow-xl shadow-black/20" : "bg-[#151518] border-dashboard-border/50 hover:bg-[#19191b] ",
       )}
     >
       <div
@@ -197,13 +209,13 @@ export default function ActivityPage() {
         <div className="xl:col-span-2 flex flex-col gap-6 min-h-0">
           {/* Filters & Search */}
           <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="relative flex-grow w-full">
+            <div className="relative grow w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
               <Input
                 placeholder="Search activity..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full"
+                className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full shadow-xl shadow-black/20"
               />
             </div>
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
@@ -303,7 +315,7 @@ export default function ActivityPage() {
 
         {/* Sidebar Column */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]">
+          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]  shadow-xl shadow-black/20">
             <div className="flex items-center gap-2 px-5 pt-3">
               <BarChart3 className="h-4 w-4 text-indigo-500" />
               <h2 className="text-md font-semibold text-zinc-200">Agency Stats</h2>
@@ -326,7 +338,7 @@ export default function ActivityPage() {
             </Card>
           </div>
 
-          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]">
+          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b] shadow-xl shadow-black/20">
             <div className="flex items-center gap-2 px-5 pt-3">
               <Zap className="h-4 w-4 text-amber-500" />
               <h2 className="text-md font-semibold text-zinc-200">Active Projects</h2>

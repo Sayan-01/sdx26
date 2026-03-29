@@ -367,10 +367,11 @@ specific project-এ assign করা হয়
 ```
 Owner clicks "New Project"
 → Enters: project name, client name, client email
-→ INSERT users (name, email, password=NULL)
-→ INSERT projects (agency_id, client_id, status=active)
-→ INSERT magic_link (project_id, client_email, token, expires_at)
-→ System sends invite email to client
+→ FIND OR INSERT client (agency_id + email)
+→ INSERT projects (agency_id, client_id, status=ACTIVE)
+→ INSERT magic_link (project_id, client_id, client_email, token, expires_at)
+→ INSERT onboarding_items (Initialize default items for the project)
+→ System sends magic link email to client
 ```
 
 ---
@@ -379,12 +380,15 @@ Owner clicks "New Project"
 
 ```
 Client receives email: "You've been invited to your project portal"
-→ Client clicks Magic Link (/portal/:token)
-→ SELECT magic_link WHERE token = :token
-→ Check: expires_at not passed, used_at is NULL
+→ Client clicks Magic Link (/portal/[token])
+→ Frontend POST /api/auth/magic-link/verify { token }
+→ SELECT magic_link WHERE token = :token (INCLUDE client, project)
+→ VALIDATE: !used_at AND expires_at > now
 → UPDATE magic_link (used_at = now)
-→ Client dashboard opens directly — no password, no signup
-→ Client sees their project, onboarding checklist, milestones
+→ SET COOKIE "client_session" (JWT containing clientId, projectId, agencyId)
+→ INSERT activity_log (action = "client.portal_accessed")
+→ Client redirected to /portal/[token]/dashboard
+→ Client sees: Onboarding checklist, milestones, project files
 ```
 
 ---
@@ -392,13 +396,15 @@ Client receives email: "You've been invited to your project portal"
 ### 5. Client Onboarding
 
 ```
-Client sees checklist: Upload Logo, Brand Guidelines, Hosting Access...
-→ Client uploads each file
-→ UPDATE onboarding_items (status=uploaded, file_url)
-→ INSERT activity_log ("Client uploaded Logo.png")
-→ Owner gets notified
-→ Owner reviews → marks each item Approved
-→ UPDATE onboarding_items (status=approved)
+Project created → Default items (Logo, Guidelines, etc.) auto-generated (PENDING)
+→ Client clicks magic link portal(already logged in) → navigates to /portal/[token]/onboarding
+→ Client sees checklist and provides resource link (URL) for each item
+→ UPDATE onboarding_items (status=UPLOADED, file_url, uploaded_by_client_id)
+→ INSERT activity_log ("Uploaded onboarding resource")
+→ Agency owner sees items marked "Review" in project dashboard
+→ Agency owner reviews → clicks [Approve] or [Request Revision]
+→ UPDATE onboarding_items (status=APPROVED or REJECTED, reviewed_by_user_id)
+→ INSERT activity_log ("Approved onboarding item" OR "Requested revision...")
 ```
 
 ---
