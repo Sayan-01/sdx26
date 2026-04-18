@@ -1,77 +1,89 @@
+"use client";
+
 import React from "react";
 import Wrapper from "@/components/design/wrapper";
-import { FileQuestion, MessageSquareWarning, Banknote, FolderArchive } from "lucide-react";
-import { Playfair } from "next/font/google";
+import { Mail, FileWarning, MessageSquare, Clock, CreditCard } from "lucide-react";
 
-const play = Playfair({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-})
+const ProblemCard = ({ 
+  title, 
+  description, 
+  icon: Icon, 
+  className = "", 
+  iconColor = "text-purple-400" 
+}: { 
+  title: string; 
+  description: string; 
+  icon: any; 
+  className?: string;
+  iconColor?: string;
+}) => (
+  <div className={`group relative p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 overflow-hidden transition-all duration-500 hover:bg-zinc-900/60 hover:border-purple-500/20 ${className}`}>
+    <div className="absolute inset-0 bg-linear-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div className="relative z-10">
+      <div className={`w-12 h-12 rounded-2xl bg-zinc-950 flex items-center justify-center mb-6 shadow-inner border border-white/5 group-hover:scale-110 transition-transform`}>
+        <Icon className={`w-6 h-6 ${iconColor}`} />
+      </div>
+      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors">{title}</h3>
+      <p className="text-zinc-400 leading-relaxed text-sm md:text-base">{description}</p>
+    </div>
+  </div>
+);
+
 export default function ProblemSection() {
-  const problems = [
-    { 
-      title: "Onboarding Friction", 
-      desc: "Chasing logos, brand guidelines, and server credentials takes weeks instead of days.", 
-      icon: FileQuestion,
-      color: "text-amber-400"
-    },
-    { 
-      title: "Approvals Chaos", 
-      desc: "Important feedback is lost in endless email threads with zero audit trail or version history.", 
-      icon: MessageSquareWarning,
-      color: "text-rose-400"
-    },
-    { 
-      title: "Payment Lag", 
-      desc: "The connection between completed work and sent invoices is fundamentally broken.", 
-      icon: Banknote,
-      color: "text-emerald-400"
-    },
-    { 
-      title: "File Management", 
-      desc: "Google Drive links and endless 'Final_v2_new' file suffixes completely ruin the client experience.", 
-      icon: FolderArchive,
-      color: "text-indigo-400"
-    }
-  ];
-
   return (
-    <section className="py-24 md:py-32 relative overflow-hidden bg-zinc-950">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-zinc-950 opacity-40"></div>
-
+    <section className="py-24 relative overflow-hidden bg-zinc-950">
       <Wrapper>
-        <div className="space-y-20 relative z-10">
-          <div className="text-center space-y-2 max-w-4xl mx-auto">
-            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 text-rose-400 text-sm font-semibold tracking-wide uppercase">
-              The Status Quo is Broken
-            </div>
-            <h2 className={`text-4xl md:text-5xl lg:text-6xl tracking-tight text-white leading-tight ${play.className} italic!`}>Stop the scattered chaos.</h2>
-            <p className="text-lg text-zinc-400 ">Agencies today work across too many disconnected tools. We bring your entire collaboration workflow into one stunning workspace.</p>
+        <div className="flex flex-col items-center mb-16">
+          <div className="px-4 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-xs font-bold tracking-widest uppercase mb-6">
+            The Chaos
           </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center max-w-4xl tracking-tight">
+            Stop losing projects to the <span className="text-zinc-600 italic">"status quo"</span> chaos.
+          </h2>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 md:px-0">
-            {problems.map((p, i) => (
-              <div
-                key={i}
-                className="group relative p-8 rounded-[2rem] border border-white/5 bg-zinc-900/40 backdrop-blur-sm hover:bg-zinc-900/80 transition-all duration-500 overflow-hidden"
-              >
-                {/* Subtle top glow effect */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                <div className="relative space-y-5 z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-zinc-900/50 border border-white/5 shadow-inner flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <p.icon className={`h-6 w-6 ${p.color}`} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl text-zinc-100 mb-2">{p.title}</h3>
-                    <p className="text-zinc-400 text-sm leading-relaxed">{p.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+          {/* Bento Grid Layout */}
+          <ProblemCard 
+            className="md:col-span-3 lg:col-span-4"
+            icon={Mail}
+            iconColor="text-rose-400"
+            title="Lost feedback in email threads"
+            description="Searching through 'Re: Re: Feedback' chains is where productivity goes to die. Milestack keeps every conversation tied to the actual deliverable."
+          />
+          <ProblemCard 
+            className="md:col-span-3 lg:col-span-2"
+            icon={FileWarning}
+            iconColor="text-amber-400"
+            title="Final_v2_final_FINAL chaos"
+            description="Version control shouldn't be a naming convention. Stop the file hunting nightmare."
+          />
+          <ProblemCard 
+            className="md:col-span-3 lg:col-span-2"
+            icon={MessageSquare}
+            iconColor="text-blue-400"
+            title="Clients messaging everywhere"
+            description="WhatsApp, Slack, Email, and LinkedIn. Centralize your communication before you lose your mind."
+          />
+          <ProblemCard 
+            className="md:col-span-3 lg:col-span-2"
+            icon={Clock}
+            iconColor="text-indigo-400"
+            title="Delayed approvals"
+            description="Waiting days for a 'looks good' thumb up? Automate the follow-ups and get clear sign-offs."
+          />
+          <ProblemCard 
+            className="md:col-span-6 lg:col-span-2"
+            icon={CreditCard}
+            iconColor="text-emerald-400"
+            title="Manual payment tracking"
+            description="Stop asking 'did they pay the deposit yet?'. Link payments to milestones and get paid automatically."
+          />
         </div>
       </Wrapper>
+
+      {/* Background decoration */}
+      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-linear-to-t from-purple-900/10 to-transparent pointer-events-none -z-10" />
     </section>
   );
 }

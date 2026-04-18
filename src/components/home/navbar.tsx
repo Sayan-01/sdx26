@@ -14,10 +14,10 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 group"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-white to-zinc-400 text-zinc-950 shadow-inner">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] group-hover:scale-110 transition-transform">
                 <Layers className="h-4 w-4" />
               </div>
-              <span className="text-lg font-bold tracking-tight text-white group-hover:text-zinc-200 transition-colors">Milestack</span>
+              <span className="text-lg font-bold tracking-tight text-white group-hover:text-purple-200 transition-colors">Milestack</span>
             </Link>
           </div>
 
