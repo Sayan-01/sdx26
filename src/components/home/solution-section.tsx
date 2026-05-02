@@ -45,7 +45,7 @@ export default function SolutionSection() {
           <div className="px-4 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 text-indigo-400 text-xs font-bold tracking-widest uppercase mb-6">
             The Solution
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center max-w-4xl tracking-tight leading-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white text-center max-w-4xl tracking-tight leading-tight">
             One structured system to <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">rule them all.</span>
           </h2>
           <p className="mt-6 text-lg text-zinc-400 text-center max-w-2xl">

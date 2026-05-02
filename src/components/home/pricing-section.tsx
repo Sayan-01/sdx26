@@ -53,7 +53,7 @@ export default function PricingSection() {
     <section id="pricing" className="py-24 bg-zinc-950">
       <Wrapper>
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">Simple, transparent pricing.</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-4">Simple, transparent pricing.</h2>
           <p className="text-zinc-400">Choose the plan that fits your agency's scale.</p>
         </div>
 

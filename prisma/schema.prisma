@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -10,6 +5,380 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model Plan {
+  id             String         @id @default(uuid())
+  name           String         @unique
+  maxTeamMembers Int
+  maxProjects    Int
+  maxStorageGb   Int
+  priceMonthly   Decimal        @db.Decimal(10, 2)
+  priceYearly    Decimal        @db.Decimal(10, 2)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  agencies       Agency[]
+  subscriptions  Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id                   String             @id @default(uuid())
+  agencyId             String             @unique
+  planId               String
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  trialEnd             DateTime?
+  cancelAt             DateTime?
+  canceledAt           DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  agency               Agency             @relation(fields: [agencyId], references: [id])
+  plan                 Plan               @relation(fields: [planId], references: [id])
+
+  @@map("subscriptions")
+}
+
+model Agency {
+  id            String         @id @default(cuid())
+  name          String
+  ownerId       String         @unique
+  slug          String         @unique
+  logoUrl       String?
+  planId        String?
+  activePlan    String?        @default("starter")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  activityLogs  ActivityLog[]
+  owner         User           @relation("AgencyOwner", fields: [ownerId], references: [id])
+  plan          Plan?          @relation(fields: [planId], references: [id])
+  teamMembers   TeamMember[]
+  users         User[]         @relation("AgencyUsers")
+  clients       Client[]
+  invitations   Invitation[]
+  notifications Notification[]
+  projects      Project[]
+  subscription  Subscription?
+}
+
+model User {
+  id                      String           @id @default(cuid())
+  name                    String?
+  email                   String           @unique
+  password                String?
+  role                    UserRole         @default(OWNER)
+  varifiedToken           String?
+  varifiedTokenExpire     DateTime?
+  avatarUrl               String?
+  agencyId                String?
+  googleId                String?
+  githubId                String?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+  actorActivityLogs       ActivityLog[]    @relation("ActorUser")
+  activityLogs            ActivityLog[]
+  ownedAgency             Agency?          @relation("AgencyOwner")
+  uploadedFiles           File[]
+  sentMessages            Message[]        @relation("UserMessages")
+  messages                Message[]
+  projectMemberships      ProjectMember[]
+  teamMembers             TeamMember[]
+  agency                  Agency?          @relation("AgencyUsers", fields: [agencyId], references: [id], onDelete: Cascade)
+  fileVersions            FileVersion[]
+  invitationsSent         Invitation[]     @relation("InvitedBy")
+  notifications           Notification[]   @relation("UserNotifications")
+  reviewedOnboardingItems OnboardingItem[] @relation("ReviewedBy")
+  onboardingItems         OnboardingItem[]
+  assignedTasks           Task[]           @relation("TaskAssignee")
+}
+
+model Invitation {
+  id          String      @id @default(uuid())
+  agencyId    String
+  email       String
+  designation Designation
+  token       String      @unique
+  invitedById String
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime    @default(now())
+  agency      Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  invitedBy   User        @relation("InvitedBy", fields: [invitedById], references: [id])
+
+  @@unique([agencyId, email])
+  @@map("invitations")
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  agencyId    String
+  userId      String
+  role        TeamRole @default(TEAM)
+  designation String?
+  joinedAt    DateTime @default(now())
+  agency      Agency   @relation(fields: [agencyId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([agencyId, userId])
+}
+
+model ProjectMember {
+  id          String            @id @default(cuid())
+  agencyId    String
+  projectId   String
+  userId      String
+  role        ProjectMemberRole @default(MEMBER)
+  addedAt     DateTime          @default(now())
+  designation String?
+  project     Project           @relation(fields: [projectId], references: [id])
+  user        User              @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+}
+
+model Project {
+  id             String           @id @default(cuid())
+  name           String
+  agencyId       String
+  clientId       String
+  description    String?
+  deadline       DateTime?
+  status         ProjectStatus    @default(ACTIVE)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  activityLogs   ActivityLog[]
+  files          File[]
+  magicLinks     MagicLink[]
+  messages       Message[]
+  projectMembers ProjectMember[]
+  milestones     Milestone[]
+  notifications  Notification[]
+  onboardingItem OnboardingItem[]
+  agency         Agency           @relation(fields: [agencyId], references: [id])
+  client         Client           @relation(fields: [clientId], references: [id])
+  tasks          Task[]
+
+  @@map("projects")
+}
+
+model Client {
+  id                String           @id @default(uuid())
+  agencyId          String
+  name              String
+  email             String
+  company           String?
+  phone             String?
+  avatarUrl         String?
+  isActive          Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  actorLogs         ActivityLog[]    @relation("ActorClient")
+  magicLinks        MagicLink[]
+  messagesSent      Message[]        @relation("ClientMessages")
+  agency            Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  notifications     Notification[]   @relation("ClientNotifications")
+  onboardingUploads OnboardingItem[] @relation("UploadedBy")
+  projects          Project[]
+
+  @@unique([agencyId, email])
+  @@map("clients")
+}
+
+model OnboardingItem {
+  id           String           @id @default(cuid())
+  agencyId     String
+  projectId    String
+  label        String
+  status       OnboardingStatus @default(PENDING)
+  fileUrl      String?
+  uploadedById String?
+  reviewedById String?
+  updatedAt    DateTime         @updatedAt
+  userId       String?
+  project      Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  reviewedBy   User?            @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  uploadedBy   Client?          @relation("UploadedBy", fields: [uploadedById], references: [id])
+  user         User?            @relation(fields: [userId], references: [id])
+
+  @@map("onboarding_items")
+}
+
+model Milestone {
+  id          String          @id @default(cuid())
+  agencyId    String
+  projectId   String
+  title       String
+  description String?
+  orderIndex  Int
+  dueDate     DateTime?
+  amount      Float?
+  status      MilestoneStatus @default(PENDING)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  files       File[]
+  messages    Message[]
+  project     Project         @relation(fields: [projectId], references: [id])
+  payments    Payment?
+  tasks       Task[]
+
+  @@unique([projectId, orderIndex])
+  @@map("milestones")
+}
+
+model File {
+  id               String        @id @default(cuid())
+  agencyId         String
+  projectId        String
+  milestoneId      String?
+  uploaderId       String
+  fileName         String
+  fileType         String?
+  url              String
+  status           FileStatus    @default(UPLOADED)
+  currentVersionId String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  milestone        Milestone?    @relation(fields: [milestoneId], references: [id])
+  project          Project       @relation(fields: [projectId], references: [id])
+  uploader         User          @relation(fields: [uploaderId], references: [id])
+  messages         Message[]
+  fileVersions     FileVersion[]
+}
+
+model Message {
+  id             String     @id @default(cuid())
+  agencyId       String
+  projectId      String
+  milestoneId    String?
+  fileId         String?
+  senderId       String
+  content        String
+  createdAt      DateTime   @default(now())
+  senderUserId   String?
+  senderClientId String?
+  userId         String?
+  file           File?      @relation(fields: [fileId], references: [id])
+  milestone      Milestone? @relation(fields: [milestoneId], references: [id])
+  project        Project    @relation(fields: [projectId], references: [id])
+  senderClient   Client?    @relation("ClientMessages", fields: [senderClientId], references: [id])
+  senderUser     User?      @relation("UserMessages", fields: [senderUserId], references: [id])
+  user           User?      @relation(fields: [userId], references: [id])
+}
+
+model FileVersion {
+  id            String   @id @default(uuid())
+  agencyId      String
+  fileId        String
+  versionNumber Int
+  storageKey    String
+  fileName      String
+  fileSizeBytes BigInt
+  uploadedById  String
+  changeNote    String?
+  createdAt     DateTime @default(now())
+  file          File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  uploadedBy    User     @relation(fields: [uploadedById], references: [id])
+
+  @@unique([fileId, versionNumber])
+  @@map("file_versions")
+}
+
+model Payment {
+  id                String         @id @default(uuid())
+  agencyId          String
+  milestoneId       String         @unique
+  amount            Decimal        @db.Decimal(10, 2)
+  currency          String         @default("USD")
+  status            PaymentStatus  @default(PENDING)
+  paymentMethod     PaymentMethod?
+  gatewayPaymentId  String?
+  gatewayCustomerId String?
+  invoiceUrl        String?
+  receiptUrl        String?
+  paidAt            DateTime?
+  createdAt         DateTime       @default(now())
+  milestone         Milestone      @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Notification {
+  id                String           @id @default(uuid())
+  agencyId          String
+  projectId         String?
+  recipientUserId   String?
+  recipientClientId String?
+  type              NotificationType
+  title             String
+  body              String
+  entityType        EntityType?
+  entityId          String?
+  isRead            Boolean          @default(false)
+  readAt            DateTime?
+  createdAt         DateTime         @default(now())
+  agency            Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  project           Project?         @relation(fields: [projectId], references: [id])
+  recipientClient   Client?          @relation("ClientNotifications", fields: [recipientClientId], references: [id])
+  recipientUser     User?            @relation("UserNotifications", fields: [recipientUserId], references: [id])
+
+  @@index([agencyId, recipientUserId, isRead])
+  @@index([agencyId, recipientClientId, isRead])
+  @@map("notifications")
+}
+
+model ActivityLog {
+  id            String   @id @default(cuid())
+  agencyId      String
+  projectId     String?
+  actorUserId   String?
+  actorClientId String?
+  action        String
+  isRead        Boolean  @default(false)
+  metadata      Json?
+  entityType    String?
+  entityId      String?
+  createdAt     DateTime @default(now())
+  userId        String?
+  actorClient   Client?  @relation("ActorClient", fields: [actorClientId], references: [id])
+  actorUser     User?    @relation("ActorUser", fields: [actorUserId], references: [id])
+  agency        Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  project       Project? @relation(fields: [projectId], references: [id])
+  user          User?    @relation(fields: [userId], references: [id])
+}
+
+model MagicLink {
+  id          String    @id @default(cuid())
+  agencyId    String
+  projectId   String
+  clientId    String?
+  clientEmail String
+  token       String    @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  client      Client?   @relation(fields: [clientId], references: [id])
+  project     Project   @relation(fields: [projectId], references: [id])
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  milestoneId String
+  projectId   String
+  title       String
+  description String?
+  status      TaskStatus   @default(PENDING)
+  priority    TaskPriority @default(MEDIUM)
+  assigneeId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  milestone   Milestone    @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
 }
 
 enum UserRole {
@@ -37,12 +406,12 @@ enum TeamRole {
 }
 
 enum Designation {
-  FOUNDER
   DESIGNER
   DEVELOPER
   HR
   PROJECT_MANAGER
   OTHER
+  FOUNDER
 }
 
 enum ProjectMemberRole {
@@ -110,380 +479,17 @@ enum EntityType {
   PAYMENT
   ONBOARDING
   MEMBER
+  ENTITY
 }
 
-model Plan {
-  id             String   @id @default(uuid())
-  name           String   @unique // "starter" | "pro" | "agency"
-  maxTeamMembers Int
-  maxProjects    Int
-  maxStorageGb   Int
-  priceMonthly   Decimal  @db.Decimal(10, 2)
-  priceYearly    Decimal  @db.Decimal(10, 2)
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-
-  agencies      Agency[]
-  subscriptions Subscription[]
-
-  @@map("plans")
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
 }
 
-model Subscription {
-  id                   String             @id @default(uuid())
-  agencyId             String             @unique
-  planId               String
-  status               SubscriptionStatus
-  currentPeriodStart   DateTime
-  currentPeriodEnd     DateTime
-  trialEnd             DateTime?
-  cancelAt             DateTime?
-  canceledAt           DateTime?
-  stripeCustomerId     String?
-  stripeSubscriptionId String?
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-
-  agency Agency @relation(fields: [agencyId], references: [id])
-  plan   Plan   @relation(fields: [planId], references: [id])
-
-  @@map("subscriptions")
-}
-
-//one agency per owner
-model Agency {
-  id         String   @id @default(cuid())
-  name       String
-  ownerId    String   @unique
-  slug       String   @unique
-  logoUrl    String?
-  planId     String?
-  activePlan String?  @default("starter")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  plan          Plan?          @relation(fields: [planId], references: [id])
-  subscription  Subscription?
-  owner         User           @relation("AgencyOwner", fields: [ownerId], references: [id])
-  users         User[]         @relation("AgencyUsers")
-  teamMembers   TeamMember[]
-  clients       Client[]  
-  projects      Project[]
-  invitations   Invitation[]
-  notifications Notification[]
-  activityLogs  ActivityLog[]
-}
-
-model User {
-  id                  String    @id @default(cuid())
-  name                String?
-  email               String    @unique
-  password            String?
-  role                UserRole  @default(OWNER)
-  varifiedToken       String?
-  varifiedTokenExpire DateTime?
-  avatarUrl           String?
-  agencyId            String?
-  googleId            String?
-  githubId            String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-
-  teamMembers             TeamMember[]
-  projectMemberships      ProjectMember[]
-  invitationsSent         Invitation[]     @relation("InvitedBy")
-  uploadedFiles           File[]
-  notifications           Notification[]   @relation("UserNotifications")
-  fileVersions            FileVersion[]
-  activityLogs            ActivityLog[]
-  actorActivityLogs       ActivityLog[]    @relation("ActorUser")
-  onboardingItems         OnboardingItem[]
-  reviewedOnboardingItems OnboardingItem[] @relation("ReviewedBy")
-  messages                Message[]
-  sentMessages            Message[]        @relation("UserMessages")
-  agency                  Agency?          @relation("AgencyUsers", fields: [agencyId], references: [id], onDelete: Cascade)
-  ownedAgency             Agency?          @relation("AgencyOwner")
-}
-
-model Invitation {
-  id          String           @id @default(uuid())
-  agencyId    String
-  email       String
-  designation Designation
-  token       String           @unique
-  invitedById String
-  expiresAt   DateTime // 48 hours from creation
-  acceptedAt  DateTime?
-  createdAt   DateTime         @default(now())
-
-  agency    Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  invitedBy User   @relation("InvitedBy", fields: [invitedById], references: [id])
-
-  // No duplicate pending invite to same email in same agency
-  @@unique([agencyId, email])
-  @@map("invitations")
-}
-
-model TeamMember {
-  id          String   @id @default(cuid())
-  agencyId    String
-  userId      String
-  role        TeamRole @default(TEAM)
-  designation String? // e.g., designer, developer, HR, PM
-  joinedAt    DateTime @default(now())
-
-  agency Agency @relation(fields: [agencyId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@unique([agencyId, userId])
-}
-
-model ProjectMember {
-  id        String            @id @default(cuid())
-  agencyId  String
-  projectId String
-  userId    String
-  role      ProjectMemberRole @default(MEMBER)
-  addedAt   DateTime          @default(now())
-
-  project Project @relation(fields: [projectId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
-
-  @@unique([projectId, userId])
-}
-
-model Project {
-  id          String        @id @default(cuid())
-  name        String
-  agencyId    String
-  clientId    String
-  description String?
-  deadline    DateTime?
-  status      ProjectStatus @default(ACTIVE)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  agency Agency @relation(fields: [agencyId], references: [id])
-
-  projectMembers ProjectMember[]
-  onboardingItem OnboardingItem[]
-  milestones     Milestone[]
-  files          File[]
-  messages       Message[]
-  activityLogs   ActivityLog[]
-  magicLinks     MagicLink[]
-  notifications  Notification[]
-  client         Client           @relation(fields: [clientId], references: [id])
-
-  @@map("projects")
-}
-
-model Client {
-  id        String   @id @default(uuid())
-  agencyId  String
-  name      String
-  email     String
-  company   String?
-  phone     String?
-  avatarUrl String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  agency            Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  magicLinks        MagicLink[]
-  messagesSent      Message[]        @relation("ClientMessages")
-  onboardingUploads OnboardingItem[] @relation("UploadedBy")
-  actorLogs         ActivityLog[]    @relation("ActorClient")
-  notifications     Notification[]   @relation("ClientNotifications")
-  projects          Project[]
-
-  // Same email cannot appear twice under the same agency
-  @@unique([agencyId, email])
-  @@map("clients")
-}
-
-model OnboardingItem {
-  id           String           @id @default(cuid())
-  agencyId     String
-  projectId    String
-  label        String
-  status       OnboardingStatus @default(PENDING)
-  fileUrl      String?
-  uploadedById String?
-  reviewedById String?
-  updatedAt    DateTime         @updatedAt
-
-  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  uploadedBy Client? @relation("UploadedBy", fields: [uploadedById], references: [id])
-  reviewedBy User?   @relation("ReviewedBy", fields: [reviewedById], references: [id])
-  user       User?   @relation(fields: [userId], references: [id])
-  userId     String?
-
-  @@map("onboarding_items")
-}
-
-model Milestone {
-  id          String          @id @default(cuid())
-  agencyId    String
-  projectId   String
-  title       String
-  description String?
-  orderIndex  Int
-  dueDate     DateTime?
-  amount      Float?
-  status      MilestoneStatus @default(PENDING)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-
-  project  Project   @relation(fields: [projectId], references: [id])
-  files    File[]
-  messages Message[]
-  payments Payment[]
-
-  @@unique([projectId, orderIndex])
-  @@map("milestones")
-}
-
-model File {
-  id               String     @id @default(cuid())
-  agencyId         String
-  projectId        String
-  milestoneId      String?
-  uploaderId       String
-  fileName         String
-  fileType         String?
-  url              String
-  status           FileStatus @default(UPLOADED)
-  currentVersionId String?
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-
-  project      Project       @relation(fields: [projectId], references: [id])
-  milestone    Milestone?    @relation(fields: [milestoneId], references: [id])
-  uploader     User          @relation(fields: [uploaderId], references: [id])
-  messages     Message[]
-  fileVersions FileVersion[]
-}
-
-model Message {
-  id          String   @id @default(cuid())
-  agencyId    String
-  projectId   String
-  milestoneId String?
-  fileId      String?
-  senderId    String
-  content     String
-  createdAt   DateTime @default(now())
-
-  project      Project    @relation(fields: [projectId], references: [id])
-  milestone    Milestone? @relation(fields: [milestoneId], references: [id])
-  file         File?      @relation(fields: [fileId], references: [id])
-  senderUser   User?      @relation("UserMessages", fields: [senderUserId], references: [id])
-  senderClient Client?    @relation("ClientMessages", fields: [senderClientId], references: [id])
-
-  senderUserId   String?
-  senderClientId String?
-  user           User?   @relation(fields: [userId], references: [id])
-  userId         String?
-}
-
-model FileVersion {
-  id            String   @id @default(uuid())
-  agencyId      String
-  fileId        String
-  versionNumber Int
-  storageKey    String
-  fileName      String
-  fileSizeBytes BigInt
-  uploadedById  String
-  changeNote    String? // "Navbar changed to black as requested"
-  createdAt     DateTime @default(now())
-
-  file       File @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  uploadedBy User @relation(fields: [uploadedById], references: [id])
-
-  @@unique([fileId, versionNumber])
-  @@map("file_versions")
-}
-
-model Payment {
-  id                String         @id @default(uuid())
-  agencyId          String
-  milestoneId       String         @unique // one payment per milestone
-  amount            Decimal        @db.Decimal(10, 2)
-  currency          String         @default("USD")
-  status            PaymentStatus  @default(PENDING)
-  paymentMethod     PaymentMethod?
-  gatewayPaymentId  String? // Stripe payment_intent_id / Razorpay order_id
-  gatewayCustomerId String?
-  invoiceUrl        String?
-  receiptUrl        String?
-  paidAt            DateTime?
-  createdAt         DateTime       @default(now())
-
-  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
-
-  @@map("payments")
-}
-
-model Notification {
-  id                String           @id @default(uuid())
-  agencyId          String
-  projectId         String?
-  recipientUserId   String? // team/owner receives
-  recipientClientId String? // client receives
-  type              NotificationType
-  title             String
-  body              String
-  entityType        EntityType?
-  entityId          String?
-  isRead            Boolean          @default(false)
-  readAt            DateTime?
-  createdAt         DateTime         @default(now())
-
-  agency          Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  project         Project? @relation(fields: [projectId], references: [id])
-  recipientUser   User?    @relation("UserNotifications", fields: [recipientUserId], references: [id])
-  recipientClient Client?  @relation("ClientNotifications", fields: [recipientClientId], references: [id])
-
-  // Fast unread count query
-  @@index([agencyId, recipientUserId, isRead])
-  @@index([agencyId, recipientClientId, isRead])
-  @@map("notifications")
-}
-
-model ActivityLog {
-  id            String   @id @default(cuid())
-  agencyId      String
-  projectId     String?
-  actorUserId   String?
-  actorClientId String?
-  action        String
-  isRead        Boolean  @default(false)
-  metadata      Json?
-  entityType    String?
-  entityId      String?
-  createdAt     DateTime @default(now())
-
-  agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  project     Project? @relation(fields: [projectId], references: [id])
-  actorUser   User?    @relation("ActorUser", fields: [actorUserId], references: [id])
-  actorClient Client?  @relation("ActorClient", fields: [actorClientId], references: [id])
-  user        User?    @relation(fields: [userId], references: [id])
-  userId      String?
-}
-
-model MagicLink {
-  id          String    @id @default(cuid())
-  agencyId    String
-  projectId   String
-  clientId    String?
-  clientEmail String
-  token       String    @unique
-  expiresAt   DateTime
-  usedAt      DateTime?
-
-  project Project @relation(fields: [projectId], references: [id])
-  client  Client? @relation(fields: [clientId], references: [id])
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
 }

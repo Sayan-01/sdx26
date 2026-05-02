@@ -78,21 +78,11 @@ export default function ActivityPage() {
 
   // Stats
   const activityStats = useMemo(() => {
-    const fileCount = logs.filter((l) => 
-      l.entityType === "FILE" || 
-      (l.entityType === "ONBOARDING" && l.action?.includes("Uploaded"))
-    ).length;
-    
-    const msgCount = logs.filter((l) => 
-      l.entityType === "MESSAGE" || 
-      l.action?.includes("MESSAGE") || 
-      l.action?.includes("comment")
-    ).length;
-    
-    const completedCount = logs.filter((l) => 
-      l.action?.includes("Approved") || 
-      l.action?.includes("Completed")
-    ).length;
+    const fileCount = logs.filter((l) => l.entityType === "FILE" || (l.entityType === "ONBOARDING" && l.action?.includes("Uploaded"))).length;
+
+    const msgCount = logs.filter((l) => l.entityType === "MESSAGE" || l.action?.includes("MESSAGE") || l.action?.includes("comment")).length;
+
+    const completedCount = logs.filter((l) => l.action?.includes("Approved") || l.action?.includes("Completed")).length;
 
     return [
       { label: "Files Uploaded", value: fileCount.toString(), icon: <FileBox className="text-blue-500 h-4 w-4" /> },
@@ -127,7 +117,7 @@ export default function ActivityPage() {
     const a = action.toLowerCase();
     const t = type.toLowerCase();
 
-    if (a.includes("file") || t === "file" || t === "onboarding" && a.includes("uploaded")) return <FileBox className="h-4 w-4" />;
+    if (a.includes("file") || t === "file" || (t === "onboarding" && a.includes("uploaded"))) return <FileBox className="h-4 w-4" />;
     if (a.includes("approved") || a.includes("checklist") || a.includes("onboarding")) return <CheckCircle2 className="h-4 w-4" />;
     if (a.includes("payment") || t === "payment") return <CreditCard className="h-4 w-4" />;
     if (a.includes("message") || a.includes("comment") || t === "message") return <MessageSquare className="h-4 w-4" />;
@@ -158,7 +148,7 @@ export default function ActivityPage() {
     <div
       className={cn(
         "p-4 rounded-xl border transition-all flex items-start gap-4 group ",
-        !activity.isRead ? "bg-[#19191b] border-dashboard-border shadow-xl shadow-black/20" : "bg-[#151518] border-dashboard-border/50 hover:bg-[#19191b] ",
+        !activity.isRead ? "bg-[#19191b] border-dashboard-border card_shadow" : "bg-[#151518] border-dashboard-border/50 hover:bg-[#19191b] ",
       )}
     >
       <div
@@ -215,7 +205,7 @@ export default function ActivityPage() {
                 placeholder="Search activity..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full shadow-xl shadow-black/20"
+                className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full card_shadow"
               />
             </div>
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
@@ -315,7 +305,7 @@ export default function ActivityPage() {
 
         {/* Sidebar Column */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]  shadow-xl shadow-black/20">
+          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]  card_shadow">
             <div className="flex items-center gap-2 px-5 pt-3">
               <BarChart3 className="h-4 w-4 text-indigo-500" />
               <h2 className="text-md font-semibold text-zinc-200">Agency Stats</h2>
@@ -338,7 +328,7 @@ export default function ActivityPage() {
             </Card>
           </div>
 
-          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b] shadow-xl shadow-black/20">
+          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b] card_shadow">
             <div className="flex items-center gap-2 px-5 pt-3">
               <Zap className="h-4 w-4 text-amber-500" />
               <h2 className="text-md font-semibold text-zinc-200">Active Projects</h2>

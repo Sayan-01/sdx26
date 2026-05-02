@@ -61,21 +61,24 @@ export default function HowItWorksSection() {
   ];
 
   return (
-    <section id="how-it-works" className="py-24 bg-zinc-950 border-t border-white/5">
+    <section
+      id="how-it-works"
+      className="py-24 bg-zinc-950 border-t border-white/5"
+    >
       <Wrapper>
         <div className="text-center mb-20">
-          <h2 className="text-4xl font-bold text-white mb-6">Simple, structured, <span className="text-purple-400">effective.</span></h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto">
-            Stop guessing where things stand. Milestack provides a clear path from kickoff to final payment for every project.
-          </p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6">
+            Simple, structured, <span className="text-purple-400">effective.</span>
+          </h2>
+          <p className="text-zinc-400 max-w-2xl mx-auto">Stop guessing where things stand. Milestack provides a clear path from kickoff to final payment for every project.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {steps.map((step, index) => (
-            <Step 
-              key={index} 
-              {...step} 
-              isLast={index === steps.length - 1} 
+            <Step
+              key={index}
+              {...step}
+              isLast={index === steps.length - 1}
             />
           ))}
         </div>

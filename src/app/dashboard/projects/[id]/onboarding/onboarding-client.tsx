@@ -221,7 +221,7 @@ export default function OnboardingClient({ initialItems, projectId }: Onboarding
                 items.map((item) => (
                   <div
                     key={item.id}
-                    className="group p-4 px-6 hover:bg-zinc-900/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-5"
+                    className="group p-4 px-6 hover:bg-zinc-900/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-5 border-b"
                   >
                     <div className="flex items-start md:items-center gap-4 relative z-10 w-full group/inner">
                       <div

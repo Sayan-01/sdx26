@@ -31,14 +31,14 @@ const ProblemCard = ({
 
 export default function ProblemSection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-zinc-950">
+    <section className="py-24 relative overflow-hidden bg-black">
       <Wrapper>
         <div className="flex flex-col items-center mb-16">
           <div className="px-4 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-xs font-bold tracking-widest uppercase mb-6">
             The Chaos
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center max-w-4xl tracking-tight">
-            Stop losing projects to the <span className="text-zinc-600 italic">"status quo"</span> chaos.
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white text-center max-w-4xl tracking-tight">
+            Stop losing projects to the <span className="text-zinc-600">"status quo"</span> chaos.
           </h2>
         </div>
 

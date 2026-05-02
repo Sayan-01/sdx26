@@ -1,8 +1,8 @@
 import React from "react";
-import { verifyInvitationToken } from "@/lib/queries";
 import SetupPasswordForm from "@/components/auth/SetupPasswordForm";
 import { Layers } from "lucide-react";
 import { notFound } from "next/navigation";
+import { verifyInvitationToken } from "../../../../server/teamMember";
 
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;

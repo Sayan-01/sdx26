@@ -40,7 +40,6 @@ export default function ProjectLayout({
 
   return (
     <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
-      
       {/* Project Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-2">
         <div className="flex items-center gap-4">
@@ -49,12 +48,8 @@ export default function ProjectLayout({
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold tracking-tight text-zinc-100">
-                Acme Web Redesign
-              </h1>
-              <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
-                Active
-              </div>
+              <h1 className="text-xl font-bold tracking-tight text-zinc-100">Acme Web Redesign</h1>
+              <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">Active</div>
             </div>
             <p className="text-zinc-500 flex items-center gap-2 mt-1 text-xs font-medium">
               <span className="flex items-center gap-1.5">
@@ -63,21 +58,28 @@ export default function ProjectLayout({
               </span>
               <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span className="flex items-center gap-1.5 text-zinc-400">
-                <CheckSquare className="h-3.5 w-3.5" /> 
+                <CheckSquare className="h-3.5 w-3.5" />
                 4/12 Items Approved
               </span>
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
-           <Button variant="outline" className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 gap-2 font-medium">
-             <ExternalLink className="h-4 w-4" />
-             Client Portal
-           </Button>
-           <Button variant="outline" size="icon" className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 w-10">
-             <MoreVertical className="h-4 w-4 text-zinc-400" />
-           </Button>
+          <Button
+            variant="outline"
+            className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 gap-2 font-medium"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Client Portal
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 w-10"
+          >
+            <MoreVertical className="h-4 w-4 text-zinc-400" />
+          </Button>
         </div>
       </div>
 
@@ -87,24 +89,16 @@ export default function ProjectLayout({
           {tabs.map((tab) => {
             const isActive = pathname === tab.href;
             return (
-              <Link 
+              <Link
                 key={tab.href}
                 href={tab.href}
-                className={cn(
-                  "relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap",
-                  isActive ? "text-white" : "text-zinc-500 hover:text-zinc-300"
-                )}
+                className={cn("relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap", isActive ? "text-white" : "text-zinc-500 hover:text-zinc-300")}
               >
-                <div className={cn(
-                  "flex items-center gap-2",
-                  isActive ? "text-zinc-100" : "text-zinc-500"
-                )}>
+                <div className={cn("flex items-center gap-2", isActive ? "text-zinc-100" : "text-zinc-500")}>
                   {tab.icon}
                   {tab.label}
                 </div>
-                {isActive && (
-                  <div className="absolute -bottom-px left-0 w-full h-[2px] bg-white rounded-t-full" />
-                )}
+                {isActive && <div className="absolute -bottom-px left-0 w-full h-[2px] bg-white rounded-t-full" />}
               </Link>
             );
           })}
@@ -112,9 +106,7 @@ export default function ProjectLayout({
       </div>
 
       {/* Tab Content */}
-      <div className="grow pb-5">
-        {children}
-      </div>
+      <div className="grow  pb-6">{children}</div>
     </div>
   );
 }

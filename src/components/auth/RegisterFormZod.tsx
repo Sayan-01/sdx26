@@ -152,7 +152,7 @@ const RegisterForm = () => {
             <FieldError errors={[form.formState.errors.password]} />
           </Field>
         </FieldGroup>
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-4 mt-5">
           <Field className="flex-1">
             <Input
               className="rounded-lg h-[42px] border-zinc-800 border tracking-[6px] overflow-hidden! placeholder:opacity-40"

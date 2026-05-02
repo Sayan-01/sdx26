@@ -16,19 +16,25 @@ export default function ProjectsPage() {
   const [view, setView] = useState<"grid" | "list">("grid");
 
   const [projects, setProjects] = useState<ProjectCard>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const response = await getAllProjects();
-      if (response.projects) {
-        const formattedProjects = response.projects.map((p: any) => ({
-          ...p,
-          priority: calculatePriority(p.deadline),
-          progress: Math.floor(Math.random() * 100), // Placeholder progress
-          team: p._count?.projectMembers || 1,
-          activity: dayAgo(p.updatedAt), // Placeholder activity
-        }));
-        setProjects(formattedProjects);
+      setIsLoading(true);
+      try {
+        const response = await getAllProjects();
+        if (response.projects) {
+          const formattedProjects = response.projects.map((p: any) => ({
+            ...p,
+            priority: calculatePriority(p.deadline),
+            progress: Math.floor(Math.random() * 100), // Placeholder progress
+            team: p._count?.projectMembers || 1,
+            activity: dayAgo(p.updatedAt), // Placeholder activity
+          }));
+          setProjects(formattedProjects);
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchProjects();
@@ -93,7 +99,11 @@ export default function ProjectsPage() {
               <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300", stat.bg, stat.color)}>{stat.icon}</div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{stat.label}</p>
-                <p className="text-xl font-bold text-white">{stat.value}</p>
+                {isLoading ? (
+                  <div className="h-6 w-12 bg-zinc-800/50 rounded animate-pulse mt-1" />
+                ) : (
+                  <p className="text-xl font-bold text-white">{stat.value}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -101,7 +111,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-[#19191b]/50 p-2 rounded-xl border border-dashboard-border shadow-xl shadow-black/20">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-[#19191b]/50 p-2 rounded-xl border border-dashboard-border card_shadow">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <Input
@@ -146,7 +156,37 @@ export default function ProjectsPage() {
       {/* Projects Display */}
       {view === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-all duration-0">
-          {projects.length === 0 ? (
+          {isLoading ? (
+            Array.from({ length: 8 }).map((_, i) => (
+              <Card key={i} className="bg-[#19191b] border-dashboard-border/60 p-0 overflow-hidden">
+                <CardContent className="p-5 flex flex-col h-full space-y-5">
+                  <div className="flex items-start justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-zinc-800/50 animate-pulse border border-dashboard-border/50" />
+                    <div className="w-20 h-6 rounded-full bg-zinc-800/50 animate-pulse" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-6 w-3/4 bg-zinc-800/50 rounded animate-pulse" />
+                    <div className="h-4 w-1/2 bg-zinc-800/50 rounded animate-pulse" />
+                  </div>
+                  <div className="space-y-2 mt-auto">
+                    <div className="flex justify-between">
+                      <div className="h-3 w-16 bg-zinc-800/50 rounded animate-pulse" />
+                      <div className="h-3 w-8 bg-zinc-800/50 rounded animate-pulse" />
+                    </div>
+                    <div className="h-2 w-full bg-zinc-800/50 rounded-full animate-pulse" />
+                  </div>
+                  <div className="pt-5 border-t border-dashboard-border flex items-center justify-between">
+                    <div className="flex -space-x-2">
+                      {[1, 2, 3].map((j) => (
+                        <div key={j} className="w-8 h-8 rounded-full bg-zinc-800/50 animate-pulse border-2 border-[#19191b]" />
+                      ))}
+                    </div>
+                    <div className="h-3 w-16 bg-zinc-800/50 rounded animate-pulse" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : projects.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-12 text-zinc-500">
               <div className="flex gap-4">
                 <Link
@@ -166,7 +206,7 @@ export default function ProjectsPage() {
                 href={`/dashboard/projects/${project.id}`}
                 className="block group"
               >
-                <Card className="bg-[#19191b] border-dashboard-border/60 shadow-xl shadow-black/20 hover:border-zinc-600 transition-all duration-300  overflow-hidden p-0 relative">
+                <Card className="bg-[#19191b] border-dashboard-border/60 hover:border-zinc-600 transition-all duration-300  overflow-hidden p-0 relative">
                   <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                   <CardContent className="p-5 flex flex-col h-full space-y-5">
@@ -260,7 +300,7 @@ export default function ProjectsPage() {
             ))
           )}
 
-          {projects.length !== 0 && (
+          {!isLoading && projects.length !== 0 && (
             <Link
               href="/dashboard/projects/new"
               className="border-2 border-dashed border-dashboard-border rounded-xl flex flex-col items-center justify-center gap-3 text-zinc-500 hover:text-white hover:bg-[#19191b]/30 hover:border-zinc-600 transition-all group"
@@ -289,7 +329,31 @@ export default function ProjectsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {projects.length === 0 ? (
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i} className="border-dashboard-border">
+                    <TableCell className="p-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-zinc-800/50 animate-pulse" />
+                        <div className="space-y-2">
+                          <div className="h-4 w-32 bg-zinc-800/50 rounded animate-pulse" />
+                          <div className="h-3 w-20 bg-zinc-800/50 rounded animate-pulse" />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell><div className="h-6 w-20 bg-zinc-800/50 rounded-full animate-pulse" /></TableCell>
+                    <TableCell><div className="h-4 w-16 bg-zinc-800/50 rounded animate-pulse" /></TableCell>
+                    <TableCell className="w-[200px]">
+                      <div className="space-y-2">
+                        <div className="h-3 w-8 bg-zinc-800/50 rounded animate-pulse ml-auto" />
+                        <div className="h-1.5 w-full bg-zinc-800/50 rounded-full animate-pulse" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-5"><div className="h-4 w-24 bg-zinc-800/50 rounded animate-pulse" /></TableCell>
+                    <TableCell className="text-right p-5"><div className="h-8 w-8 bg-zinc-800/50 rounded animate-pulse ml-auto" /></TableCell>
+                  </TableRow>
+                ))
+              ) : projects.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={6}

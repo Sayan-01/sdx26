@@ -24,7 +24,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
     // Generate new token
-    const token = crypto.randomBytes(32).toString("hex");
+    const token = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
     // Create new magic link
     await prisma.magicLink.create({
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         expiresAt: expiresAt,
       },
     });
-    const portalUrl = `${process.env.NEXT_PUBLIC_URL}/portal/${token}`;
+    const portalUrl = `${process.env.NEXT_PUBLIC_URL_SCHEME}${session.user.agencySlug}.${process.env.NEXT_PUBLIC_URL_DOMAIN}/portal/${token}`;
 
     // Send email
     await sendPortalUrl(project.client.email, project.client.name, portalUrl);
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         agencyId: project.agencyId,
         projectId: project.id,
         actorUserId: session.user.id,
-        action: "portal.link_generated",
+        action: "portal_link_generated",
         entityType: "PROJECT",
         entityId: project.id,
         metadata: {

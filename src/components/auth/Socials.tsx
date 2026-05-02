@@ -8,7 +8,7 @@ const Socials = () => {
     <div className="flex flex-col space-y-4">
       <form action={Goo_login}>
         <button
-          className="bg-[#111111] relative group/btn flex space-x-2 items-center justify-center px-4 w-full text-white rounded-lg border border-zinc-800 h-10 font-medium shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+          className="bg-[#111111] relative group/btn flex space-x-2 items-center justify-center px-4 w-full text-white rounded-lg border border-zinc-800 h-[42px] font-medium shadow-[0px_0px_1px_1px_var(--neutral-800)]"
           type="submit"
         >
           <Google />

@@ -30,10 +30,8 @@ export default function PortalEntryPage() {
 
         if (res.ok) {
           setState("redirecting");
-          // Session cookie is now set by the API
-          // Small delay so the user sees the success state
           setTimeout(() => {
-            // router.replace(`/portal/${token}/dashboard`);
+            window.location.href = `/portal/${token}/dashboard`;
           }, 800);
           return;
         }

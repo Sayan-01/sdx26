@@ -3,11 +3,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Layers, ArrowRight } from "lucide-react";
 import Wrapper from "@/components/design/wrapper";
+import { auth } from "../../../auth";
 
-export default function Navbar() {
+async function Navbar() {
+  const session = await auth();
   return (
-    <div className="fixed top-0 inset-x-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
-      <div className="w-full max-w-5xl bg-zinc-950/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-full pointer-events-auto transition-all duration-300">
+    <div className="fixed top-0 py-3 inset-x-0 z-50 flex justify-center w-full pointer-events-none bg-zinc-950/40 backdrop-blur-2xl border-b border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+      <div className="w-full max-w-5xl  rounded-full pointer-events-auto transition-all duration-300">
         <div className="flex h-14 items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <Link
@@ -43,23 +45,33 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link href="/auth/login">
-              <Button
-                variant="ghost"
-                className="text-zinc-300 hover:text-white hover:bg-white/10 rounded-full px-5 hidden sm:flex"
-              >
-                Log in
-              </Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-5 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all hover:scale-105 group">
-                Get Started
-                <ArrowRight className="ml-1.5 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </Link>
+            {session?.user ? (
+              <Link href="/dashboard">
+                <Button className="bg-gradient-to-r from-[#5421d8] to-[#7a52e1] text-white rounded-full h-12 px-4">Dashboard</Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <Button
+                    variant="ghost"
+                    className="text-zinc-300 hover:text-white hover:bg-white/10 rounded-full px-5 hidden sm:flex"
+                  >
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-5 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all hover:scale-105 group">
+                    Get Started
+                    <ArrowRight className="ml-1.5 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default Navbar;

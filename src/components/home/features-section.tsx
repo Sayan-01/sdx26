@@ -78,18 +78,19 @@ export default function FeaturesSection() {
   return (
     <section className="py-24 bg-zinc-950">
       <Wrapper>
-        <div className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+        <div className="mb-16 flex flex-col items-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-4 max-w-4xl text-center">
             Built for the way <span className="text-purple-400">modern agencies</span> work.
           </h2>
-          <p className="text-zinc-400 max-w-2xl">
-            Everything you need to manage the client-facing side of your business, without the complexity of traditional project management tools.
-          </p>
+          <p className="text-zinc-400 max-w-2xl text-center">Everything you need to manage the client-facing side of your business, without the complexity of traditional project management tools.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <FeatureCard key={index} {...feature} />
+            <FeatureCard
+              key={index}
+              {...feature}
+            />
           ))}
         </div>
       </Wrapper>

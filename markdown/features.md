@@ -8,6 +8,7 @@ A premium, white-label client portal and onboarding platform designed for agenci
 *   **Onboarding Checklists:** Dynamic requirement lists for clients to upload brand assets (logos, copy, credentials).
 *   **File Management:** Centralized repository for project-specific documents and brand assets.
 *   **Project Status Tracking:** Real-time progress bars and milestone management for client visibility.
+*   **Internal Milestone Tasks:** Granular task management within milestones, assignable to specific agency team members.
 *   **Role-Based Access:** Distinct permissions for Agency Owners, Team Members, and Clients.
 
 ## 🤖 AI-Powered Features (The Innovation Edge)

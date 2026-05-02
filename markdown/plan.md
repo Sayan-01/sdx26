@@ -159,6 +159,7 @@ Each milestone has:
 - Linked payment amount
 - Attached files
 - Context thread (comments)
+- **Internal Tasks:** Assignable to team members for internal tracking.
 
 ---
 
@@ -485,6 +486,38 @@ All milestones status=paid
 
 ---
 
+## 🗺️ Per Projects Flows
+
+1. Add a client → 2. Add a project → 3. Add a milestone  → 4. Add file (optional) → 5. Upload required assets → 6. Upload deliverables → 7. Approve → 8. Payment (optional)
+
+### MainPage
+- **Flow:** Agency owner or assigned team member accesses the project overview.
+- **Actions:** View project progress, overall status, recent activity feed, and quick stats. Navigate to specific tabs (Milestones, Onboarding, Files, Members).
+
+### Milestone
+- **Flow:** Structuring the project timeline and payments.
+- **Actions:** Agency creates milestones (Title, Amount, Due Date) → Team members update status (`In Progress`, `In Review`) → Client reviews milestone progress and can approve or comment → Upon approval, status changes to `Approved` and eventually `Paid` upon payment.
+
+### Onboarding
+- **Flow:** Collecting initial assets from the client.
+- **Actions:** Agency defines required onboarding items (e.g., Logo, Brand Guidelines) → Client accesses the portal and uploads required links/files → Agency reviews and marks them as `Approved` or `Rejected` → Once all items are approved, onboarding is complete.
+
+### FileReview
+- **Flow:** Managing deliverable approvals and feedback.
+- **Actions:** Agency uploads deliverable files (images, PDFs, links) for a specific milestone → Client gets notified → Client reviews and can `Approve`, `Request Change`, or `Comment` → Agency uploads new version if requested → Loop continues until `Approved`.
+
+### Portal
+- **Flow:** The client-facing interface via Magic Link.
+- **Actions:** Client receives a Magic Link via email → Clicks link and auto-logs in (no password required) → Views a simplified dashboard showing project progress, pending action items (onboarding, file approvals, payments), and recent activity.
+
+### ScopeLog
+- **Flow:** Managing additional client requests (Scope Creep Protection).
+- **Actions:** Client requests additional work outside the original scope → Agency logs the request in ScopeLog → Agency estimates cost/time → Client approves the additional scope and cost → A new milestone or task is generated for the approved new scope.
+
+### Members
+- **Flow:** Managing team access to specific projects.
+- **Actions:** Agency owner views current project members → Owner assigns existing agency team members to the project with specific roles (`Admin`, `Member`, `Viewer`) → Assigned team members gain access to view/edit project assets → Owner can remove or update member roles as needed.
+
 ## 🔮 Advanced Features (Post-MVP)
 
 ### Visual Design Feedback (Figma-style)
@@ -527,6 +560,7 @@ All milestones status=paid
 | `messages` | id, project_id, milestone_id, file_id, sender_id, content, created_at |
 | `activity_log` | id, project_id, actor_id, action, is_read (default false), metadata (JSONB), entity_type, entity_id, created_at |
 | `payments` | id, milestone_id, amount, status (pending, paid), paid_at, invoice_url |
+| `tasks` | id, milestone_id, project_id, title, status (pending, in_progress, completed), priority (low, medium, high), assignee_id, created_at |
 | `magic_link` | id, project_id, client_email, token, expires_at, used_at |
 
 ---
