@@ -26,7 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Sidebar userId={session?.user?.id || ""} />
       </aside>
       <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed border-dashboard-border">
-        <Header />
+        <Header/>
         <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-6">
           <div className="mx-auto w-full">{children}</div>
         </main>

@@ -6,10 +6,14 @@ import { Bell, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/db";
 import { headers } from "next/headers";
+import { Roboto_Mono } from "next/font/google";
+
+const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
 
 export default async function PortalLayout({ children, params }: { children: React.ReactNode; params: Promise<{ token: string }> }) {
   const { token } = await params;
   const session = await getClientSession();
+
 
   const headersList = await headers();
   const currentPath = headersList.get("x-pathname") || "";
@@ -94,7 +98,7 @@ export default async function PortalLayout({ children, params }: { children: Rea
   ];
 
   return (
-    <div className="flex min-h-screen bg-zinc-900/80 text-zinc-100 selection_color font-sans">
+    <div className={`flex h-dvh bg-zinc-900/80 ${roboto_Mono.className}`}>
       <aside className="md:w-[260px]">
         <SidebarComp
           userId={session.clientId}
@@ -105,9 +109,9 @@ export default async function PortalLayout({ children, params }: { children: Rea
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-grow border-l-2 border-dashed border-dashboard-border">
+      <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed border-dashboard-border">
         {/* Unified Top Header */}
-        <header className="h-20 px-10 backdrop-blur-xl sticky top-0 z-40 flex items-center justify-between border-b-2 border-dashed border-dashboard-border">
+        <header className="border-b-2 border-dashed border-dashboard-border max-md:fixed top-0 z-40 flex items-center h-16 md:px-6 px-5 justify-between">
           <div className="space-y-0.5">
             <h2 className="text-lg font-bold tracking-tight">{project.name}</h2>
             <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
@@ -131,10 +135,11 @@ export default async function PortalLayout({ children, params }: { children: Rea
             </Button>
           </div>
         </header>
-
         {/* Page Main Content */}
-        <div className="p-10 max-w-7xl mx-auto fade-in">{children}</div>
-      </main>
+        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-6">
+          <div className="mx-auto w-full">{children}</div>
+        </main>
+      </div>
     </div>
   );
 }

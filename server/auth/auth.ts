@@ -1,6 +1,7 @@
 "use server";
 
-import { signIn, signOut } from "../../auth";
+import { signIn, signOut, auth } from "../../auth";
+import prisma from "@/lib/db";
 
 export const Goo_login = async () => {
   await signIn("google");
@@ -12,4 +13,13 @@ export const Git_login = async () => {
 
 export const Sign_Out = async () => {
   await signOut();
+};
+
+export const getUserAgency = async () => {
+  const session = await auth();
+  if (!session?.user?.id) return null;
+  const agency = await prisma.agency.findFirst({
+    where: { ownerId: session.user.id }
+  });
+  return agency;
 };

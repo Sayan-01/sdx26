@@ -1,15 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, LogOut } from "lucide-react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Sign_Out } from "../../../server/auth/auth";
+import { Sign_Out, getUserAgency } from "../../../server/auth/auth";
+import { useSession } from "next-auth/react";
 
 const UserButton = () => {
   const { data: session } = useSession();
+  const [logoUrl, setLogoUrl] = useState<string>("");
+
+  useEffect(() => {
+    const fetchAgency = async () => {
+      if (session?.user?.id) {
+        const agency = await getUserAgency();
+        if (agency?.logoUrl) {
+          setLogoUrl(agency.logoUrl);
+        }
+      }
+    };
+    fetchAgency();
+  }, [session?.user?.id]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -19,8 +33,7 @@ const UserButton = () => {
         >
           <Avatar className="md:h-[33.4px] md:w-[33.4px] h-[36px] w-[36px]">
             <AvatarImage
-              // @ts-ignore
-              src={session?.user?.avatarUrl || ""}
+              src={logoUrl || session?.user?.avatarUrl || ""}
               alt="User"
             />
             <AvatarFallback className="bg-zinc-700">{session?.user?.name?.[0]}</AvatarFallback>
@@ -39,22 +52,22 @@ const UserButton = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="dark:bg-zinc-700" />
-        <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200">
+        <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200" asChild>
           <Link
             href="/dashboard/settings"
-            className="flex items-center"
+            className="flex items-center w-full cursor-pointer"
           >
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200">
+        <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200" asChild>
           <form
             action={Sign_Out}
             className="w-full"
           >
             <button
-              className="w-full flex items-center"
+              className="w-full flex items-center cursor-pointer"
               type="submit"
             >
               <LogOut className="mr-2 h-4 w-4" />

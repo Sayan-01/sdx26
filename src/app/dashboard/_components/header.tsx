@@ -11,6 +11,7 @@ const Header = () => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const current = segments[segments.length - 1] || "Home";
+  
 
   // Optional: format to Capitalize first letter
   const formattedCurrent = current.charAt(0).toUpperCase() + current.slice(1).replace(/-/g, " ");

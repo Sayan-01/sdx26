@@ -406,6 +406,37 @@ export const getFilesByProjectId = async (projectId: string) => {
   return { success: true, files };
 };
 
+export const getPortalFilesByProjectId = async (projectId: string, agencyId: string) => {
+  try {
+    const files = await prisma.file.findMany({
+      where: {
+        projectId,
+        agencyId,
+      },
+      include: {
+        uploader: {
+          select: {
+            name: true,
+          },
+        },
+        milestone: {
+          select: {
+            title: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { success: true, files };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to fetch files" };
+  }
+};
+
 export const getLatestMagicLink = async (projectId: string) => {
   const session = await auth();
   if (!session?.user?.id) {
