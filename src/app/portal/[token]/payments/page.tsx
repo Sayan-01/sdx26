@@ -42,10 +42,11 @@ export default async function ClientPaymentsPage({ params }: { params: Promise<{
     const payment = m.payments;
     return {
       id: payment?.id || m.id,
+      milestoneId: m.id,
       invoiceId: payment ? `INV-${payment.id.substring(0, 8).toUpperCase()}` : `EST-${m.id.substring(0, 8).toUpperCase()}`,
       title: m.title,
       status: payment?.status || (m.status === "PAID" ? "PAID" : "PENDING"),
-      amount: payment?.amount || m.amount,
+      amount: m.amount,
       date: payment?.createdAt || m.createdAt,
       due: (!payment || payment.status !== "PAID") && m.dueDate ? "Due soon" : undefined,
       method: payment?.paymentMethod || undefined,

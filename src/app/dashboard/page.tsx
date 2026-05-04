@@ -10,7 +10,9 @@ import { formatDistanceToNow } from "date-fns";
 
 export default async function DashboardPage() {
   const result = await getDashboardData();
-  
+
+  console.log(result);
+
   if (result.error || !result.data) {
     return <div className="p-6 text-red-500">Error loading dashboard data: {result.error}</div>;
   }

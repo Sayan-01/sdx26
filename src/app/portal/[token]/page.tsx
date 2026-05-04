@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { CheckIcon, ClockIcon, LockIcon, XIcon } from "lucide-react";
 
 type State = "verifying" | "redirecting" | "already_used" | "expired" | "invalid" | "error";
 
@@ -182,99 +183,6 @@ function ErrorState({ message }: { message: string }) {
 
 function ContactHint() {
   return <p style={styles.hint}>Need help? Reply to the invitation email you received.</p>;
-}
-
-// ─────────────────────────────────────────
-// Icons
-// ─────────────────────────────────────────
-
-function CheckIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-    >
-      <path
-        d="M4 10l4 4 8-8"
-        stroke="var(--green)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function LockIcon({ color }: { color: string }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-    >
-      <rect
-        x="4"
-        y="9"
-        width="12"
-        height="9"
-        rx="2"
-        stroke={color}
-        strokeWidth="1.5"
-      />
-      <path
-        d="M7 9V6a3 3 0 016 0v3"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function ClockIcon({ color }: { color: string }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-    >
-      <circle
-        cx="10"
-        cy="10"
-        r="7"
-        stroke={color}
-        strokeWidth="1.5"
-      />
-      <path
-        d="M10 6v4l3 2"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function XIcon({ color }: { color: string }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-    >
-      <path
-        d="M6 6l8 8M14 6l-8 8"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
 }
 
 // ─────────────────────────────────────────

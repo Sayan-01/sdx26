@@ -20,8 +20,54 @@ import DashboardHeading from "@/app/dashboard/_components/dashboard-heading";
 import DashboardCard from "@/app/dashboard/_components/dashboard-card";
 import { format } from "date-fns";
 
+import { createPortalCheckout } from "./actions";
+import { toast } from "sonner";
+
 export default function PortalPaymentsClient({ token, invoices }: { token: string; invoices: any[] }) {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [processingId, setProcessingId] = React.useState<string | null>(null);
+
+  const handlePayment = async (inv: any) => {
+    try {
+      setProcessingId(inv.id);
+      setIsLoading(true);
+      const result = await createPortalCheckout({
+        amount: inv.amount,
+        milestoneId: inv.milestoneId,
+        title: inv.title
+      });
+
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setProcessingId(null);
+      setIsLoading(false);
+    }
+  };
+
+  const totalPending = invoices.filter(inv => inv.status === "PENDING").reduce((acc, inv) => acc + Number(inv.amount), 0);
+
+  const handlePayBalance = async () => {
+    if (totalPending <= 0) {
+      toast.info("No pending balance to pay");
+      return;
+    }
+    
+    // For paying full balance, we can either pay the next pending milestone or create a combined one.
+    // For now, let's pay the next pending one to keep it simple and aligned with milestones.
+    const nextInv = invoices.find(inv => inv.status === "PENDING");
+    if (nextInv) {
+      handlePayment(nextInv);
+    }
+  };
 
   // Calculate Stats
   const totalValue = invoices.reduce((acc, inv) => acc + Number(inv.amount), 0);
@@ -45,9 +91,13 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
           title="Finance & Billing" 
           description="Manage your project investments, review invoices, and track payment history." 
         />
-        <Button className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
+        <Button 
+          onClick={handlePayBalance}
+          disabled={isLoading || totalPending <= 0}
+          className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium"
+        >
           <CreditCard className="h-4 w-4" />
-          Pay Balance
+          {isLoading ? "Redirecting..." : "Pay Balance"}
         </Button>
       </div>
 
@@ -121,14 +171,25 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
                        </div>
                        <div className="flex items-center gap-2">
                          <div className={cn(
-                           "w-22 h-6 px-3 flex items-center justify-center rounded-md text-[10px] font-bold uppercase tracking-wider border",
+                           "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
                            inv.status === "PAID" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"
                          )}>
                            {inv.status}
                          </div>
-                         <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-600 hover:text-zinc-300" disabled={!inv.invoiceUrl}>
-                            <Download className="h-4 w-4" />
-                         </Button>
+                         {inv.status !== "PAID" ? (
+                           <Button 
+                             size="sm" 
+                             onClick={() => handlePayment(inv)}
+                             disabled={isLoading && processingId === inv.id}
+                             className="h-8 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-sm text-[10px] uppercase tracking-wider ml-2"
+                           >
+                             {processingId === inv.id ? "..." : "Pay Now"}
+                           </Button>
+                         ) : (
+                           <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-600 hover:text-zinc-300" disabled={!inv.invoiceUrl}>
+                              <Download className="h-4 w-4" />
+                           </Button>
+                         )}
                        </div>
                      </div>
                    </div>

@@ -16,7 +16,7 @@ export default async function SettingsPage() {
         title="Settings"
         description="Manage your agency profile, personal details, and preferences."
       />
-
+<p>{JSON.stringify(session?.user)}</p>
       <form className="w-full">
         <DashboardCard
           title="General Settings"

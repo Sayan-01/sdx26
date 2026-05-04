@@ -6,7 +6,7 @@ import { Layers, Loader2, ArrowRight, Lock } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldGroup } from "../ui/field";
-import { completeInvitation } from "@/lib/queries";
+import { completeInvitation } from "@server/teamMember";
 
 interface SetupPasswordFormProps {
   token: string;

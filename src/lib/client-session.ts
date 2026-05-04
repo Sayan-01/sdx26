@@ -9,6 +9,8 @@ export interface ClientSession extends JWTPayload {
   clientId: string;
   projectId: string;
   agencyId: string;
+  clientEmail: string;
+  token: string;
   type: "client_session";
 }
 

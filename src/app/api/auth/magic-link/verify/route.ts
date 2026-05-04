@@ -48,6 +48,8 @@ export async function POST(req: NextRequest) {
       clientId: magicLink.clientId,
       projectId: magicLink.projectId,
       agencyId: magicLink.agencyId,
+      clientEmail: magicLink.clientEmail,
+      token: token,
       type: "client_session",
     })
       .setProtectedHeader({ alg: "HS256" })
