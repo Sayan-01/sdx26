@@ -37,3 +37,18 @@ export const markAllLogsAsRead = async () => {
 
   return { success: true };
 };
+
+export const getNewNotifications = async () => {
+  const session = await auth();
+  if(!session?.user?.agencyId) return { success: false, notifications: [] };
+
+  const notifications = await prisma.activityLog.findMany({
+    where: { agencyId: session.user.agencyId, isRead: false },
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: 10 // Limit to 10 recent notifications for now
+  });
+
+  return { success: true, notifications };
+};

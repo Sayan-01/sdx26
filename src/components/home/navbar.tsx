@@ -42,6 +42,12 @@ async function Navbar() {
             >
               Pricing
             </Link>
+            <Link
+              href="/docs"
+              className="hover:text-white transition-colors relative after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-white after:opacity-0 hover:after:opacity-100 after:transition-opacity"
+            >
+              Docs
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">

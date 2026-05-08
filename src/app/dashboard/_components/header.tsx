@@ -1,4 +1,5 @@
 "use client";
+import NotificationBellButton from "@/components/global/notification-bell-button";
 import UserButton from "@/components/global/user-button";
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -63,14 +64,7 @@ const Header = () => {
               className="block w-full pl-10 pr-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-lg text-sm dark:bg-zinc-800 dark:text-zinc-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-zinc-500 hover:text-white relative"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border-2 border-zinc-950" />
-          </Button>
+          <NotificationBellButton/>
 
           <UserButton />
         </div>

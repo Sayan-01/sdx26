@@ -69,7 +69,7 @@ export const completeInvitation = async (token: string, password: string) => {
     data: {
       agencyId: invitation.agencyId,
       actorUserId: user.id,
-      action: "team_member.accepted_invitation",
+      action: "accepted invitation",
       entityType: "TEAM_MEMBER",
       entityId: user.id,
       metadata: {

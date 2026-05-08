@@ -8,6 +8,15 @@ export type ProjectCard = {
   _count: {
     projectMembers: number;
   };
+  milestones: {
+    status: string;
+  }[];
+  projectMembers: {
+    user: {
+      name: string | null;
+      avatarUrl: string | null;
+    }
+  }[];
   name: string;
   id: string;
   createdAt: Date;

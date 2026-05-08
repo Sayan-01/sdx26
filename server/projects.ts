@@ -38,6 +38,21 @@ export const getAllProjects = async () => {
           email: true,
         },
       },
+      milestones: {
+        select: {
+          status: true,
+        },
+      },
+      projectMembers: {
+        select: {
+          user: {
+            select: {
+              name: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           projectMembers: true,
@@ -118,7 +133,7 @@ export async function createProject(data: { projectName: string; projectDescript
         agencyId: project.agencyId,
         projectId: project.id,
         actorUserId: session.user.id,
-        action: "portal_link_generated",
+        action: "portal link generated",
         entityType: "PROJECT",
         entityId: project.id,
         metadata: {

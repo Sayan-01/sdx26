@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
         agencyId: magicLink.agencyId,
         projectId: magicLink.projectId,
         actorClientId: magicLink.clientId,
-        action: "client.portal_accessed",
+        action: "portal accessed",
         entityType: "PROJECT",
         entityId: magicLink.projectId,
         metadata: {

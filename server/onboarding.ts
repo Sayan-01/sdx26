@@ -60,7 +60,7 @@ export async function updateOnboardingStatus(itemId: string, status: string) {
         agencyId: item.agencyId,
         projectId: item.projectId,
         actorUserId: session.user.id,
-        action: status === "APPROVED" ? "APPROVED_ONBOARDING_ITEM" : "REJECTED_ONBOARDING_ITEM",
+        action: status === "APPROVED" ? "Approved onboarding item" : "Rejected onboarding item",
         entityType: "ONBOARDING",
         entityId: item.id,
         metadata: { label: item.label, status }
@@ -179,7 +179,7 @@ export async function uploadPortalOnboardingItem(itemId: string, fileUrl: string
         agencyId: session.agencyId,
         projectId: session.projectId,
         actorClientId: session.clientId,
-        action: "UPLOADED_ONBOARDING_RESOURCE",
+        action: "upload onboarding resource",
         entityType: "ONBOARDING",
         entityId: item.id,
         metadata: { label: item.label, fileUrl }

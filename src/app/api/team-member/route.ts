@@ -100,7 +100,7 @@ export const POST = async (req: NextRequest) => {
       data: {
         agencyId,
         actorUserId: session?.user.id as string,
-        action: "team_member.send_invitation",
+        action: "sent invitation",
         entityType: "TEAM_MEMBER",
         entityId: user.id,
         metadata: {

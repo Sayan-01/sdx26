@@ -11,12 +11,24 @@ import DashboardHeading from "../_components/dashboard-heading";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getAllProjects } from "../../../../server/projects";
 import { ProjectCard } from "@/types/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ProjectsPage() {
   const [view, setView] = useState<"grid" | "list">("grid");
 
   const [projects, setProjects] = useState<ProjectCard>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -24,13 +36,20 @@ export default function ProjectsPage() {
       try {
         const response = await getAllProjects();
         if (response.projects) {
-          const formattedProjects = response.projects.map((p: any) => ({
-            ...p,
-            priority: calculatePriority(p.deadline),
-            progress: Math.floor(Math.random() * 100), // Placeholder progress
-            team: p._count?.projectMembers || 1,
-            activity: dayAgo(p.updatedAt), // Placeholder activity
-          }));
+          const formattedProjects = response.projects.map((p: any) => {
+            // Calculate real progress based on milestones
+            const totalMilestones = p.milestones?.length || 0;
+            const completedMilestones = p.milestones?.filter((m: any) => m.status === "APPROVED" || m.status === "PAID").length || 0;
+            const progress = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
+
+            return {
+              ...p,
+              priority: calculatePriority(p.deadline),
+              progress,
+              team: p._count?.projectMembers || 0,
+              activity: dayAgo(p.updatedAt),
+            };
+          });
           setProjects(formattedProjects);
         }
       } finally {
@@ -39,6 +58,14 @@ export default function ProjectsPage() {
     };
     fetchProjects();
   }, []);
+
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch =
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.client.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "ALL" || project.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const stats = [
     {
@@ -115,20 +142,61 @@ export default function ProjectsPage() {
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <Input
-            placeholder="Search projects, clients or tags..."
+            placeholder="Search projects or clients..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-[#151518] border-dashboard-border text-zinc-400 hover:text-white h-10 px-4 gap-2 flex-1 md:flex-none"
-          >
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "bg-[#151518] border-dashboard-border text-zinc-400 hover:text-white h-10 px-4 gap-2 flex-1 md:flex-none",
+                  statusFilter !== "ALL" && "text-indigo-400 border-indigo-500/50"
+                )}
+              >
+                <Filter className="h-4 w-4" />
+                {statusFilter === "ALL" ? "Filters" : statusFilter.replace("_", " ")}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-[#19191b] border-dashboard-border">
+              <DropdownMenuLabel className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Status Filter</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-dashboard-border" />
+              <DropdownMenuCheckboxItem
+                checked={statusFilter === "ALL"}
+                onCheckedChange={() => setStatusFilter("ALL")}
+                className="text-zinc-300 focus:bg-zinc-800 focus:text-white"
+              >
+                All Projects
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={statusFilter === "ACTIVE"}
+                onCheckedChange={() => setStatusFilter("ACTIVE")}
+                className="text-zinc-300 focus:bg-zinc-800 focus:text-white"
+              >
+                Active
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={statusFilter === "ON_HOLD"}
+                onCheckedChange={() => setStatusFilter("ON_HOLD")}
+                className="text-zinc-300 focus:bg-zinc-800 focus:text-white"
+              >
+                On Hold
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={statusFilter === "COMPLETED"}
+                onCheckedChange={() => setStatusFilter("COMPLETED")}
+                className="text-zinc-300 focus:bg-zinc-800 focus:text-white"
+              >
+                Completed
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div className="h-10 w-px bg-dashboard-border mx-1 hidden md:block" />
 
@@ -186,21 +254,20 @@ export default function ProjectsPage() {
                 </CardContent>
               </Card>
             ))
-          ) : projects.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-12 text-zinc-500">
+          ) : filteredProjects.length === 0 ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-20 text-zinc-500">
               <div className="flex gap-4">
-                <Link
-                  href="/dashboard/projects/new"
+                <div
                   className="w-16 h-16 rounded-full bg-zinc-900 border border-dashboard-border flex items-center justify-center mb-4"
                 >
-                  <Briefcase className="h-8 w-8" />
-                </Link>
+                  <Search className="h-8 w-8 text-zinc-700" />
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-zinc-300 mb-1">No Projects Yet</h3>
-              <p className="text-sm">Get started by creating your first project</p>
+              <h3 className="text-lg font-bold text-zinc-300 mb-1">No Projects Found</h3>
+              <p className="text-sm">Try adjusting your search or filters</p>
             </div>
           ) : (
-            projects.map((project) => (
+            filteredProjects.map((project) => (
               <Link
                 key={project.id}
                 href={`/dashboard/projects/${project.id}`}
@@ -275,17 +342,23 @@ export default function ProjectsPage() {
 
                     <div className="pt-5 border-t border-dashboard-border flex items-center justify-between">
                       <div className="flex -space-x-2">
-                        {Array.from({ length: Math.min(project.team, 3) }).map((_, i) => (
-                          <div
-                            key={i}
-                            className="w-8 h-8 rounded-full bg-zinc-800 border-2 border-[#19191b] flex items-center justify-center text-[10px] font-bold text-zinc-300 group-hover:border-zinc-700 transition-colors"
-                          >
-                            {i === 0 ? "JD" : i === 1 ? "MK" : "+"}
+                        {project.projectMembers && project.projectMembers.length > 0 ? (
+                          project.projectMembers.slice(0, 3).map((member, i) => (
+                            <Avatar key={i} className="w-8 h-8 border-2 border-[#19191b] hover:z-10 transition-transform">
+                              <AvatarImage src={member.user.avatarUrl || ""} alt={member.user.name || "Member"} />
+                              <AvatarFallback className="bg-zinc-800 text-[10px] font-bold text-zinc-300 uppercase">
+                                {member.user.name?.substring(0, 2) || "TM"}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-zinc-800 border-2 border-[#19191b] flex items-center justify-center text-[10px] font-bold text-zinc-300">
+                            -
                           </div>
-                        ))}
-                        {project.team > 3 && (
+                        )}
+                        {project.projectMembers && project.projectMembers.length > 3 && (
                           <div className="w-8 h-8 rounded-full bg-[#151518] border-2 border-[#19191b] flex items-center justify-center text-[10px] font-bold text-zinc-500 group-hover:border-zinc-700 transition-colors">
-                            +{project.team - 2}
+                            +{project.projectMembers.length - 3}
                           </div>
                         )}
                       </div>
@@ -300,7 +373,7 @@ export default function ProjectsPage() {
             ))
           )}
 
-          {!isLoading && projects.length !== 0 && (
+          {!isLoading && filteredProjects.length !== 0 && (
             <Link
               href="/dashboard/projects/new"
               className="border-2 border-dashed border-dashboard-border rounded-xl flex flex-col items-center justify-center gap-3 text-zinc-500 hover:text-white hover:bg-[#19191b]/30 hover:border-zinc-600 transition-all group"
@@ -353,17 +426,17 @@ export default function ProjectsPage() {
                     <TableCell className="text-right p-5"><div className="h-8 w-8 bg-zinc-800/50 rounded animate-pulse ml-auto" /></TableCell>
                   </TableRow>
                 ))
-              ) : projects.length === 0 ? (
+              ) : filteredProjects.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={6}
                     className="h-24 text-center text-zinc-500"
                   >
-                    No projects found
+                    No projects found matching your criteria
                   </TableCell>
                 </TableRow>
               ) : (
-                projects.map((project) => (
+                filteredProjects.map((project) => (
                   <TableRow
                     key={project.id}
                     className="border-dashboard-border hover:bg-[#19191b] transition-colors group"

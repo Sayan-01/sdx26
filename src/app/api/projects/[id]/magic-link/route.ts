@@ -47,7 +47,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
         agencyId: project.agencyId,
         projectId: project.id,
         actorUserId: session.user.id,
-        action: "portal_link_generated",
+        action: "portal link generated",
         entityType: "PROJECT",
         entityId: project.id,
         metadata: {
