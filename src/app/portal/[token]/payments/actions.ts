@@ -19,9 +19,10 @@ export async function createPortalCheckout(data: { amount: number; milestoneId: 
       customerEmail: session.clientEmail,
       prices: [
         {
-          amount: Math.round(data.amount * 100), // convert to cents
-          recurringInterval: null,
-        },
+          type: "fixed",
+          priceAmount: Math.round(data.amount * 100), // convert to cents
+          priceCurrency: "usd",
+        } as any,
       ],
       metadata: {
         milestoneId: data.milestoneId,
@@ -29,7 +30,7 @@ export async function createPortalCheckout(data: { amount: number; milestoneId: 
         agencyId: session.agencyId,
         clientId: session.clientId,
       },
-    });
+    } as any);
 
     return { url: checkout.url };
   } catch (error) {

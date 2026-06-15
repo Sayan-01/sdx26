@@ -129,7 +129,7 @@ export default function ActivityPage() {
   const getLogContent = (log: any) => {
     const actor = log.actorUser?.name || log.actorClient?.name || "Someone";
     const target = log.metadata?.label || log.metadata?.name || log.metadata?.email || log.entityId || "item";
-    let actionTxt = log.action.split("_").join(" ").toLowerCase();
+    let actionTxt = log.action;
 
     return (
       <p className="text-sm leading-relaxed">

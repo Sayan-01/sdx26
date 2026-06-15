@@ -56,7 +56,7 @@ export default async function DashboardPage() {
         {stats.map((stat, i) => (
           <Card
             key={i}
-            className="relative hover:bg-zinc-900/70 transition-colors overflow-hidden group"
+            className="relative bg-zinc-900/70 transition-colors overflow-hidden group"
           >
             <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 

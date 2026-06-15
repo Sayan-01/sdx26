@@ -1,83 +1,78 @@
 import React from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Layers, ArrowRight } from "lucide-react";
-import Wrapper from "@/components/design/wrapper";
+import { ArrowRight } from "lucide-react";
 import { auth } from "../../../auth";
+import ThemeToggle from "./theme-toggle";
 
-async function Navbar() {
-  const session = await auth();
+function Logo() {
   return (
-    <div className="fixed top-0 py-3 inset-x-0 z-50 flex justify-center w-full pointer-events-none bg-zinc-950/40 backdrop-blur-2xl border-b border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-      <div className="w-full max-w-5xl  rounded-full pointer-events-auto transition-all duration-300">
-        <div className="flex h-14 items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2 group"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] group-hover:scale-110 transition-transform">
-                <Layers className="h-4 w-4" />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-white group-hover:text-purple-200 transition-colors">Milestack</span>
-            </Link>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-            <Link
-              href="#features"
-              className="hover:text-white transition-colors relative after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-white after:opacity-0 hover:after:opacity-100 after:transition-opacity"
-            >
-              Features
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="hover:text-white transition-colors relative after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-white after:opacity-0 hover:after:opacity-100 after:transition-opacity"
-            >
-              How it works
-            </Link>
-            <Link
-              href="#pricing"
-              className="hover:text-white transition-colors relative after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-white after:opacity-0 hover:after:opacity-100 after:transition-opacity"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/docs"
-              className="hover:text-white transition-colors relative after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:bg-white after:opacity-0 hover:after:opacity-100 after:transition-opacity"
-            >
-              Docs
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            {session?.user ? (
-              <Link href="/dashboard">
-                <Button className="bg-gradient-to-r from-[#5421d8] to-[#7a52e1] text-white rounded-full h-12 px-4">Dashboard</Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/auth/login">
-                  <Button
-                    variant="ghost"
-                    className="text-zinc-300 hover:text-white hover:bg-white/10 rounded-full px-5 hidden sm:flex"
-                  >
-                    Log in
-                  </Button>
-                </Link>
-                <Link href="/auth/register">
-                  <Button className="bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-5 shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all hover:scale-105 group">
-                    Get Started
-                    <ArrowRight className="ml-1.5 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
+    <Link href="/" className="flex items-center gap-2 group">
+      <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground transition-transform group-hover:scale-[1.02]">
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 18 L10 10 L14 14 L20 6" />
+        </svg>
       </div>
-    </div>
+      <span className="font-display text-[15px] font-semibold tracking-tight text-foreground group-hover:text-foreground/90 transition-colors">
+        Milestack
+      </span>
+    </Link>
   );
 }
 
-export default Navbar;
+export default async function Navbar() {
+  const session = await auth();
+  const links = [
+    { label: "Features", href: "#capabilities" },
+    { label: "Workflow", href: "#workflow" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Docs", href: "/docs" },
+  ];
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+      <div className="container-page flex h-16 items-center justify-between">
+        <Logo />
+        <nav className="hidden items-center gap-1 md:flex">
+          {links.map((l) => (
+            <Link
+              key={l.label}
+              href={l.href}
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center gap-2">
+          {/* <ThemeToggle /> */}
+          
+          {session?.user ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-soft transition-transform hover:-translate-y-px"
+            >
+              Dashboard
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="hidden rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-soft transition-transform hover:-translate-y-px"
+              >
+                Get Started
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}

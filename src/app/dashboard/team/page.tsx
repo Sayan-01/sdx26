@@ -87,7 +87,7 @@ export default function AgencyTeamPage() {
         </Link>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-[#19191b]/50 p-2 rounded-xl border border-dashboard-border card_shadow">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <Input
@@ -120,7 +120,9 @@ export default function AgencyTeamPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-dashboard-border overflow-hidden bg-[#151518]">
+      <div className="rounded-xl border border-dashboard-border overflow-hidden bg-[#19191b] group relative card_shadow">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="bg-[#151518] overflow-hidden">
         <Table>
           <TableHeader className="bg-[#19191b]">
             <TableRow className="border-dashboard-border hover:bg-transparent">
@@ -214,10 +216,12 @@ export default function AgencyTeamPage() {
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-[#19191b] border-dashboard-border shadow-none p-0">
+        <Card className="bg-[#19191b] border-dashboard-border group relative card_shadow transition-all duration-300 p-0 overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <CardContent className="p-5 space-y-4">
             <div className="w-10 h-10 rounded-xl bg-zinc-800/50 border border-dashboard-border/50 flex items-center justify-center text-zinc-500">
               <Shield className="h-5 w-5" />

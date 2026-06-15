@@ -1,93 +1,77 @@
 "use client";
 
 import React from "react";
-import Wrapper from "@/components/design/wrapper";
-import { CheckCircle2, Zap, Layout, ShieldCheck } from "lucide-react";
+import Italic from "../global/italic";
 
-const SolutionCard = ({ 
-  title, 
-  description, 
-  icon: Icon, 
-  className = "", 
-  accentColor = "bg-purple-500/10",
-  iconColor = "text-purple-400"
-}: { 
-  title: string; 
-  description: string; 
-  icon: any; 
-  className?: string;
-  accentColor?: string;
-  iconColor?: string;
-}) => (
-  <div className={`group relative p-8 rounded-[2.5rem] bg-zinc-900/20 border border-white/5 overflow-hidden transition-all duration-500 hover:bg-zinc-900/40 hover:border-indigo-500/30 ${className}`}>
-    <div className="absolute inset-0 bg-linear-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-    <div className="relative z-10">
-      <div className={`w-14 h-14 rounded-2xl ${accentColor} flex items-center justify-center mb-6 shadow-lg border border-white/5`}>
-        <Icon className={`w-7 h-7 ${iconColor}`} />
-      </div>
-      <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
-      <p className="text-zinc-400 leading-relaxed text-base">{description}</p>
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="eyebrow">
+      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+      {children}
     </div>
-    
-    {/* Abstract visual elements */}
-    <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-  </div>
-);
+  );
+}
+
+const pillars = [
+  {
+    title: "Single source of truth",
+    body: "No more digging through emails or Slack. Every file, approval, and message is attached directly to the project milestone. Your clients know exactly where to go — and so do you.",
+  },
+  {
+    title: "Structured workflows",
+    body: "Standardize delivery from kickoff to closeout. Follow a repeatable, clear path that ensures nothing falls through the cracks.",
+  },
+  {
+    title: "Client-facing workspace",
+    body: "Give clients a premium, branded portal that makes you look like a top-tier agency. A centralized home for progress, deliverables, and billing.",
+  },
+  {
+    title: "Scope-creep protection",
+    body: "Clearly defined deliverables and structured feedback loops mean you only work on what's agreed. Convert out-of-scope requests into new paid milestones instantly.",
+  },
+];
 
 export default function SolutionSection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-zinc-950">
-      {/* Decorative lines */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24 bg-linear-to-b from-purple-500/50 to-transparent" />
-      
-      <Wrapper>
-        <div className="flex flex-col items-center mb-16">
-          <div className="px-4 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 text-indigo-400 text-xs font-bold tracking-widest uppercase mb-6">
-            The Solution
+    <section className="border-b border-border">
+      <div className="container-page py-24 md:py-32">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[10px] font-medium text-zinc-300 tracking-wider uppercase mb-6">
+            <div className="flex items-center justify-center w-3 h-3 rounded-full border border-indigo-500/50 bg-indigo-500/10">
+              <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+            </div>The Solution
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white text-center max-w-4xl tracking-tight leading-tight">
-            One structured system to <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">rule them all.</span>
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground md:text-5xl">
+            One structured system to <Italic>rule them all.</Italic>
           </h2>
-          <p className="mt-6 text-lg text-zinc-400 text-center max-w-2xl">
-            Milestack replaces your scattered mess of tools with a single, professional source of truth for you and your clients.
+          <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
+            Milestack replaces your scattered mess of tools with a single,
+            professional source of truth for you and your clients.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <SolutionCard 
-            className="md:col-span-8"
-            icon={CheckCircle2}
-            accentColor="bg-emerald-500/10"
-            iconColor="text-emerald-400"
-            title="Single Source of Truth"
-            description="No more digging through emails or Slack. Every file, approval, and message is exactly where it belongs—attached to the project milestone. Your clients know exactly where to go, and so do you."
-          />
-          <SolutionCard 
-            className="md:col-span-4"
-            icon={Zap}
-            accentColor="bg-amber-500/10"
-            iconColor="text-amber-400"
-            title="Structured Workflows"
-            description="Standardize your delivery process. From onboarding to final sign-off, follow a repeatable path that ensures nothing falls through the cracks."
-          />
-          <SolutionCard 
-            className="md:col-span-5"
-            icon={Layout}
-            accentColor="bg-blue-500/10"
-            iconColor="text-blue-400"
-            title="Client-Facing Workspace"
-            description="Give your clients a premium experience. A clean, branded portal that makes you look like a top-tier agency, even if you're a team of one."
-          />
-          <SolutionCard 
-            className="md:col-span-7"
-            icon={ShieldCheck}
-            accentColor="bg-indigo-500/10"
-            iconColor="text-indigo-400"
-            title="Scope Creep Protection"
-            description="Clearly defined milestones and structured feedback loops mean you only work on what's agreed upon. Track extra requests as new milestones with linked payments."
-          />
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          {pillars.map((p, i) => (
+            <article
+              key={p.title}
+              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-soft transition-shadow hover:shadow-card"
+            >
+              <div className="flex items-center gap-3">
+                <span className="font-display text-[11px] font-semibold tracking-widest text-muted-foreground">
+                  0{i + 1}
+                </span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <h3 className="mt-5 font-display text-xl font-semibold tracking-tight text-foreground">
+                {p.title}
+              </h3>
+              <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+                {p.body}
+              </p>
+            </article>
+          ))}
         </div>
-      </Wrapper>
+      </div>
     </section>
   );
 }

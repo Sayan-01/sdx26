@@ -1,89 +1,85 @@
-"use client";
+import { AlertTriangle, ArrowRight, Clock, CreditCard, Mail, MessageSquare } from "lucide-react";
+import Italic from "../global/italic";
 
-import React from "react";
-import Wrapper from "@/components/design/wrapper";
-import { Mail, FileWarning, MessageSquare, Clock, CreditCard } from "lucide-react";
-
-const ProblemCard = ({ 
-  title, 
-  description, 
-  icon: Icon, 
-  className = "", 
-  iconColor = "text-purple-400" 
-}: { 
-  title: string; 
-  description: string; 
-  icon: any; 
-  className?: string;
-  iconColor?: string;
-}) => (
-  <div className={`group relative p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 overflow-hidden transition-all duration-500 hover:bg-zinc-900/60 hover:border-purple-500/20 ${className}`}>
-    <div className="absolute inset-0 bg-linear-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-    <div className="relative z-10">
-      <div className={`w-12 h-12 rounded-2xl bg-zinc-950 flex items-center justify-center mb-6 shadow-inner border border-white/5 group-hover:scale-110 transition-transform`}>
-        <Icon className={`w-6 h-6 ${iconColor}`} />
-      </div>
-      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors">{title}</h3>
-      <p className="text-zinc-400 leading-relaxed text-sm md:text-base">{description}</p>
-    </div>
-  </div>
-);
+const problems = [
+  {
+    icon: Mail,
+    title: "Lost feedback in email threads",
+    body: "Searching through 'Re: Re: Feedback' chains is where productivity goes to die. Milestack keeps every conversation tied to the actual deliverable.",
+  },
+  {
+    icon: AlertTriangle,
+    title: "Final_v2_final_FINAL chaos",
+    body: "Version control shouldn't be a naming convention. Stop the file-hunting nightmare and keep a clean audit trail.",
+  },
+  {
+    icon: MessageSquare,
+    title: "Clients messaging everywhere",
+    body: "WhatsApp, Slack, Email, LinkedIn. Centralize communication before you lose your mind and your focus.",
+  },
+  {
+    icon: Clock,
+    title: "Delayed approvals",
+    body: "Waiting days for a 'looks good' text? Automate the follow-ups and get clear, documented sign-offs.",
+  },
+  {
+    icon: CreditCard,
+    title: "Manual payment tracking",
+    body: "Stop asking 'did they pay the deposit yet?'. Link client payments to milestones and get paid automatically on completion.",
+  },
+];
 
 export default function ProblemSection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-black">
-      <Wrapper>
-        <div className="flex flex-col items-center mb-16">
-          <div className="px-4 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-xs font-bold tracking-widest uppercase mb-6">
-            The Chaos
+    <section className="border-y border-border bg-surface">
+      <div className="container-page py-24 md:py-32">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[10px] font-medium text-zinc-300 tracking-wider uppercase mb-6">
+            <div className="flex items-center justify-center w-3 h-3 rounded-full border border-indigo-500/50 bg-indigo-500/10">
+              <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+            </div>The chaos
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-white text-center max-w-4xl tracking-tight">
-            Stop losing projects to the <span className="text-zinc-600">"status quo"</span> chaos.
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground md:text-5xl">
+            Stop losing projects to the <Italic>status quo</Italic> chaos.
           </h2>
+          <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
+            Managing client projects shouldn't feel like a full-time search
+            operation. Here's what your agency is up against.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-          {/* Bento Grid Layout */}
-          <ProblemCard 
-            className="md:col-span-3 lg:col-span-4"
-            icon={Mail}
-            iconColor="text-rose-400"
-            title="Lost feedback in email threads"
-            description="Searching through 'Re: Re: Feedback' chains is where productivity goes to die. Milestack keeps every conversation tied to the actual deliverable."
-          />
-          <ProblemCard 
-            className="md:col-span-3 lg:col-span-2"
-            icon={FileWarning}
-            iconColor="text-amber-400"
-            title="Final_v2_final_FINAL chaos"
-            description="Version control shouldn't be a naming convention. Stop the file hunting nightmare."
-          />
-          <ProblemCard 
-            className="md:col-span-3 lg:col-span-2"
-            icon={MessageSquare}
-            iconColor="text-blue-400"
-            title="Clients messaging everywhere"
-            description="WhatsApp, Slack, Email, and LinkedIn. Centralize your communication before you lose your mind."
-          />
-          <ProblemCard 
-            className="md:col-span-3 lg:col-span-2"
-            icon={Clock}
-            iconColor="text-indigo-400"
-            title="Delayed approvals"
-            description="Waiting days for a 'looks good' thumb up? Automate the follow-ups and get clear sign-offs."
-          />
-          <ProblemCard 
-            className="md:col-span-6 lg:col-span-2"
-            icon={CreditCard}
-            iconColor="text-emerald-400"
-            title="Manual payment tracking"
-            description="Stop asking 'did they pay the deposit yet?'. Link payments to milestones and get paid automatically."
-          />
+        <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-3">
+          {problems.map((p) => (
+            <article key={p.title} className="bg-card p-7 transition-colors hover:bg-card/70">
+              <div className="grid h-9 w-9 place-items-center rounded-md border border-border bg-surface-2 text-foreground">
+                <p.icon className="h-4 w-4" strokeWidth={1.75} />
+              </div>
+              <h3 className="mt-5 font-display text-base font-semibold text-foreground">
+                {p.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {p.body}
+              </p>
+            </article>
+          ))}
+          <div className="hidden bg-card p-7 lg:block">
+            <div className="flex h-full flex-col justify-between">
+              <div className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
+                <ArrowRight className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="font-display text-base font-semibold text-foreground">
+                  There's a better way.
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  One workspace. Every project. Zero chaos.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </Wrapper>
-
-      {/* Background decoration */}
-      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-linear-to-t from-purple-900/10 to-transparent pointer-events-none -z-10" />
+      </div>
     </section>
   );
 }
+

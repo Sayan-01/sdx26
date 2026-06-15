@@ -60,7 +60,7 @@ export async function getDashboardData() {
       const progress = totalMilestones === 0 ? 0 : Math.round((completedMilestones / totalMilestones) * 100);
 
       // Convert project status string to match mock if possible or use as is
-      let statusStr = project.status;
+      let statusStr: string = project.status;
       if (statusStr === "ACTIVE") statusStr = "Active";
       else if (statusStr === "ON_HOLD") statusStr = "On Hold";
       else if (statusStr === "COMPLETED") statusStr = "Completed";
