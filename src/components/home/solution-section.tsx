@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Italic from "../global/italic";
 import { Database, Workflow, Sparkles, ShieldCheck, Layers, WorkflowIcon, GitBranch, AppWindow, Palette, LucideIcon, LockIcon } from "lucide-react";
 
-
 function IconPair({ Left, Right }: { Left: LucideIcon; Right: LucideIcon }) {
   return (
     <div className="relative flex h-full w-full items-center justify-center gap-10 md:gap-14">
@@ -19,9 +18,9 @@ function IconPair({ Left, Right }: { Left: LucideIcon; Right: LucideIcon }) {
       />
       <div
         aria-hidden
-        className="relative h-16 w-px"
+        className="relative h-16 w-[4px]"
         style={{
-          background: "linear-gradient(to bottom, transparent, rgba(15,15,17,0.18), transparent)",
+          background: "linear-gradient(to bottom, transparent, rgba(1,1,1), transparent)",
         }}
       />
       <Squircle
@@ -107,10 +106,8 @@ function VizShield() {
   );
 }
 
-
 const pillars = [
   {
-    eyrow: "01 — Unified", // Keep internal naming matching or use eyebrow
     eyebrow: "01 — Unified",
     title: "Single source of truth",
     body: "No more digging through emails or Slack. Every file, approval, and message is attached directly to the project milestone. Your clients know exactly where to go — and so do you.",
@@ -160,20 +157,20 @@ export default function Solution() {
     if (!els.length) return;
     const io = new IntersectionObserver(
       (entries) => {
-        // Pick the entry closest to the viewport center
-        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) {
-          const idx = Number((visible[0].target as HTMLElement).dataset.pillarIndex);
-          if (!Number.isNaN(idx)) setActive(idx);
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Number((entry.target as HTMLElement).dataset.pillarIndex);
+            if (!Number.isNaN(idx)) {
+              setActive(idx);
+            }
+          }
+        });
       },
-      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
-
-  const ActiveViz = pillars[active].viz;
 
   return (
     <section className="border-b border-border bg-background">
@@ -191,6 +188,10 @@ export default function Solution() {
         }
         .animate-fade-in {
           animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .viz-transition {
+          transition: opacity 650ms cubic-bezier(0.16, 1, 0.3, 1),
+                      transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
         }
       `}</style>
       <div className="container-page py-24 md:py-32">
@@ -225,8 +226,10 @@ export default function Solution() {
                   </div>
                   <div className="flex gap-4 items-center mt-7">
                     <div
-                      className={`flex items-center justify-center w-12 h-12 rounded-lg border transition-all duration-500 ${
-                        active === i ? p.badgeGlow : "bg-surface-2/40 border-border/80 text-muted-foreground/60"
+                      className={`flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        active === i
+                          ? "bg-gradient-to-br from-white to-zinc-200 border-transparent text-zinc-900 shadow-[0_0.597px_0.597px_-0.875px_rgba(0,0,0,0.12),0_1.81px_1.81px_-1.75px_rgba(0,0,0,0.1),0_4.78px_4.78px_-2.625px_rgba(0,0,0,0.08),0_15px_15px_-3.5px_rgba(0,0,0,0.05),inset_-0.73px_0.73px_2px_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(0,0,0,0.03)] -translate-y-0.5"
+                          : "bg-surface-2/40 border border-border/80 text-muted-foreground/60"
                       }`}
                     >
                       <p.icon
@@ -257,39 +260,61 @@ export default function Solution() {
           <div className="hidden lg:block">
             <div className="sticky top-[15%] flex flex-col justify-center h-[70vh]">
               <div
-                className="relative aspect-[5/4] overflow-hidden rounded-3xl "
+                className="relative aspect-[5/4] overflow-hidden rounded-3xl"
                 style={{
-                  background: "linear-gradient(160deg, #f4f499 0%, #e9e9eccc 55%, #dedee2aa 100%)",
-                  boxShadow: "0 1px 0 rgba(255,255,255,0.8) inset, 0 -1px 0 rgba(0,0,0,0.04) inset, 0 30px 60px -30px rgba(0,0,0,0.45), 0 12px 30px -12px rgba(0,0,0,0.25)",
+                  background: `
+radial-gradient(
+  circle at top left,
+  #edf0c4 0%,
+  #d9d9d9 45%,
+  #bfc0c8 100%
+)
+`,
+                  boxShadow: `
+inset 0 1px 0 rgba(255,255,255,0.15),
+inset 0 -1px 0 rgba(0,0,0,0.08),
+0 40px 80px -30px rgba(0,0,0,0.45)
+`,
                 }}
               >
+                {/* Background Grid Pattern */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-[0.05] dark:opacity-[0.08]"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, rgba(0,0,0,1) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(0,0,0,1) 1px, transparent 1px)
+                    `,
+                    backgroundSize: "10% 10%",
+                  }}
+                />
                 {/* subtle inner vignette */}
                 <div
                   aria-hidden
-                  className="absolute inset-0"
+                  className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: "radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.6), transparent 60%)",
+                    background: "radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.03), transparent 70%)",
                   }}
                 />
                 {/* Top bar */}
                 <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-5 py-3.5">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 mr-5">
                     <span
                       className="h-2 w-2 rounded-full"
-                      style={{ background: "rgba(0,0,0,0.15)" }}
+                      style={{ background: "rgba(0,0,0,0.2)" }}
                     />
                     <span
                       className="h-2 w-2 rounded-full"
-                      style={{ background: "rgba(0,0,0,0.15)" }}
+                      style={{ background: "rgba(0,0,0,0.2)" }}
                     />
                     <span
                       className="h-2 w-2 rounded-full"
-                      style={{ background: "rgba(0,0,0,0.15)" }}
+                      style={{ background: "rgba(0,0,0,0.2)" }}
                     />
                   </div>
                   <span
                     className="font-display text-[10px] font-semibold tracking-[0.18em] uppercase"
-                    style={{ color: "rgba(0,0,0,0.45)" }}
+                    style={{ color: "rgba(0, 0, 0,0.4)" }}
                   >
                     {pillars[active].eyebrow}
                   </span>
@@ -304,12 +329,19 @@ export default function Solution() {
                   </div>
                 </div>
                 {/* Viz */}
-                <div
-                  key={active}
-                  className="absolute inset-0 flex items-center justify-center pt-6 animate-fade-in"
-                >
-                  <ActiveViz />
-                </div>
+                {pillars.map((p, i) => {
+                  const Vis = p.viz;
+                  return (
+                    <div
+                      key={i}
+                      className={`absolute inset-0 flex items-center justify-center pt-6 viz-transition ${
+                        active === i ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 translate-y-8 scale-[0.93] pointer-events-none"
+                      }`}
+                    >
+                      <Vis />
+                    </div>
+                  );
+                })}
               </div>
               <div className="mt-4 flex items-center justify-between px-1">
                 <span className="font-display text-sm font-semibold text-foreground">{pillars[active].title}</span>
