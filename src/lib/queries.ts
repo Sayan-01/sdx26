@@ -43,6 +43,7 @@ export async function createAgency(formData: { name: string; logoUrl?: string | 
         logoUrl: logoUrl || null,
         ownerId: session.user.id,
         slug,
+        activePlan: "basic",
       },
     });
 

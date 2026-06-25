@@ -50,7 +50,7 @@ model Agency {
   slug          String         @unique
   logoUrl       String?
   planId        String?
-  activePlan    String?        @default("starter")
+  activePlan    String?        @default("basic")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   activityLogs  ActivityLog[]

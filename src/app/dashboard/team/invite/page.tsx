@@ -6,13 +6,18 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import DashboardHeading from "../../_components/dashboard-heading";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { inviteFormSchema } from "../../../../../validators/invite-form-validator";
 import { FieldError } from "@/components/ui/field";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import DashboardHeading from "../../_components/dashboard-heading";
 
 export default function InviteTeamMemberPage() {
+  const { data: session } = useSession();
+  const isBasic = session?.user?.activePlan === "basic" || !session?.user?.activePlan;
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -53,6 +58,34 @@ export default function InviteTeamMemberPage() {
       setLoading(false);
     }
   };
+
+  if (isBasic) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4 max-w-lg mx-auto space-y-6 animate-in fade-in duration-500">
+        <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+          <UserPlus className="h-8 w-8" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-white">Upgrade Required</h1>
+          <p className="text-zinc-400 text-sm md:text-base">
+            You are currently on the Free/Basic plan which allows 0 team members. Please upgrade to a premium plan (Starter or Pro) to invite team members.
+          </p>
+        </div>
+        <div className="flex gap-4 w-full justify-center pt-2">
+          <Link href="/#pricing" className="flex-1 max-w-[200px]">
+            <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold h-12 rounded-xl">
+              View Plans
+            </Button>
+          </Link>
+          <Link href="/dashboard/team" className="flex-1 max-w-[200px]">
+            <Button variant="outline" className="w-full h-12 rounded-xl border-dashboard-border bg-[#19191b] text-zinc-400 hover:text-white">
+              Go Back
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">

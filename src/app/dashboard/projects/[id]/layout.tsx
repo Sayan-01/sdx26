@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { getProjectById } from "@server/projects";
 
 export default function ProjectLayout({
   children,
@@ -27,6 +28,17 @@ export default function ProjectLayout({
 }) {
   const pathname = usePathname();
   const { id } = React.use(params);
+  const [project, setProject] = React.useState<any>(null);
+
+  useEffect(() => {
+    const getProject = async () => {
+      const project = await getProjectById(id);
+      setProject(project.project);
+      console.log(project);
+      
+    };
+    getProject();
+  }, []);
 
   const tabs = [
     { label: "Overview", icon: <Activity className="h-4 w-4" />, href: `/dashboard/projects/${id}` },
@@ -48,13 +60,13 @@ export default function ProjectLayout({
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold tracking-tight text-zinc-100">Acme Web Redesign</h1>
+              <h1 className="text-xl font-bold tracking-tight text-zinc-100">{project?.name}</h1>
               <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">Active</div>
             </div>
             <p className="text-zinc-500 flex items-center gap-2 mt-1 text-xs font-medium">
               <span className="flex items-center gap-1.5">
                 <Users className="h-3.5 w-3.5" />
-                Client: <span className="text-zinc-300">Acme Corp</span>
+                Client: <span className="text-zinc-300">{project?.client.name}</span>
               </span>
               <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span className="flex items-center gap-1.5 text-zinc-400">

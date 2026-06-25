@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
 import crypto from "crypto";
 import { sendInviteEmaill } from "@/lib/sendPortalUrl";
+import { getAgencyLimits } from "@/lib/planLimits";
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -23,6 +24,16 @@ export const POST = async (req: NextRequest) => {
     if (!agencyId) {
       console.log("Agency ID missing in session");
       return NextResponse.json({ error: "No agency found for this session" }, { status: 403 });
+    }
+
+    // Check team member limits
+    const currentMemberCount = await prisma.teamMember.count({
+      where: { agencyId },
+    });
+    const limits = await getAgencyLimits(agencyId);
+    if (currentMemberCount >= limits.maxTeamMembers) {
+      const maxSeatsStr = limits.maxTeamMembers >= 999999 ? "unlimited" : `${limits.maxTeamMembers} seats`;
+      return NextResponse.json({ error: `Team member limit reached. Your current plan allows up to ${maxSeatsStr}.` }, { status: 400 });
     }
 
     // Check if user exists globally by email

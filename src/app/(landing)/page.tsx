@@ -12,11 +12,14 @@ import Footer from "@/components/home/footer";
 import {  Inter } from "next/font/google";
 
 import "./landing.css";
+import { auth } from "../../../auth";
 
 const inter = Inter({
   subsets: ["latin"],
 });
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await auth()
+    
   return (
     <div className={`min-h-screen bg-background text-foreground selection_color ${inter.className}`}>
       <Navbar />
@@ -27,7 +30,7 @@ export default function LandingPage() {
         <FeaturesSection />
         <HowItWorksSection />
         <AboutSection />
-        <PricingSection />
+        <PricingSection session={session} />
         <CTASection />
       </main>
       <Footer />

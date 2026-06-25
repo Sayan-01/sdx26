@@ -98,6 +98,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (session.agencyId) token.agencyId = session.agencyId;
         if (session.agencySlug) token.agencySlug = session.agencySlug;
         if (session.avatarUrl) token.avatarUrl = session.avatarUrl;
+        if (session.activePlan) token.activePlan = session.activePlan;
       }
 
       if (user) {
@@ -112,6 +113,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             agency: {
               select: {
                 slug: true,
+                activePlan: true,
               },
             },
           },
@@ -123,8 +125,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.name = alreadyUser.name as string;
           token.role = alreadyUser.role; 
           token.avatarUrl = alreadyUser.avatarUrl;
-          token.agencyId = alreadyUser.agencyId
-          token.agencySlug = alreadyUser.agency?.slug as string
+          token.agencyId = alreadyUser.agencyId;
+          token.agencySlug = alreadyUser.agency?.slug as string;
+          token.activePlan = alreadyUser.agency?.activePlan || "basic";
         }
       }
       return token; // Return the updated token
@@ -137,6 +140,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.avatarUrl = token.avatarUrl;
         session.user.agencyId = token.agencyId;
         session.user.agencySlug = token.agencySlug;
+        session.user.activePlan = token.activePlan as string | null;
       }
       return session;
     },

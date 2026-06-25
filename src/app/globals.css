@@ -167,7 +167,7 @@
   background: #515151;
   border-radius: 50px;
 }
-.card_shadow {
+/* .card_shadow {
   --tw-shadow: 0 10px 15px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.4)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.4));
   box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-}
+} */

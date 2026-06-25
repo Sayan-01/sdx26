@@ -3,6 +3,7 @@
 import prisma from "@/lib/db";
 import { sendPortalUrl } from "@/lib/sendPortalUrl";
 import { auth } from "../auth";
+import { getAgencyLimits, checkStorageLimit } from "@/lib/planLimits";
 
 export const getAllProjects = async () => {
   const session = await auth();
@@ -78,6 +79,20 @@ export async function createProject(data: { projectName: string; projectDescript
 
   if (!user?.agencyId || user.role !== "OWNER") {
     return { error: "You must belong to an agency to create projects" };
+  }
+
+  // Check active projects limit
+  const activeProjectsCount = await prisma.project.count({
+    where: {
+      agencyId: user.agencyId,
+      status: "ACTIVE",
+    },
+  });
+
+  const limits = await getAgencyLimits(user.agencyId);
+  if (activeProjectsCount >= limits.maxProjects) {
+    const maxProjectsStr = limits.maxProjects >= 999999 ? "unlimited" : `${limits.maxProjects} active projects`;
+    return { error: `Project limit reached. Your current plan allows up to ${maxProjectsStr}.` };
   }
 
   const { projectName, projectDescription, clientName, clientEmail } = data;
@@ -412,6 +427,11 @@ export const getFilesByProjectId = async (projectId: string) => {
           title: true,
         },
       },
+      fileVersions: {
+        select: {
+          fileSizeBytes: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -437,6 +457,11 @@ export const getPortalFilesByProjectId = async (projectId: string, agencyId: str
         milestone: {
           select: {
             title: true,
+          },
+        },
+        fileVersions: {
+          select: {
+            fileSizeBytes: true,
           },
         },
       },
@@ -481,4 +506,87 @@ export const getLatestMagicLink = async (projectId: string) => {
 
   const portalUrl = `${process.env.NEXT_PUBLIC_URL_SCHEME}${session.user.agencySlug}.${process.env.NEXT_PUBLIC_URL_DOMAIN}/portal/${magicLink.token}`;
   return { success: true, portalUrl };
+};
+
+export const uploadFile = async (
+  projectId: string,
+  data: {
+    fileName: string;
+    fileType: string;
+    fileSizeBytes: number;
+    url: string;
+    milestoneId?: string;
+  }
+) => {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return { error: "Unauthorized" };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { agencyId: true },
+  });
+
+  if (!user?.agencyId) {
+    return { error: "Agency not found" };
+  }
+
+  // Enforce storage limits
+  const storageCheck = await checkStorageLimit(user.agencyId, data.fileSizeBytes);
+  if (!storageCheck.allowed) {
+    return { error: storageCheck.error };
+  }
+
+  try {
+    const file = await prisma.file.create({
+      data: {
+        fileName: data.fileName,
+        fileType: data.fileType,
+        url: data.url,
+        projectId,
+        agencyId: user.agencyId,
+        uploaderId: session.user.id,
+        milestoneId: data.milestoneId || null,
+        status: "UPLOADED",
+      },
+    });
+
+    const fileVersion = await prisma.fileVersion.create({
+      data: {
+        fileId: file.id,
+        versionNumber: 1,
+        storageKey: data.url,
+        fileName: data.fileName,
+        fileSizeBytes: BigInt(data.fileSizeBytes),
+        uploadedById: session.user.id,
+        agencyId: user.agencyId,
+      },
+    });
+
+    await prisma.file.update({
+      where: { id: file.id },
+      data: {
+        currentVersionId: fileVersion.id,
+      },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        agencyId: user.agencyId,
+        projectId,
+        actorUserId: session.user.id,
+        action: `uploaded file: ${data.fileName}`,
+        entityType: "FILE",
+        entityId: file.id,
+      },
+    });
+
+    revalidatePath(`/dashboard/projects/${projectId}/files`);
+    return { success: true, file };
+  } catch (error) {
+    console.error("Failed to upload file:", error);
+    return { error: "Failed to upload file" };
+  }
 };

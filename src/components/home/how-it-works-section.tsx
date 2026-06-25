@@ -2,15 +2,7 @@
 
 import React from "react";
 import Italic from "../global/italic";
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="eyebrow">
-      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-      {children}
-    </div>
-  );
-}
+import Eyebrow from "../global/Eyebrow";
 
 const workflow = [
   { title: "Invite Client", body: "Send a secure magic link to your client. No passwords to remember — just instant access to their portal." },
@@ -24,11 +16,7 @@ export default function HowItWorksSection() {
     <section id="workflow" className="border-b border-border">
       <div className="container-page py-24 md:py-32">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[10px] font-medium text-zinc-300 tracking-wider uppercase mb-6">
-            <div className="flex items-center justify-center w-3 h-3 rounded-full border border-indigo-500/50 bg-indigo-500/10">
-              <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
-            </div>Workflow
-          </div>
+          <Eyebrow>Workflow</Eyebrow>
           <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground md:text-5xl">
             Simple, structured, <Italic>effective.</Italic>
           </h2>

@@ -11,6 +11,7 @@ declare module "next-auth" {
       agencyId: string | null;
       avatarUrl: string | null; 
       agencySlug: string | null;
+      activePlan: string | null;
     };
   }
 }
@@ -23,5 +24,6 @@ declare module "next-auth/jwt" {
     agencyId: string | null;
     avatarUrl: string | null;
     agencySlug: string | null;
+    activePlan: string | null;
   }
 }

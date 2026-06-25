@@ -25,7 +25,7 @@ function DashboardMock() {
   return (
     <div className="grid grid-cols-12 gap-0 text-[12px] text-foreground bg-background">
       {/* Sidebar */}
-      <aside className="col-span-3 hidden border-r border-border/60 p-4 md:flex flex-col justify-between min-h-[500px] bg-[#13151b]">
+      <div className="col-span-3 hidden border-r border-border/60 p-4 md:flex flex-col justify-between min-h-[500px] bg-[#13151b]">
         <div>
           {/* Logo */}
           <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ function DashboardMock() {
             </div>
           </div>
         </div>
-      </aside>
+      </div>
 
       {/* Main Content Area */}
       <div className="col-span-12 p-5 md:col-span-9 flex flex-col justify-between min-h-[500px] bg-[#13151b]/70">

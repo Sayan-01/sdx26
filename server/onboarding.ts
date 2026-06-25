@@ -5,6 +5,7 @@ import { auth } from "../auth";
 import { getClientSession } from "@/lib/client-session";
 import { OnboardingStatus } from "@/generated/prisma";
 import { revalidatePath } from "next/cache";
+import { checkStorageLimit } from "@/lib/planLimits";
 
 export async function getOnboardingItems(projectId: string) {
   const session = await auth();
@@ -158,6 +159,11 @@ export async function uploadPortalOnboardingItem(itemId: string, fileUrl: string
 
   if (!session) {
     return { error: "Unauthorized" };
+  }
+
+  const storageCheck = await checkStorageLimit(session.agencyId, 0);
+  if (!storageCheck.allowed) {
+    return { error: storageCheck.error };
   }
 
   try {

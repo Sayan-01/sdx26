@@ -58,7 +58,7 @@ const iconMap: Record<string, any> = {
   Milestone,
 };
 
-export function SidebarComp({ userId, defaultOption = false, sidebarNav, sidebarUtils }: { userId: string | undefined; defaultOption?: boolean; sidebarNav: any[]; sidebarUtils: any[] }) {
+export function SidebarComp({ userId, defaultOption = false, sidebarNav, sidebarUtils, activePlan }: { userId: string | undefined; defaultOption?: boolean; sidebarNav: any[]; sidebarUtils: any[]; activePlan?: string }) {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const openState = useMemo(() => (defaultOption ? { open: true } : {}), [defaultOption]);
@@ -135,7 +135,7 @@ export function SidebarComp({ userId, defaultOption = false, sidebarNav, sidebar
         <div className="mt-0 pt-3  relative">
           <div className="h-[60px] bg-gradient-to-b from-transparent via-zinc-900 z-10 to-zinc-900 pointer-events-none absolute -top-[40px] left-0 w-full md:hidden block" />
 
-          <UpgradeCard credits={0} />
+          <UpgradeCard activePlan={activePlan} />
           {sidebarUtils.map((item, index) => (
             <Link
               key={index}

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { 
   FileBox, 
   Upload, 
@@ -18,11 +18,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { getFilesByProjectId } from "@server/projects";
+import { getFilesByProjectId, uploadFile } from "@server/projects";
 import { formatDistanceToNow } from "date-fns";
 import DashboardCard from "@/app/dashboard/_components/dashboard-card";
+import { toast } from "sonner";
 
-export default function FilesClient({ projectId, rawFiles }: { projectId: string; rawFiles: any[] }) {
+export default function FilesClient({
+  projectId,
+  rawFiles,
+  limits,
+  storageUsed: initialStorageUsed
+}: {
+  projectId: string;
+  rawFiles: any[];
+  limits?: { maxProjects: number; maxTeamMembers: number; maxStorageGb: number };
+  storageUsed?: number;
+}) {
 
   const getFileIcon = (type: string | null) => {
     const t = (type || "").toLowerCase();
@@ -52,22 +63,64 @@ export default function FilesClient({ projectId, rawFiles }: { projectId: string
 
   const files = rawFiles.map(file => {
     const styles = getIconStyles(file.fileType);
+    const sizeInBytes = file.fileVersions?.[0]?.fileSizeBytes ? Number(file.fileVersions[0].fileSizeBytes) : 0;
     return {
       id: file.id,
       name: file.fileName,
       type: file.fileType || "unknown",
-      size: formatSize(0), // No size in File model, could fetch from FileVersion if needed
-      version: 1, // Fallback, could be length of fileVersions
+      size: formatSize(sizeInBytes),
+      version: file.fileVersions?.length || 1,
       status: file.status.toLowerCase(),
       uploader: file.uploader.name || "Unknown",
       at: formatDistanceToNow(new Date(file.createdAt), { addSuffix: true }),
       milestone: file.milestone?.title || "No milestone",
+      fileUrl: file.url,
       iconBg: styles.bg,
       iconColor: styles.color
     };
   });
 
   const [searchQuery, setSearchQuery] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [storageUsed, setStorageUsed] = useState(initialStorageUsed || 0);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    setIsUploading(true);
+    const toastId = toast.loading(`Uploading ${selectedFile.name}...`);
+
+    try {
+      const simulatedUrl = `https://milestack-uploads.s3.amazonaws.com/mock-${Date.now()}-${selectedFile.name}`;
+
+      const res = await uploadFile(projectId, {
+        fileName: selectedFile.name,
+        fileType: selectedFile.type || "application/octet-stream",
+        fileSizeBytes: selectedFile.size,
+        url: simulatedUrl,
+      });
+
+      if (res.success) {
+        toast.success(`${selectedFile.name} uploaded successfully!`, { id: toastId });
+        setStorageUsed(prev => prev + selectedFile.size);
+        window.location.reload();
+      } else {
+        toast.error(res.error || "Failed to upload file", { id: toastId });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred during upload", { id: toastId });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const filteredFiles = files.filter(f => 
     f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -82,11 +135,57 @@ export default function FilesClient({ projectId, rawFiles }: { projectId: string
           <h2 className="text-xl font-bold">Project Files</h2>
           <p className="text-sm text-zinc-400">Manage deliverables, assets, and version history.</p>
         </div>
-        <Button className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
+        <Button onClick={handleUploadClick} disabled={isUploading} className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
           <Upload className="h-4 w-4" />
-          Upload File
+          {isUploading ? "Uploading..." : "Upload File"}
         </Button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+        />
       </div>
+
+      {limits && (
+        <div className="p-5 rounded-2xl bg-zinc-900/50 border border-dashboard-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1 shrink-0">
+            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Plan Storage Limit</h4>
+            <p className="text-sm text-zinc-300 font-medium">
+              Using <span className="text-white font-bold">{formatSize(storageUsed)}</span> of{" "}
+              <span className="text-white font-bold">
+                {limits.maxStorageGb >= 999999 ? "Unlimited" : `${limits.maxStorageGb} GB`}
+              </span>
+            </p>
+          </div>
+          {limits.maxStorageGb < 999999 && (
+            <div className="flex-1 w-full max-w-lg">
+              <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden mb-2 border border-zinc-800/50">
+                <div
+                  className={cn(
+                    "h-full transition-all duration-500",
+                    (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100 > 90
+                      ? "bg-rose-500"
+                      : (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100 > 75
+                      ? "bg-amber-500"
+                      : "bg-indigo-500"
+                  )}
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100
+                    )}%`,
+                  }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+                <span>Starter Storage Limit</span>
+                <span>{((storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100).toFixed(1)}% Used</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <DashboardCard
         icon={
@@ -148,20 +247,28 @@ export default function FilesClient({ projectId, rawFiles }: { projectId: string
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
+                    {file.fileUrl && (
+                      <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </a>
+                    )}
+                    {file.fileUrl && (
+                      <a href={file.fileUrl} download>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </a>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -183,7 +290,10 @@ export default function FilesClient({ projectId, rawFiles }: { projectId: string
           )}
         </div>
 
-        <div className="p-8 m-5 rounded-xl bg-[#19191b] border border-dashed border-dashboard-border flex flex-col items-center justify-center text-center space-y-4 hover:bg-zinc-900/50 transition-colors cursor-pointer">
+        <div
+          onClick={handleUploadClick}
+          className="p-8 m-5 rounded-xl bg-[#19191b] border border-dashed border-dashboard-border flex flex-col items-center justify-center text-center space-y-4 hover:bg-zinc-900/50 transition-colors cursor-pointer"
+        >
           <div className="w-12 h-12 rounded-xl bg-[#151518] border border-dashboard-border flex items-center justify-center text-zinc-500">
             <Upload className="h-5 w-5" />
           </div>

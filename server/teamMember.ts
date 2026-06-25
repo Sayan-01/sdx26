@@ -3,6 +3,7 @@
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { auth } from "../auth";
+import { getAgencyLimits } from "@/lib/planLimits";
 
 export const getAllTeamMembers = async () => {
   const session = await auth();
@@ -42,6 +43,16 @@ export const completeInvitation = async (token: string, password: string) => {
 
   if (!invitation || invitation.expiresAt < new Date() || invitation.acceptedAt) {
     throw new Error("Invalid or expired invitation");
+  }
+
+  // Check team member limits
+  const currentMemberCount = await prisma.teamMember.count({
+    where: { agencyId: invitation.agencyId },
+  });
+  const limits = await getAgencyLimits(invitation.agencyId);
+  if (currentMemberCount >= limits.maxTeamMembers) {
+    const maxSeatsStr = limits.maxTeamMembers >= 999999 ? "unlimited" : `${limits.maxTeamMembers} seats`;
+    throw new Error(`Team member limit reached (${maxSeatsStr}). Cannot accept invitation.`);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);

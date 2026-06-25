@@ -12,6 +12,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { createProject } from "../../../../../server/projects";
+import { useSession } from "next-auth/react";
 
 const projectSchema = z.object({
   projectName: z.string().min(3, "Project name must be at least 3 characters"),
@@ -23,6 +24,9 @@ const projectSchema = z.object({
 type ProjectFormData = z.infer<typeof projectSchema>;
 
 export default function NewProjectPage() {
+  const { data: session } = useSession();
+  const isBasic = session?.user?.activePlan === "basic" || !session?.user?.activePlan;
+
   const [isLoading, setIsLoading] = useState(false);
   const [createdData, setCreatedData] = useState<{ projectId: string; magicToken: string } | null>(null);
 
@@ -54,6 +58,55 @@ export default function NewProjectPage() {
     }
   };
 
+  if (isBasic) {
+    return (
+      <div className="max-w-[440px] mx-auto min-h-[90vh] flex flex-col justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 px-4">
+        <Card className="bg-[#19191b] border-dashboard-border overflow-hidden p-8 relative">
+          {/* Subtle top indicator glow */}
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-purple-500/50 to-transparent" />
+          
+          <div className="flex flex-col items-center text-center space-y-6">
+            <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shadow-inner">
+              <Zap className="h-5 w-5" />
+            </div>
+
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold text-white tracking-tight font-display">Access Premium Workspaces</h2>
+              <p className="text-zinc-400 text-xs leading-relaxed max-w-[320px] mx-auto">
+                Project initialization is a Premium feature. Upgrade your plan to manage projects, share magic links, and invite clients.
+              </p>
+            </div>
+
+            {/* Quick feature checklist */}
+            <div className="w-full bg-[#151518]/60 rounded-2xl border border-dashboard-border/60 p-5 text-left space-y-4">
+              <div className="flex items-start gap-3 text-xs text-zinc-300">
+                <BadgeCheck className="h-4.5 w-4.5 text-purple-400 shrink-0 mt-0.5" />
+                <span className="leading-snug">Unlimited client portals & workspaces</span>
+              </div>
+              <div className="flex items-start gap-3 text-xs text-zinc-300">
+                <BadgeCheck className="h-4.5 w-4.5 text-purple-400 shrink-0 mt-0.5" />
+                <span className="leading-snug">Secure client magic-links & access logs</span>
+              </div>
+              <div className="flex items-start gap-3 text-xs text-zinc-300">
+                <BadgeCheck className="h-4.5 w-4.5 text-purple-400 shrink-0 mt-0.5" />
+                <span className="leading-snug">Additional storage & team collaboration</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full pt-2">
+              <Button asChild className="w-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11 rounded-xl shadow-lg shadow-white/5 cursor-pointer order-2 sm:order-1 sm:flex-1">
+                <Link href="/#pricing">View Plans</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full h-11 rounded-xl border-zinc-800 bg-transparent text-zinc-400 hover:text-white hover:bg-zinc-900 cursor-pointer order-1 sm:order-2 sm:flex-1">
+                <Link href="/dashboard/projects">Go Back</Link>
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   if (createdData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] max-w-2xl mx-auto text-center space-y-10 animate-in zoom-in duration-500 pb-20">
@@ -71,7 +124,7 @@ export default function NewProjectPage() {
           <p className="text-zinc-400 text-lg max-w-md mx-auto leading-relaxed">The creative workspace is ready. You can now invite your client using the magic link below.</p>
         </div>
 
-        <Card className="bg-[#19191b] border-dashboard-border shadow-2xl shadow-black/40 w-full overflow-hidden p-0">
+        <Card className="bg-[#19191b] border-dashboard-border w-full overflow-hidden p-0">
           <CardContent className="p-0">
             <div className="p-6 text-left border-b border-dashboard-border bg-[#1c1c1e]">
               <div className="flex items-center justify-between mb-4">
@@ -101,7 +154,7 @@ export default function NewProjectPage() {
             href={`/dashboard/projects/${createdData.projectId}`}
             className="flex-1 max-w-[280px]"
           >
-            <Button className="w-full bg-white text-zinc-950 hover:bg-zinc-200 h-14 px-8 font-bold rounded-xl transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-white/5">
+            <Button className="w-full bg-white text-zinc-950 hover:bg-zinc-200 h-14 px-8 font-bold rounded-xl transition-transform hover:scale-[1.02] active:scale-[0.98] ">
               Enter Dashboard
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
@@ -139,7 +192,7 @@ export default function NewProjectPage() {
         className="grid grid-cols-1 lg:grid-cols-5 gap-6 p-0"
       >
         <div className="lg:col-span-3 space-y-6">
-          <Card className="bg-[#19191b] border-dashboard-border shadow-2xl shadow-black/20 overflow-hidden group p-6">
+          <Card className="bg-[#19191b] border-dashboard-border  overflow-hidden group p-6">
             <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity" />
             <div className="space-y-6">
               <div className="flex items-center gap-3">
@@ -172,7 +225,7 @@ export default function NewProjectPage() {
             </div>
           </Card>
 
-          <Card className="bg-[#19191b] border-dashboard-border shadow-2xl shadow-black/20 overflow-hidden group p-6">
+          <Card className="bg-[#19191b] border-dashboard-border overflow-hidden group p-6">
             <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-blue-500/50 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity" />
             <div className="space-y-6">
               <div className="flex items-center gap-3">

@@ -4,15 +4,8 @@ import React from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Italic from "../global/italic";
+import Eyebrow from "../global/Eyebrow";
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="eyebrow">
-      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-      {children}
-    </div>
-  );
-}
 
 export default function CTASection() {
   return (

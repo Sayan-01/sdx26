@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Italic from "../global/italic";
 import { Database, Workflow, Sparkles, ShieldCheck, Layers, WorkflowIcon, GitBranch, AppWindow, Palette, LucideIcon, LockIcon } from "lucide-react";
+import Eyebrow from "../global/Eyebrow";
 
 function IconPair({ Left, Right }: { Left: LucideIcon; Right: LucideIcon }) {
   return (
@@ -196,12 +197,7 @@ export default function Solution() {
       `}</style>
       <div className="container-page py-24 md:py-32">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[10px] font-medium text-zinc-300 tracking-wider uppercase mb-6">
-            <div className="flex items-center justify-center w-3 h-3 rounded-full border border-indigo-500/50 bg-indigo-500/10">
-              <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
-            </div>
-            The Solution
-          </div>
+          <Eyebrow>The Solution</Eyebrow>
           <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight text-foreground md:text-5xl">
             One structured system to <Italic>rule them all.</Italic>
           </h2>
@@ -258,7 +254,7 @@ export default function Solution() {
 
           {/* RIGHT — sticky visual */}
           <div className="hidden lg:block">
-            <div className="sticky top-[15%] flex flex-col justify-center h-[70vh]">
+            <div className="sticky top-[15%] flex flex-col justify-center h-[70vh] duration-1000">
               <div
                 className="relative aspect-[5/4] overflow-hidden rounded-3xl"
                 style={{
@@ -322,7 +318,7 @@ inset 0 -1px 0 rgba(0,0,0,0.08),
                     {pillars.map((_, i) => (
                       <span
                         key={i}
-                        className={`h-1 rounded-full transition-all duration-500 ${active === i ? "w-6" : "w-1.5"}`}
+                        className={`h-1 rounded-full transition-all duration-1000 ${active === i ? "w-6" : "w-1.5"}`}
                         style={{ background: active === i ? "rgba(0,0,0,0.7)" : "rgba(0,0,0,0.15)" }}
                       />
                     ))}
@@ -335,7 +331,7 @@ inset 0 -1px 0 rgba(0,0,0,0.08),
                     <div
                       key={i}
                       className={`absolute inset-0 flex items-center justify-center pt-6 viz-transition ${
-                        active === i ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 translate-y-8 scale-[0.93] pointer-events-none"
+                        active === i ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 translate-y-8 scale-[0.93] pointer-events-none "
                       }`}
                     >
                       <Vis />
