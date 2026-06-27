@@ -22,8 +22,8 @@ export default function CTASection() {
             }}
           />
           <div className="relative mx-auto max-w-4xl text-center">
-            <Eyebrow>
-              <span className="text-primary-foreground/70">Get started</span>
+            <Eyebrow className={"text-primary-foreground/70 border-purple-400 bg-purple-400/10"}>
+              Get started
             </Eyebrow>
             <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight md:text-5xl">
               Stop managing clients across 10 tools.

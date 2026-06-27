@@ -60,7 +60,7 @@ export default function ProjectLayout({
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold tracking-tight text-zinc-100">{project?.name}</h1>
+              <h1 className="text-xl font-bold text-zinc-100">{project?.name}</h1>
               <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">Active</div>
             </div>
             <p className="text-zinc-500 flex items-center gap-2 mt-1 text-xs font-medium">
