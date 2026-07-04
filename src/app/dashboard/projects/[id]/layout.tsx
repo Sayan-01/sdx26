@@ -51,7 +51,7 @@ export default function ProjectLayout({
   ];
 
   return (
-    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
+    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto">
       {/* Project Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-2">
         <div className="flex items-center gap-4">
@@ -60,18 +60,35 @@ export default function ProjectLayout({
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-zinc-100">{project?.name}</h1>
-              <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">Active</div>
+              {project ? (
+                <>
+                  <h1 className="text-xl font-bold text-zinc-100">{project.name}</h1>
+                  <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider shrink-0">
+                    {project.status === "ACTIVE" ? "Active" : project.status}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="h-6 w-48 bg-zinc-800/80 rounded animate-pulse" />
+                  <div className="h-6 w-14 bg-zinc-800/80 rounded animate-pulse shrink-0" />
+                </>
+              )}
             </div>
-            <p className="text-zinc-500 flex items-center gap-2 mt-1 text-xs font-medium">
+            <p className="text-zinc-500 flex items-center gap-2 mt-1.5 text-xs font-medium">
               <span className="flex items-center gap-1.5">
                 <Users className="h-3.5 w-3.5" />
-                Client: <span className="text-zinc-300">{project?.client.name}</span>
+                Client: {project ? <span className="text-zinc-300">{project.client.name}</span> : <span className="inline-block h-3.5 w-24 bg-zinc-800/80 rounded animate-pulse align-middle" />}
               </span>
               <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span className="flex items-center gap-1.5 text-zinc-400">
                 <CheckSquare className="h-3.5 w-3.5" />
-                4/12 Items Approved
+                {project ? (
+                  <span>
+                    {project.onboardingItem?.filter((item: any) => item.status === "APPROVED").length ?? 0}/{project.onboardingItem?.length ?? 0} Items Approved
+                  </span>
+                ) : (
+                  <span className="inline-block h-3.5 w-28 bg-zinc-800/80 rounded animate-pulse align-middle" />
+                )}
               </span>
             </p>
           </div>

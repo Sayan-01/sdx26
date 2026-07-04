@@ -18,7 +18,7 @@ const UpgradeCard = ({ activePlan = "basic" }: UpgradeCardProps) => {
           </span>
         </div>
         <h3 className="text-[15px] text-zinc-100 mb-1.5 tracking-tight">
-          {activePlan} Plan
+          {activePlan.toUpperCase()} Plan
         </h3>
         <p className="text-[13px] text-zinc-400 mb-4 leading-relaxed pr-2">
           Your agency is subscribed to the {activePlan} plan. Enjoy full access to your workspace.
