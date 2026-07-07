@@ -64,10 +64,10 @@ export default async function HeroSection() {
         </div>
 
         {/* Product preview */}
-        <div className="relative mx-auto mt-24 max-w-5xl md:mt-20">
+        <div className="relative mx-auto mt-12 max-w-5xl md:mt-20 md:w-full w-[170%] ">
           <div className="rounded-2xl border border-border bg-card p-2 shadow-elevated">
             <div className="overflow-hidden rounded-xl border border-border/80 bg-surface">
-              <Image src="/image.png" alt="hero" width={1000} height={1000} className="w-full object-cover rounded-lg" />
+              <Image src="/image.png" alt="hero" width={1000} height={1000} className="md:w-full w-[200%] object-cover rounded-lg" />
             </div>
           </div>
           <div

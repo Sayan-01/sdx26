@@ -26,7 +26,19 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
     // Generate new token
     const token = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    await prisma.magicLink.updateMany({
+      where: {
+        projectId: project.id,
+        clientId: project.clientId,
+        usedAt: null, // only unused links
+      },
+      data: {
+        expiresAt: new Date(), // mark as used so they can't be used anymore
+      },
+    });
     // Create new magic link
+
     await prisma.magicLink.create({
       data: {
         agencyId: project.agencyId,

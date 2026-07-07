@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { CheckIcon, ClockIcon, LockIcon, XIcon } from "lucide-react";
 
@@ -15,6 +15,39 @@ export default function PortalEntryPage() {
   const router = useRouter();
   const [state, setState] = useState<State>("verifying");
   const [errorMsg, setErrorMsg] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [showContent, setShowContent] = useState(false);
+  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+
+  // Animate progress bar during verification
+  useEffect(() => {
+    if (state === "verifying") {
+      setProgress(0);
+      progressInterval.current = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 85) return prev; // Stall at 85% until real completion
+          return prev + Math.random() * 12;
+        });
+      }, 300);
+    } else {
+      // Snap to 100% then clear
+      setProgress(100);
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+        progressInterval.current = null;
+      }
+    }
+    return () => {
+      if (progressInterval.current) clearInterval(progressInterval.current);
+    };
+  }, [state]);
+
+  // Delay content reveal for smooth transition between states
+  useEffect(() => {
+    setShowContent(false);
+    const t = setTimeout(() => setShowContent(true), 60);
+    return () => clearTimeout(t);
+  }, [state]);
 
   useEffect(() => {
     if (!token) return;
@@ -33,7 +66,7 @@ export default function PortalEntryPage() {
           setState("redirecting");
           setTimeout(() => {
             window.location.href = `/portal/${token}/dashboard`;
-          }, 800);
+          }, 1200);
           return;
         }
 
@@ -87,12 +120,31 @@ export default function PortalEntryPage() {
         style={styles.card}
         className="fade-up"
       >
-        {state === "verifying" && <VerifyingState />}
-        {state === "redirecting" && <RedirectingState />}
-        {state === "already_used" && <AlreadyUsedState />}
-        {state === "expired" && <ExpiredState />}
-        {state === "invalid" && <InvalidState />}
-        {state === "error" && <ErrorState message={errorMsg} />}
+        {/* Progress bar */}
+        <div style={styles.progressTrack}>
+          <div
+            style={{
+              ...styles.progressBar,
+              width: `${Math.min(progress, 100)}%`,
+              opacity: state === "verifying" || state === "redirecting" ? 1 : 0,
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            ...styles.contentTransition,
+            opacity: showContent ? 1 : 0,
+            transform: showContent ? "translateY(0)" : "translateY(6px)",
+          }}
+        >
+          {state === "verifying" && <VerifyingState />}
+          {state === "redirecting" && <RedirectingState />}
+          {state === "already_used" && <AlreadyUsedState />}
+          {state === "expired" && <ExpiredState />}
+          {state === "invalid" && <InvalidState />}
+          {state === "error" && <ErrorState message={errorMsg} />}
+        </div>
       </div>
     </div>
   );
@@ -105,9 +157,17 @@ export default function PortalEntryPage() {
 function VerifyingState() {
   return (
     <div style={styles.stateWrap}>
-      <div className="spinner" />
+      <div style={styles.spinnerOuter}>
+        <div style={styles.spinnerGlow} />
+        <div className="spinner" />
+      </div>
       <p style={styles.stateTitle}>Opening your portal</p>
       <p style={styles.stateDesc}>Verifying your access link...</p>
+      <div style={styles.dotsWrap}>
+        <span style={{ ...styles.dot, animationDelay: "0ms" }} />
+        <span style={{ ...styles.dot, animationDelay: "200ms" }} />
+        <span style={{ ...styles.dot, animationDelay: "400ms" }} />
+      </div>
     </div>
   );
 }
@@ -115,8 +175,11 @@ function VerifyingState() {
 function RedirectingState() {
   return (
     <div style={styles.stateWrap}>
-      <div style={styles.iconWrap}>
-        <CheckIcon />
+      <div style={{ ...styles.iconWrap, animation: "iconPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }}>
+        <CheckIcon
+          color="var(--green, #22c55e)"
+          size={22}
+        />
       </div>
       <p style={styles.stateTitle}>You're in!</p>
       <p style={styles.stateDesc}>Taking you to your project...</p>
@@ -127,11 +190,14 @@ function RedirectingState() {
 function AlreadyUsedState() {
   return (
     <div style={styles.stateWrap}>
-      <div style={{ ...styles.iconWrap, background: "var(--amber-bg)" }}>
-        <LockIcon color="var(--amber)" />
+      <div style={{ ...styles.iconWrap, background: "rgba(245, 158, 11, 0.1)", animation: "iconPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }}>
+        <LockIcon
+          color="#f59e0b"
+          size={22}
+        />
       </div>
       <p style={styles.stateTitle}>Link already used</p>
-      <p style={styles.stateDesc}>This link can only be used once. If your session expired or you're on a new device, contact your agency for a new link.</p>
+      <p style={styles.stateDesc}>This link can only be used once. If your session expired or you&apos;re on a new device, contact your agency for a new link.</p>
       <ContactHint />
     </div>
   );
@@ -140,8 +206,11 @@ function AlreadyUsedState() {
 function ExpiredState() {
   return (
     <div style={styles.stateWrap}>
-      <div style={{ ...styles.iconWrap, background: "var(--amber-bg)" }}>
-        <ClockIcon color="var(--amber)" />
+      <div style={{ ...styles.iconWrap, background: "rgba(245, 158, 11, 0.1)", animation: "iconPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }}>
+        <ClockIcon
+          color="#f59e0b"
+          size={22}
+        />
       </div>
       <p style={styles.stateTitle}>Link expired</p>
       <p style={styles.stateDesc}>Portal links expire after 7 days. Please contact your agency and ask them to send a new link.</p>
@@ -153,11 +222,14 @@ function ExpiredState() {
 function InvalidState() {
   return (
     <div style={styles.stateWrap}>
-      <div style={{ ...styles.iconWrap, background: "var(--red-bg)" }}>
-        <XIcon color="var(--red)" />
+      <div style={{ ...styles.iconWrap, background: "rgba(239, 68, 68, 0.1)", animation: "iconPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }}>
+        <XIcon
+          color="#ef4444"
+          size={22}
+        />
       </div>
       <p style={styles.stateTitle}>Invalid link</p>
-      <p style={styles.stateDesc}>This link doesn't exist or has been revoked. Please contact your agency.</p>
+      <p style={styles.stateDesc}>This link doesn&apos;t exist or has been revoked. Please contact your agency.</p>
       <ContactHint />
     </div>
   );
@@ -166,14 +238,25 @@ function InvalidState() {
 function ErrorState({ message }: { message: string }) {
   return (
     <div style={styles.stateWrap}>
-      <div style={{ ...styles.iconWrap, background: "var(--red-bg)" }}>
-        <XIcon color="var(--red)" />
+      <div style={{ ...styles.iconWrap, background: "rgba(239, 68, 68, 0.1)", animation: "iconPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards" }}>
+        <XIcon
+          color="#ef4444"
+          size={22}
+        />
       </div>
       <p style={styles.stateTitle}>Something went wrong</p>
       <p style={styles.stateDesc}>{message}</p>
       <button
         style={styles.retryBtn}
         onClick={() => window.location.reload()}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-1px)";
+          e.currentTarget.style.boxShadow = "0 4px 12px rgba(99, 102, 241, 0.25)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "none";
+        }}
       >
         Try again
       </button>
@@ -214,13 +297,34 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: "-0.01em",
   },
   card: {
-    background: "var(--surface)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius)",
+    background: "#19191b",
+    border: "1px solid #2e2e33",
+    borderRadius: "16px",
     padding: "48px 40px",
     width: "100%",
     maxWidth: "420px",
     textAlign: "center" as const,
+    position: "relative" as const,
+    overflow: "hidden" as const,
+  },
+  progressTrack: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "2px",
+    background: "rgba(255, 255, 255, 0.04)",
+    overflow: "hidden" as const,
+    borderRadius: "2px",
+  },
+  progressBar: {
+    height: "100%",
+    background: "linear-gradient(90deg, rgba(129, 140, 248, 0.6), rgba(99, 102, 241, 0.9))",
+    borderRadius: "2px",
+    transition: "width 0.4s ease, opacity 0.6s ease",
+  },
+  contentTransition: {
+    transition: "opacity 0.35s ease, transform 0.35s ease",
   },
   stateWrap: {
     display: "flex",
@@ -228,43 +332,72 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     gap: "12px",
   },
-  iconWrap: {
+  spinnerOuter: {
+    position: "relative" as const,
     width: "48px",
     height: "48px",
-    borderRadius: "50%",
-    background: "var(--green-bg)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: "4px",
   },
+  spinnerGlow: {
+    position: "absolute" as const,
+    inset: "-4px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(129, 140, 248, 0.15), transparent 70%)",
+    animation: "pulse 2s ease-in-out infinite",
+  },
+  iconWrap: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    background: "rgba(34, 197, 94, 0.1)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: "4px",
+  },
+  dotsWrap: {
+    display: "flex",
+    gap: "6px",
+    marginTop: "4px",
+  },
+  dot: {
+    width: "4px",
+    height: "4px",
+    borderRadius: "50%",
+    background: "rgba(161, 161, 170, 0.4)",
+    animation: "dotBounce 1.2s ease-in-out infinite",
+  } as React.CSSProperties,
   stateTitle: {
     fontSize: "18px",
-    fontWeight: "500",
-    color: "var(--text-1)",
+    fontWeight: "600",
+    color: "#fafafa",
     letterSpacing: "-0.02em",
   },
   stateDesc: {
     fontSize: "14px",
-    color: "var(--text-2)",
+    color: "#a1a1aa",
     lineHeight: "1.6",
     maxWidth: "320px",
   },
   hint: {
     fontSize: "12px",
-    color: "var(--text-3)",
+    color: "#71717a",
     marginTop: "8px",
   },
   retryBtn: {
-    marginTop: "8px",
-    padding: "8px 20px",
-    background: "var(--accent)",
-    color: "var(--accent-fg)",
+    marginTop: "12px",
+    padding: "10px 24px",
+    background: "linear-gradient(135deg, #6366f1, #4f46e5)",
+    color: "#ffffff",
     border: "none",
-    borderRadius: "var(--radius-sm)",
+    borderRadius: "10px",
     fontSize: "14px",
     fontWeight: "500",
     cursor: "pointer",
     fontFamily: "inherit",
+    transition: "all 0.2s ease",
   },
 };

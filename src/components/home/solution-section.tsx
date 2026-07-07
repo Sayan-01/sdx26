@@ -213,7 +213,7 @@ export default function Solution() {
               <div
                 key={p.title}
                 data-pillar-index={i}
-                className="flex min-h-[70vh] flex-col justify-center py-12"
+                className="flex min-h-[70vh] flex-col justify-center py-12 max-sm:px-2"
               >
                 <div className={`transition-all duration-500 ${active === i ? "opacity-100 translate-y-0" : "opacity-40 translate-y-1"}`}>
                   <div className="flex items-center gap-3.5">
@@ -222,7 +222,7 @@ export default function Solution() {
                   </div>
                   <div className="flex gap-4 items-center mt-7">
                     <div
-                      className={`flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                      className={`flex items-center justify-center min-w-12 h-12 rounded-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         active === i
                           ? "bg-gradient-to-br from-white to-zinc-200 border-transparent text-zinc-900 shadow-[0_0.597px_0.597px_-0.875px_rgba(0,0,0,0.12),0_1.81px_1.81px_-1.75px_rgba(0,0,0,0.1),0_4.78px_4.78px_-2.625px_rgba(0,0,0,0.08),0_15px_15px_-3.5px_rgba(0,0,0,0.05),inset_-0.73px_0.73px_2px_rgba(255,255,255,0.9),inset_0_0_0_1px_rgba(0,0,0,0.03)] -translate-y-0.5"
                           : "bg-surface-2/40 border border-border/80 text-muted-foreground/60"

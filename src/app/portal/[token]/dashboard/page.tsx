@@ -221,7 +221,7 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
 function StatCard({ title, value, icon, desc }: { title: string; value: string; icon: React.ReactNode; desc: string }) {
   return (
     <Card className="bg-[#19191b] border-dashboard-border/50 overflow-hidden group hover:border-dashboard-border transition-colors">
-      <CardContent className="p-4 flex items-center gap-4">
+      <CardContent className="p-4 flex items-cente gap-4">
         <div className="w-10 h-10 rounded-xl bg-[#151518] border border-dashboard-border flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300">{icon}</div>
         <div className="overflow-hidden">
           <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 truncate">{title}</p>

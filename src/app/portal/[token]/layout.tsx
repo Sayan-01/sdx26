@@ -14,15 +14,27 @@ export default async function PortalLayout({ children, params }: { children: Rea
   const { token } = await params;
   const session = await getClientSession();
 
-
+  
   const headersList = await headers();
   const currentPath = headersList.get("x-pathname") || "";
   const entryPath = `/portal/${token}`;
-
+  
+  if (session && session.token !== token) {
+    if (currentPath !== entryPath && currentPath !== `${entryPath}/`) {
+      redirect(entryPath);
+    }
+  }
   // If session exists and we are at the entry page (exactly /[token]),
   // redirect specifically to dashboard.
-  if (session && (currentPath === entryPath || currentPath === `${entryPath}/`)) {
+  if (session && session.token === token && (currentPath === entryPath || currentPath === `${entryPath}/`)) {
     redirect(`${entryPath}/dashboard`);
+  }
+
+  // Tenant Validation: Ensure client matches subdomain agency context
+  const agencyIdHeader = headersList.get("x-agency-id");
+  if (session && agencyIdHeader && session.agencyId !== agencyIdHeader) {
+    // Tenant mismatch detected, redirect back to entry path
+    redirect(entryPath);
   }
 
   // If no session and we are NOT on the entry page, MUST redirect back to entry.
@@ -31,7 +43,7 @@ export default async function PortalLayout({ children, params }: { children: Rea
   }
 
   // If no session and it is the entry page, just render without the nav/sidebar
-  if (!session) {
+  if (!session || (session.token !== token && (currentPath === entryPath || currentPath === `${entryPath}/`))) {
     return <>{children}</>;
   }
 

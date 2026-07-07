@@ -20,8 +20,8 @@ These features are either partially built (mocked) or missing completely, and mu
 - [ ] **Interactive Status Checks:** Replace static task lists in the dashboard/project page with interactive checkboxes/controls to allow instant status updates.
 
 ### 3. 🕸️ Subdomain Routing Middleware
-- [ ] **Next.js Subdomain Rewrites:** Implement `middleware.ts` at the root of the project to capture subdomain requests (`agency-slug.milestack.com`) and rewrite them to resolve the correct agency tenant context via `/api/internal/resolve-tenant`.
-- [ ] **Local Testing Configuration:** Document how to configure dynamic subdomains locally (e.g., via `localhost` hosts file adjustment or `lvh.me`).
+- [X] **Next.js Subdomain Rewrites:** Implement `middleware.ts` at the root of the project to capture subdomain requests (`agency-slug.milestack.com`) and rewrite them to resolve the correct agency tenant context via `/api/internal/resolve-tenant`.
+- [X] **Local Testing Configuration:** Document how to configure dynamic subdomains locally (e.g., via `localhost` hosts file adjustment or `lvh.me`).
 
 ### 4. 🔑 Premium Magic Link UX & Delivery
 - [ ] **HTML Email Layout:** Upgrade the text-only nodemailer notification templates in [sendPortalUrl.ts](file:///d:/SAYAN-X/abc/sdx26/src/lib/sendPortalUrl.ts) to premium HTML layouts with white-label agency branding and clearer call-to-action buttons.
