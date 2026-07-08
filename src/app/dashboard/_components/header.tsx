@@ -12,14 +12,13 @@ const Header = () => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const current = segments[segments.length - 1] || "Home";
-  
 
   // Optional: format to Capitalize first letter
   const formattedCurrent = current.charAt(0).toUpperCase() + current.slice(1).replace(/-/g, " ");
 
   return (
-    <header className="border-b-2 border-dashed border-dashboard-border max-md:fixed top-0 z-40">
-      <div className="flex items-center h-16 md:px-6 px-5 ">
+    <header className="border-b border-dashboard-border max-md:fixed top-0 z-40">
+      <div className="flex items-center h-16 md:px-6 px-5 max-w-[1400px] mx-auto">
         {/* Breadcrumb */}
         <Breadcrumb className="lg:flex hidden">
           <BreadcrumbList>
@@ -61,11 +60,10 @@ const Header = () => {
             <input
               type="text"
               placeholder="Search"
-              className="block w-full pl-10 pr-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-lg text-sm dark:bg-zinc-800 dark:text-zinc-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="block w-full pl-10 pr-3 py-1.5 border border-border rounded-lg text-sm bg-card focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <NotificationBellButton/>
-
+          <NotificationBellButton />
           <UserButton />
         </div>
       </div>

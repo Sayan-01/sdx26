@@ -1,16 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Google_Sans, Poppins } from "next/font/google";
+import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
 
-
-const main = Poppins({
+const sans = Inter({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-sans",
 });
 
+const display = Instrument_Serif({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: "Milestack",
@@ -25,14 +37,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="dark"
+      className={`dark ${sans.variable} ${display.variable} ${mono.variable}`}
     >
       <body
-        className={` scroll-smooth w-full overflow-auto antialiased box selection_color bg-zinc-950 ${main.className}`}
+        className="scroll-smooth w-full overflow-auto antialiased box selection_color bg-background text-foreground"
         cz-shortcut-listen="true"
       >
         <NextTopLoader
-          color="#ffffff"
+          color="var(--accent)"
           height={2}
           showSpinner={false}
         />
@@ -41,3 +53,4 @@ export default function RootLayout({
     </html>
   );
 }
+

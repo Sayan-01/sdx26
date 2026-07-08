@@ -11,15 +11,7 @@ import DashboardHeading from "../_components/dashboard-heading";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getAllProjects } from "../../../../server/projects";
 import { ProjectCard } from "@/types/types";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ProjectsPage() {
@@ -60,9 +52,7 @@ export default function ProjectsPage() {
   }, []);
 
   const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.client.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) || project.client.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "ALL" || project.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -126,11 +116,7 @@ export default function ProjectsPage() {
               <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300", stat.bg, stat.color)}>{stat.icon}</div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{stat.label}</p>
-                {isLoading ? (
-                  <div className="h-6 w-12 bg-zinc-800/50 rounded animate-pulse mt-1" />
-                ) : (
-                  <p className="text-xl font-bold text-white">{stat.value}</p>
-                )}
+                {isLoading ? <div className="h-6 w-12 bg-zinc-800/50 rounded animate-pulse mt-1" /> : <p className="text-xl font-bold text-white">{stat.value}</p>}
               </div>
             </CardContent>
           </Card>
@@ -157,14 +143,17 @@ export default function ProjectsPage() {
                 size="sm"
                 className={cn(
                   "bg-[#151518] border-dashboard-border text-zinc-400 hover:text-white h-10 px-4 gap-2 flex-1 md:flex-none",
-                  statusFilter !== "ALL" && "text-indigo-400 border-indigo-500/50"
+                  statusFilter !== "ALL" && "text-indigo-400 border-indigo-500/50",
                 )}
               >
                 <Filter className="h-4 w-4" />
                 {statusFilter === "ALL" ? "Filters" : statusFilter.replace("_", " ")}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-[#19191b] border-dashboard-border">
+            <DropdownMenuContent
+              align="end"
+              className="w-48 bg-[#19191b] border-dashboard-border"
+            >
               <DropdownMenuLabel className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Status Filter</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-dashboard-border" />
               <DropdownMenuCheckboxItem
@@ -226,7 +215,10 @@ export default function ProjectsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-all duration-0">
           {isLoading ? (
             Array.from({ length: 8 }).map((_, i) => (
-              <Card key={i} className="bg-[#19191b] border-dashboard-border/60 p-0 overflow-hidden">
+              <Card
+                key={i}
+                className="bg-[#19191b] border-dashboard-border/60 p-0 overflow-hidden"
+              >
                 <CardContent className="p-5 flex flex-col h-full space-y-5">
                   <div className="flex items-start justify-between">
                     <div className="w-12 h-12 rounded-2xl bg-zinc-800/50 animate-pulse border border-dashboard-border/50" />
@@ -246,7 +238,10 @@ export default function ProjectsPage() {
                   <div className="pt-5 border-t border-dashboard-border flex items-center justify-between">
                     <div className="flex -space-x-2">
                       {[1, 2, 3].map((j) => (
-                        <div key={j} className="w-8 h-8 rounded-full bg-zinc-800/50 animate-pulse border-2 border-[#19191b]" />
+                        <div
+                          key={j}
+                          className="w-8 h-8 rounded-full bg-zinc-800/50 animate-pulse border-2 border-[#19191b]"
+                        />
                       ))}
                     </div>
                     <div className="h-3 w-16 bg-zinc-800/50 rounded animate-pulse" />
@@ -257,9 +252,7 @@ export default function ProjectsPage() {
           ) : filteredProjects.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-20 text-zinc-500">
               <div className="flex gap-4">
-                <div
-                  className="w-16 h-16 rounded-full bg-zinc-900 border border-dashboard-border flex items-center justify-center mb-4"
-                >
+                <div className="w-16 h-16 rounded-full bg-zinc-900 border border-dashboard-border flex items-center justify-center mb-4">
                   <Search className="h-8 w-8 text-zinc-700" />
                 </div>
               </div>
@@ -344,17 +337,19 @@ export default function ProjectsPage() {
                       <div className="flex -space-x-2">
                         {project.projectMembers && project.projectMembers.length > 0 ? (
                           project.projectMembers.slice(0, 3).map((member, i) => (
-                            <Avatar key={i} className="w-8 h-8 border-2 border-[#19191b] hover:z-10 transition-transform">
-                              <AvatarImage src={member.user.avatarUrl || ""} alt={member.user.name || "Member"} />
-                              <AvatarFallback className="bg-zinc-800 text-[10px] font-bold text-zinc-300 uppercase">
-                                {member.user.name?.substring(0, 2) || "TM"}
-                              </AvatarFallback>
+                            <Avatar
+                              key={i}
+                              className="w-8 h-8 border-2 border-[#19191b] hover:z-10 transition-transform"
+                            >
+                              <AvatarImage
+                                src={member.user.avatarUrl || ""}
+                                alt={member.user.name || "Member"}
+                              />
+                              <AvatarFallback className="bg-zinc-800 text-[10px] font-bold text-zinc-300 uppercase">{member.user.name?.substring(0, 2) || "TM"}</AvatarFallback>
                             </Avatar>
                           ))
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-zinc-800 border-2 border-[#19191b] flex items-center justify-center text-[10px] font-bold text-zinc-300">
-                            -
-                          </div>
+                          <div className="w-8 h-8 rounded-full bg-zinc-800 border-2 border-[#19191b] flex items-center justify-center text-[10px] font-bold text-zinc-300">-</div>
                         )}
                         {project.projectMembers && project.projectMembers.length > 3 && (
                           <div className="w-8 h-8 rounded-full bg-[#151518] border-2 border-[#19191b] flex items-center justify-center text-[10px] font-bold text-zinc-500 group-hover:border-zinc-700 transition-colors">
@@ -404,7 +399,10 @@ export default function ProjectsPage() {
             <TableBody>
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i} className="border-dashboard-border">
+                  <TableRow
+                    key={i}
+                    className="border-dashboard-border"
+                  >
                     <TableCell className="p-5">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-zinc-800/50 animate-pulse" />
@@ -414,16 +412,24 @@ export default function ProjectsPage() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell><div className="h-6 w-20 bg-zinc-800/50 rounded-full animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-16 bg-zinc-800/50 rounded animate-pulse" /></TableCell>
+                    <TableCell>
+                      <div className="h-6 w-20 bg-zinc-800/50 rounded-full animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-16 bg-zinc-800/50 rounded animate-pulse" />
+                    </TableCell>
                     <TableCell className="w-[200px]">
                       <div className="space-y-2">
                         <div className="h-3 w-8 bg-zinc-800/50 rounded animate-pulse ml-auto" />
                         <div className="h-1.5 w-full bg-zinc-800/50 rounded-full animate-pulse" />
                       </div>
                     </TableCell>
-                    <TableCell className="px-5"><div className="h-4 w-24 bg-zinc-800/50 rounded animate-pulse" /></TableCell>
-                    <TableCell className="text-right p-5"><div className="h-8 w-8 bg-zinc-800/50 rounded animate-pulse ml-auto" /></TableCell>
+                    <TableCell className="px-5">
+                      <div className="h-4 w-24 bg-zinc-800/50 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell className="text-right p-5">
+                      <div className="h-8 w-8 bg-zinc-800/50 rounded animate-pulse ml-auto" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : filteredProjects.length === 0 ? (

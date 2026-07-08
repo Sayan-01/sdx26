@@ -52,7 +52,10 @@ const UserButton = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="dark:bg-zinc-700" />
-        <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200" asChild>
+        <DropdownMenuItem
+          className="dark:hover:bg-zinc-700 dark:text-zinc-200"
+          asChild
+        >
           <Link
             href="/dashboard/settings"
             className="flex items-center w-full cursor-pointer"
@@ -61,7 +64,10 @@ const UserButton = () => {
             Settings
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="dark:hover:bg-zinc-700 dark:text-zinc-200" asChild>
+        <DropdownMenuItem
+          className="dark:hover:bg-zinc-700 dark:text-zinc-200"
+          asChild
+        >
           <form
             action={Sign_Out}
             className="w-full"

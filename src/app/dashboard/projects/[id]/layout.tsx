@@ -3,29 +3,12 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  Settings, 
-  Users, 
-  CheckSquare, 
-  Milestone, 
-  FileBox, 
-  Activity,
-  MoreVertical,
-  ExternalLink,
-  AlertCircle,
-  Briefcase
-} from "lucide-react";
+import { Settings, Users, CheckSquare, Milestone, FileBox, Activity, MoreVertical, ExternalLink, AlertCircle, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getProjectById } from "@server/projects";
 
-export default function ProjectLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ id: string }>;
-}) {
+export default function ProjectLayout({ children, params }: { children: React.ReactNode; params: Promise<{ id: string }> }) {
   const pathname = usePathname();
   const { id } = React.use(params);
   const [project, setProject] = React.useState<any>(null);
@@ -35,7 +18,6 @@ export default function ProjectLayout({
       const project = await getProjectById(id);
       setProject(project.project);
       console.log(project);
-      
     };
     getProject();
   }, []);

@@ -22,7 +22,7 @@ export default function AgencyTeamPage() {
     setIsLoading(true);
     try {
       const res = await getAllTeamMembers();
-      if(res.success) {
+      if (res.success) {
         setTeams(res.teamMembers);
       } else {
         toast.error("Failed to fetch team members");
@@ -32,40 +32,37 @@ export default function AgencyTeamPage() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  useEffect(()=> {
+  useEffect(() => {
     fetchTeams();
-  }, [])
+  }, []);
 
   const filteredTeams = useMemo(() => {
     if (!searchTerm) return teams;
-    return teams.filter((member) => 
-      member.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      member.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return teams.filter((member) => member.name?.toLowerCase().includes(searchTerm.toLowerCase()) || member.email?.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [teams, searchTerm]);
 
   const exportToCSV = () => {
     if (filteredTeams.length === 0) return;
-    
+
     const headers = ["Name", "Email", "Role", "Designation", "Joined", "Status"];
-    const csvData = filteredTeams.map(member => [
+    const csvData = filteredTeams.map((member) => [
       member.name || "Unnamed",
       member.email,
       member.role,
       member.teamMembers?.[0]?.designation || (member.role === "OWNER" ? "Founder" : "Team Member"),
       new Date(member.createdAt).toLocaleDateString(),
-      member.password ? "Active" : "Pending"
+      member.password ? "Active" : "Pending",
     ]);
-    
-    const csvContent = [headers, ...csvData].map(e => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    const csvContent = [headers, ...csvData].map((e) => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `agency-team-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
+    link.setAttribute("download", `agency-team-${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -80,10 +77,10 @@ export default function AgencyTeamPage() {
           description="Manage your internal team members and their roles across the whole agency."
         />
         <Link href="/dashboard/team/invite">
-        <Button className="bg-white text-zinc-950 hover:bg-zinc-200 gap-2 h-10">
-          <UserPlus className="h-4 w-4" />
-          Invite Team Member
-        </Button>
+          <Button className="bg-white text-zinc-950 hover:bg-zinc-200 gap-2 h-10">
+            <UserPlus className="h-4 w-4" />
+            Invite Team Member
+          </Button>
         </Link>
       </div>
 
@@ -123,99 +120,108 @@ export default function AgencyTeamPage() {
       <div className="rounded-xl border border-dashboard-border overflow-hidden bg-[#19191b] group relative card_shadow">
         <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="bg-[#151518] overflow-hidden">
-        <Table>
-          <TableHeader className="bg-[#19191b]">
-            <TableRow className="border-dashboard-border hover:bg-transparent">
-              <TableHead className="w-[300px] text-zinc-400 font-bold uppercase tracking-widest text-[10px] p-5">Member</TableHead>
-              <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Designation</TableHead>
-              <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Role</TableHead>
-              <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Joined</TableHead>
-              <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Status</TableHead>
-              <TableHead className="text-right"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-48 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
-                    <p className="text-sm text-zinc-500">Loading team members...</p>
-                  </div>
-                </TableCell>
+          <Table>
+            <TableHeader className="bg-[#19191b]">
+              <TableRow className="border-dashboard-border hover:bg-transparent">
+                <TableHead className="w-[300px] text-zinc-400 font-bold uppercase tracking-widest text-[10px] p-5">Member</TableHead>
+                <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Designation</TableHead>
+                <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Role</TableHead>
+                <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Joined</TableHead>
+                <TableHead className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] ">Status</TableHead>
+                <TableHead className="text-right"></TableHead>
               </TableRow>
-            ) : filteredTeams.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-48 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <p className="font-bold text-zinc-400">No team members found</p>
-                    <p className="text-xs text-zinc-500">Try adjusting your search or inviting someone.</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredTeams.map((member: any, i: number) => (
-                <TableRow
-                  key={member.id}
-                  className="border-dashboard-border hover:bg-[#19191b] transition-colors group"
-                >
-                  <TableCell className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-zinc-800/50 border border-dashboard-border flex items-center justify-center font-bold text-xs text-zinc-400 group-hover:bg-zinc-800 group-hover:text-white transition-colors uppercase">
-                        {(member.name || "?")
-                          .split(" ")
-                          .map((n: string) => n[0])
-                          .join("")}
-                      </div>
-                      <div>
-                        <p className="font-medium text-white">{member.name || "Unnamed User"}</p>
-                        <p className="text-xs text-zinc-500 flex items-center gap-1">{member.email}</p>
-                      </div>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="h-48 text-center"
+                  >
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+                      <p className="text-sm text-zinc-500">Loading team members...</p>
                     </div>
-                  </TableCell>
-                <TableCell className="text-zinc-400">{member.designation || "Team Member"}</TableCell>
-                  <TableCell>
-                  <span className={cn("py-0.5 rounded text-[10px] font-bold uppercase tracking-widest", member.role === "OWNER" ? "text-emerald-500" : "text-zinc-500")}>{member.role}</span>
-                  </TableCell>
-                <TableCell className="text-zinc-500 text-sm">{new Date(member.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                    <div className={cn("w-1.5 h-1.5 rounded-full", member.password ? "bg-emerald-500" : "bg-amber-500")} />
-                      <span className="text-sm font-medium">{member.password ? "Active" : "Pending"}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-zinc-600 hover:text-white h-8 w-8"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-[#19191b] border-dashboard-border text-zinc-400 w-50">
-                        <DropdownMenuLabel className="text-white text-xs">Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-dashboard-border" />
-                        <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2">
-                          <UserCheck className="h-4 w-4" /> Edit Permissions
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2">
-                          <Edit className="h-4 w-4" /> Edit Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-dashboard-border" />
-                        <DropdownMenuItem className="focus:bg-zinc-800 text-red-500 focus:text-red-400 cursor-pointer gap-2">
-                          <Trash2 className="h-4 w-4" /> Remove from Agency
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : filteredTeams.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="h-48 text-center"
+                  >
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <p className="font-bold text-zinc-400">No team members found</p>
+                      <p className="text-xs text-zinc-500">Try adjusting your search or inviting someone.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredTeams.map((member: any, i: number) => (
+                  <TableRow
+                    key={member.id}
+                    className="border-dashboard-border hover:bg-[#19191b] transition-colors group"
+                  >
+                    <TableCell className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-zinc-800/50 border border-dashboard-border flex items-center justify-center font-bold text-xs text-zinc-400 group-hover:bg-zinc-800 group-hover:text-white transition-colors uppercase">
+                          {(member.name || "?")
+                            .split(" ")
+                            .map((n: string) => n[0])
+                            .join("")}
+                        </div>
+                        <div>
+                          <p className="font-medium text-white">{member.name || "Unnamed User"}</p>
+                          <p className="text-xs text-zinc-500 flex items-center gap-1">{member.email}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-zinc-400">{member.designation || "Team Member"}</TableCell>
+                    <TableCell>
+                      <span className={cn("py-0.5 rounded text-[10px] font-bold uppercase tracking-widest", member.role === "OWNER" ? "text-emerald-500" : "text-zinc-500")}>{member.role}</span>
+                    </TableCell>
+                    <TableCell className="text-zinc-500 text-sm">{new Date(member.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className={cn("w-1.5 h-1.5 rounded-full", member.password ? "bg-emerald-500" : "bg-amber-500")} />
+                        <span className="text-sm font-medium">{member.password ? "Active" : "Pending"}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-zinc-600 hover:text-white h-8 w-8"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-[#19191b] border-dashboard-border text-zinc-400 w-50"
+                        >
+                          <DropdownMenuLabel className="text-white text-xs">Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator className="bg-dashboard-border" />
+                          <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2">
+                            <UserCheck className="h-4 w-4" /> Edit Permissions
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2">
+                            <Edit className="h-4 w-4" /> Edit Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className="bg-dashboard-border" />
+                          <DropdownMenuItem className="focus:bg-zinc-800 text-red-500 focus:text-red-400 cursor-pointer gap-2">
+                            <Trash2 className="h-4 w-4" /> Remove from Agency
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
 

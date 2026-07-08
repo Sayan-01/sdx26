@@ -58,7 +58,19 @@ const iconMap: Record<string, any> = {
   Milestone,
 };
 
-export function SidebarComp({ userId, defaultOption = false, sidebarNav, sidebarUtils, activePlan }: { userId: string | undefined; defaultOption?: boolean; sidebarNav: any[]; sidebarUtils: any[]; activePlan?: string }) {
+export function SidebarComp({
+  userId,
+  defaultOption = false,
+  sidebarNav,
+  sidebarUtils,
+  activePlan,
+}: {
+  userId: string | undefined;
+  defaultOption?: boolean;
+  sidebarNav: any[];
+  sidebarUtils: any[];
+  activePlan?: string;
+}) {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const openState = useMemo(() => (defaultOption ? { open: true } : {}), [defaultOption]);
@@ -84,7 +96,7 @@ export function SidebarComp({ userId, defaultOption = false, sidebarNav, sidebar
       <SheetContent
         showX={!defaultOption}
         side="left"
-        className={cn("w-[260px] gap-0 hidden flex-col min-[1150px]:flex justify-between h-full p-6 bg-transparent border-0", {
+        className={cn("w-[260px] gap-0 hidden flex-col min-[1150px]:flex justify-between h-full p-6 bg-card border-0", {
           "hidden md:flex z-0 ": defaultOption,
           "flex md:hidden z-100 ": !defaultOption,
         })}
