@@ -6,7 +6,7 @@ import { CheckSquare, Milestone as MilestoneIcon, TrendingUp, Layout, MessageSqu
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import DashboardHeading from "@/app/dashboard/_components/dashboard-heading";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardCard from "@/app/dashboard/_components/dashboard-card";
 
 export default async function PortalDashboardPage({ params }: { params: Promise<{ token: string }> }) {
@@ -132,14 +132,14 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
           <DashboardCard
             title="Onboarding Checklist"
             link={`/portal/${token}/onboarding`}
-            icon={<CheckSquare className="h-4 w-4 text-amber-400" />}
+            icon={<CheckSquare className="h-5 w-5 text-amber-400" />}
           >
             <div className="divide-y divide-zinc-800/60 flex-1 box min-h-0">
               {project.onboardingItem.length > 0 ? (
                 project.onboardingItem.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 hover:bg-zinc-900/50 transition-colors group"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-zinc-900/50 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
                       <div
@@ -179,14 +179,11 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
           >
             <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box">
               {project.activityLogs.length > 0 ? (
-                project.activityLogs.map((log) => (
+                project.activityLogs.slice(0, 5).map((log) => (
                   <div
                     key={log.id}
-                    className="flex gap-4 px-5 py-4 hover:bg-zinc-900/50 transition-colors group"
+                    className="flex gap-4 px-6 py-6 hover:bg-zinc-900/50 transition-colors group"
                   >
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border bg-zinc-900/50 text-zinc-400 border-zinc-800">
-                      <MessageSquare className="h-4 w-4" />
-                    </div>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm text-zinc-300 group-hover:text-white transition-colors leading-snug">{formatActivityAction(log.action)}</p>
                       <p className="text-[10px] text-zinc-500 font-medium flex items-center gap-1.5">{format(new Date(log.createdAt), "MMM d, h:mm a")}</p>
@@ -220,15 +217,18 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
 
 function StatCard({ title, value, icon, desc }: { title: string; value: string; icon: React.ReactNode; desc: string }) {
   return (
-    <Card className="bg-[#19191b] border-dashboard-border/50 overflow-hidden group hover:border-dashboard-border transition-colors">
-      <CardContent className="p-4 flex items-cente gap-4">
-        <div className="w-10 h-10 rounded-xl bg-[#151518] border border-dashboard-border flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300">{icon}</div>
-        <div className="overflow-hidden">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 truncate">{title}</p>
-          <p className="text-xl font-bold text-white truncate">{value}</p>
-          <p className="text-[10px] text-zinc-600 font-medium truncate mt-0.5">{desc}</p>
+    <Card className="relative bg-[#19191b] transition-colors overflow-hidden group">
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+        <div>
+          <CardTitle className="text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">{title}</CardTitle>
+          <p className="text-[11px] text-zinc-600 font-medium truncate mt-0.5">{desc}</p>
         </div>
-      </CardContent>
+        <div className={cn("p-2 rounded-lg transition-colors duration-300 bg-[#242424]")}>{icon}</div>
+      </CardHeader>
+
+      <CardContent>{false ? <div className="skeleton-shimmer h-10 w-20 rounded-lg" /> : <div className="text-2xl font-bold tracking-tight">{value}</div>}</CardContent>
     </Card>
   );
 }

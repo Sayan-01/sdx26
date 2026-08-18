@@ -38,10 +38,16 @@ const plans = [
 ];
 
 export default async function PricingSection({ session }: { session: any | null }) {
-  const products = await polar.products.list({ isArchived: false });
+  let products: any = null;
+  try {
+    products = await polar.products.list({ isArchived: false });
+  } catch (error) {
+    console.error("Failed to fetch Polar products:", error);
+  }
+
   const mergedPlans = plans.map((plan, index) => ({
     ...plan,
-    product: products.result.items[index],
+    product: products?.result?.items?.[index] || null,
   }));
   return (
     <section
@@ -83,7 +89,7 @@ export default async function PricingSection({ session }: { session: any | null 
               </div>
 
               <Link
-                href={session ? `/checkout?products=${p.product?.id}&customerEmail=${session?.user?.email ?? ""}` : `/auth/login`}
+                href={session ? `/checkout?products=${p.product?.id || ""}&customerEmail=${session?.user?.email ?? ""}` : `/auth/login`}
                 className={`mt-8 inline-flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-px ${
                   p.popular ? "bg-foreground text-background shadow-lg shadow-white/5" : "border border-border/80 bg-surface text-foreground hover:bg-surface-2"
                 }`}

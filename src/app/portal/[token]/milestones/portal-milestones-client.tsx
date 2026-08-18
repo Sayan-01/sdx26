@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import DashboardHeading from "@/app/dashboard/_components/dashboard-heading";
 import DashboardCard from "@/app/dashboard/_components/dashboard-card";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type PortalMilestonesClientProps = {
   initialMilestones: any[];
@@ -40,18 +40,18 @@ export default function PortalMilestonesClient({ initialMilestones, token }: Por
       {/* Stats Table */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <Card
-            key={i}
-            className="bg-[#19191b] border-dashboard-border/50 overflow-hidden group hover:border-dashboard-border transition-colors"
-          >
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300", stat.bg, stat.color)}>{stat.icon}</div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{stat.label}</p>
-                {isLoading ? <div className="h-6 w-12 bg-zinc-800/50 rounded animate-pulse mt-1" /> : <p className="text-xl font-bold text-white">{stat.value}</p>}
-              </div>
-            </CardContent>
-          </Card>
+          
+            <Card className="relative bg-[#19191b] transition-colors overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <div>
+                  <CardTitle className="text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">{stat.label}</CardTitle>
+                </div>
+                <div className={cn("p-2 rounded-lg transition-colors duration-300", stat.bg, stat.color)}>{stat.icon}</div>
+              </CardHeader>
+              <CardContent>{isLoading ? <div className="skeleton-shimmer h-10 w-20 rounded-lg" /> : <div className="text-4xl tracking-tight">{stat.value}</div>}</CardContent>{" "}
+            </Card>
+       
         ))}
       </div>
 

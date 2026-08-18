@@ -15,7 +15,7 @@ const UpgradeCard = ({ activePlan = "basic" }: UpgradeCardProps) => {
         <div className="flex items-center justify-between mb-3.5">
           <span className="bg-emerald-500/10 text-emerald-500 text-xs px-2 py-0.5 rounded-lg">Active</span>
         </div>
-        <h3 className="text-[20px] text-zinc-100 mb-1.5 font-display ">{activePlan.toUpperCase()} Plan</h3>
+        <h3 className="text-[15px] text-zinc-100 mb-1.5 tracking-tight">{activePlan.toUpperCase()} Plan</h3>
         <p className="text-[13px] text-zinc-400 mb-4 leading-relaxed pr-2">Your agency is subscribed to the {activePlan} plan. Enjoy full access to your workspace.</p>
         <Link href="/#pricing">
           <button className="flex items-center gap-1.5 text-[13px]  text-zinc-200 bg-transparent hover:bg-zinc-800 border border-white/10 px-3 py-1.5 rounded-xl transition-all duration-300">

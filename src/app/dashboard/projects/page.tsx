@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Plus, Search, Filter, Briefcase, MoreVertical, ArrowUpRight, TrendingUp, LayoutGrid, List, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn, calculatePriority, dayAgo } from "@/lib/utils";
 import DashboardHeading from "../_components/dashboard-heading";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -110,14 +110,20 @@ export default function ProjectsPage() {
         {stats.map((stat, i) => (
           <Card
             key={i}
-            className="bg-[#19191b] border-dashboard-border/50 overflow-hidden group hover:border-dashboard-border transition-colors"
+            className="relative bg-[#19191b] transition-colors overflow-hidden group"
           >
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 duration-300", stat.bg, stat.color)}>{stat.icon}</div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{stat.label}</p>
-                {isLoading ? <div className="h-6 w-12 bg-zinc-800/50 rounded animate-pulse mt-1" /> : <p className="text-xl font-bold text-white">{stat.value}</p>}
-              </div>
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">{stat.label}</CardTitle>
+              <div className={cn("p-2 rounded-lg transition-colors duration-300", stat.bg, stat.color)}>{stat.icon}</div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="skeleton-shimmer h-10 w-20 rounded-lg" />
+              ) : (
+                <div className="text-4xl tracking-tight">{stat.value}</div>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -219,7 +225,7 @@ export default function ProjectsPage() {
                 key={i}
                 className="bg-[#19191b] border-dashboard-border/60 p-0 overflow-hidden"
               >
-                <CardContent className="p-5 flex flex-col h-full space-y-5">
+                <CardContent className="p-6 flex flex-col h-full space-y-5">
                   <div className="flex items-start justify-between">
                     <div className="w-12 h-12 rounded-2xl bg-zinc-800/50 animate-pulse border border-dashboard-border/50" />
                     <div className="w-20 h-6 rounded-full bg-zinc-800/50 animate-pulse" />
@@ -269,7 +275,7 @@ export default function ProjectsPage() {
                 <Card className="bg-[#19191b] border-dashboard-border/60 hover:border-zinc-600 transition-all duration-300  overflow-hidden p-0 relative">
                   <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                  <CardContent className="p-5 flex flex-col h-full space-y-5">
+                  <CardContent className="p-6 flex flex-col h-full space-y-5">
                     <div className="flex items-start justify-between">
                       <div className="w-12 h-12 rounded-2xl bg-[#151518] border border-dashboard-border flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-zinc-800 transition-all duration-300 shadow-inner">
                         <Briefcase className="h-5 w-5" />
@@ -403,7 +409,7 @@ export default function ProjectsPage() {
                     key={i}
                     className="border-dashboard-border"
                   >
-                    <TableCell className="p-5">
+                    <TableCell className="p-6">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-zinc-800/50 animate-pulse" />
                         <div className="space-y-2">
@@ -447,7 +453,7 @@ export default function ProjectsPage() {
                     key={project.id}
                     className="border-dashboard-border hover:bg-[#19191b] transition-colors group"
                   >
-                    <TableCell className="p-5">
+                    <TableCell className="p-6">
                       <Link
                         href={`/dashboard/projects/${project.id}`}
                         className="flex items-center gap-4"

@@ -6,9 +6,9 @@ import { Bell, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/db";
 import { headers } from "next/headers";
-import { Roboto_Mono } from "next/font/google";
+import { Roboto_Mono, Sora } from "next/font/google";
 
-const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
+const roboto_Mono = Sora({ subsets: ["latin"] });
 
 export default async function PortalLayout({ children, params }: { children: React.ReactNode; params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -125,7 +125,7 @@ export default async function PortalLayout({ children, params }: { children: Rea
         {/* Unified Top Header */}
         <header className="border-b-2 border-dashed border-dashboard-border max-md:fixed top-0 z-40 flex items-center h-16 md:px-6 px-5 justify-between">
           <div className="space-y-0.5">
-            <h2 className="text-lg font-bold tracking-tight">{project.name}</h2>
+            <h2 className="text-lg font-semibold">{project.name}</h2>
             <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
               Active Project • <span className="text-zinc-300">{project.client.company || project.client.name}</span>

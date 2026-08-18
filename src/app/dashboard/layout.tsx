@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import Sidebar from "./_components/sidebar";
 import Header from "./_components/header";
 import { auth } from "../../../auth";
-import { Roboto_Mono } from "next/font/google";
+import { Sora } from "next/font/google";
 import { redirect } from "next/navigation";
 
-const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
+const roboto_Mono = Sora({ subsets: ["latin"] });
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -23,14 +23,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const isBasicPlan = activePlan === "basic";
 
   return (
-    <div className={`flex h-dvh  ${roboto_Mono.className}`}>
+    <div className={`flex h-dvh bg-zinc-900/80 ${roboto_Mono.className}`}>
       <aside className="md:w-[260px]">
         <Sidebar
           userId={session?.user?.id || ""}
           activePlan={activePlan}
         />
       </aside>
-      <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border border-border ">
+      <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed border-dashboard-border">
         <Header />
         {isBasicPlan && (
           <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 flex items-center justify-between gap-4 animate-in slide-in-from-top duration-500">
@@ -50,8 +50,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </Link>
           </div>
         )}
-        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box">
-          <div className="mx-auto w-full max-w-[1400px] p-6">{children}</div>
+        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-6">
+          <div className="mx-auto w-full">{children}</div>
         </main>
       </div>
     </div>
