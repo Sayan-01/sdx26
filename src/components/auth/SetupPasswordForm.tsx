@@ -66,7 +66,7 @@ export default function SetupPasswordForm({
           <Layers className="h-10 w-10" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Welcome, {name}!</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Welcome, {name.toLowerCase()}!</h1>
           <p className="text-zinc-400">
             You've been invited to join <span className="text-white font-medium">{agencyName}</span>. 
             Set your password to get started.

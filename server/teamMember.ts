@@ -4,19 +4,85 @@ import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { auth } from "../auth";
 import { getAgencyLimits } from "@/lib/planLimits";
+import { InviteStatus } from "@/generated/prisma";
 
 export const getAllTeamMembers = async () => {
-  const session = await auth();
-  if(!session?.user) return { success: false, teamMembers: [] };
-  const agency = await prisma.agency.findUnique({
-    where: { id: session.user.agencyId as string },
-  });
-  if(!agency) return { success: false, teamMembers: [] };
-  const teamMembers = await prisma.user.findMany({
-    where: { agencyId: session.user.agencyId },
-  });
-  return {success: true, teamMembers};
-  
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return { success: false, message: "Unauthorized", teamMembers: [] };
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { agencyId: true },
+    });
+
+    if (!user?.agencyId) return { success: false, message: "Agency not found", teamMembers: [] };
+
+    // আগে teamMembers fetch করো
+    const teamMembers = await prisma.teamMember.findMany({
+      where: { agencyId: user.agencyId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: { joinedAt: "desc" },
+    });
+
+    // তারপর invitations fetch করো
+    const invitations = await prisma.invitation.findMany({
+      where: {
+        agencyId: user.agencyId,
+        status: InviteStatus.PENDING,
+        expiresAt: { gt: new Date() },
+      },
+      select: {
+        id: true,
+        email: true,
+        name :true,
+        designation: true,
+        status: true,
+        createdAt: true,
+        expiresAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const activeMembers = teamMembers.map((member) => ({
+      id: member.id,
+      userId: member.userId,
+      name: member.user.name,
+      email: member.user.email,
+      avatarUrl: member.user.avatarUrl,
+      designation: member.designation,
+      role: member.role,
+      status: "ACCEPTED",
+      joinedAt: member.joinedAt,
+    }));
+
+    const pendingMembers = invitations.map((invitation) => ({
+      id: invitation.id,
+      userId: null,
+      name: invitation.name,
+      email: invitation.email,
+      avatarUrl: null,
+      designation: invitation.designation,
+      role: null,
+      status: "PENDING" as const,
+      joinedAt: null,
+      expiresAt: invitation.expiresAt,
+    }));
+
+    return { success: true, teamMembers: [...activeMembers, ...pendingMembers] };
+  } catch (error) {
+    console.error("getAllTeamMembers error:", error);
+    return { success: false, message: "Failed to fetch team members", teamMembers: [] };
+  }
 };
 
 export const verifyInvitationToken = async (token: string) => {
@@ -33,7 +99,7 @@ export const verifyInvitationToken = async (token: string) => {
     where: { email: invitation.email },
   });
 
-  return { invitation, user };
+  return { email: invitation.email, name: invitation.name, agencyName: invitation.agency.name };
 };
 
 export const completeInvitation = async (token: string, password: string) => {
@@ -91,6 +157,74 @@ export const completeInvitation = async (token: string, password: string) => {
       },
     },
   });
-  
+
+  return { success: true };
+};
+
+export const updateMemberRole = async (memberId: string, role: "OWNER" | "TEAM", designation: string) => {
+  const session = await auth();
+  if (!session?.user?.agencyId) return { success: false, error: "Unauthorized" };
+
+  // Prevent modifying yourself
+  if (memberId === session.user.id) return { success: false, error: "You cannot change your own role" };
+
+  const target = await prisma.user.findFirst({
+    where: { id: memberId, agencyId: session.user.agencyId },
+  });
+  if (!target) return { success: false, error: "Member not found" };
+
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: memberId },
+      data: { role },
+    }),
+    prisma.teamMember.updateMany({
+      where: { userId: memberId, agencyId: session.user.agencyId },
+      data: { role, designation },
+    }),
+  ]);
+
+  return { success: true };
+};
+
+export const updateMemberName = async (memberId: string, name: string) => {
+  const session = await auth();
+  if (!session?.user?.agencyId) return { success: false, error: "Unauthorized" };
+
+  const target = await prisma.user.findFirst({
+    where: { id: memberId, agencyId: session.user.agencyId },
+  });
+  if (!target) return { success: false, error: "Member not found" };
+
+  await prisma.user.update({
+    where: { id: memberId },
+    data: { name: name.trim() },
+  });
+
+  return { success: true };
+};
+
+export const removeMember = async (memberId: string) => {
+  const session = await auth();
+  if (!session?.user?.agencyId) return { success: false, error: "Unauthorized" };
+
+  if (memberId === session.user.id) return { success: false, error: "You cannot remove yourself" };
+
+  const target = await prisma.user.findFirst({
+    where: { id: memberId, agencyId: session.user.agencyId },
+  });
+  if (!target) return { success: false, error: "Member not found" };
+  if (target.role === "OWNER") return { success: false, error: "Cannot remove the agency owner" };
+
+  await prisma.$transaction([
+    prisma.teamMember.deleteMany({
+      where: { userId: memberId, agencyId: session.user.agencyId },
+    }),
+    prisma.user.update({
+      where: { id: memberId },
+      data: { agencyId: null },
+    }),
+  ]);
+
   return { success: true };
 };

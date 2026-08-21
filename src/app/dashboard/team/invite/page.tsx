@@ -13,6 +13,7 @@ import { FieldError } from "@/components/ui/field";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import DashboardHeading from "../../_components/dashboard-heading";
+import { toast } from "sonner";
 
 export default function InviteTeamMemberPage() {
   const { data: session } = useSession();
@@ -20,8 +21,6 @@ export default function InviteTeamMemberPage() {
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const form = useForm({
     resolver: zodResolver(inviteFormSchema),
@@ -35,8 +34,6 @@ export default function InviteTeamMemberPage() {
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    setError("");
-    setSuccess("");
     try {
       const res = await fetch("/api/team-member", {
         method: "POST",
@@ -47,13 +44,13 @@ export default function InviteTeamMemberPage() {
       });
       const result = await res.json();
       if (result.success) {
-        setSuccess("Invitation sent successfully");
+        toast.success("Invitation sent successfully");
         form.reset();
       } else {
-        setError(result.error);
+        toast.error(result.error);
       }
     } catch (error) {
-      setError("Something went wrong");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -72,13 +69,20 @@ export default function InviteTeamMemberPage() {
           </p>
         </div>
         <div className="flex gap-4 w-full justify-center pt-2">
-          <Link href="/#pricing" className="flex-1 max-w-[200px]">
-            <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold h-12 rounded-xl">
-              View Plans
-            </Button>
+          <Link
+            href="/#pricing"
+            className="flex-1 max-w-[200px]"
+          >
+            <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold h-12 rounded-xl">View Plans</Button>
           </Link>
-          <Link href="/dashboard/team" className="flex-1 max-w-[200px]">
-            <Button variant="outline" className="w-full h-12 rounded-xl border-dashboard-border bg-[#19191b] text-zinc-400 hover:text-white">
+          <Link
+            href="/dashboard/team"
+            className="flex-1 max-w-[200px]"
+          >
+            <Button
+              variant="outline"
+              className="w-full h-12 rounded-xl border-dashboard-border bg-[#19191b] text-zinc-400 hover:text-white"
+            >
               Go Back
             </Button>
           </Link>
@@ -96,9 +100,9 @@ export default function InviteTeamMemberPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-[#19191b] border-dashboard-border shadow-none overflow-hidden">
+          <Card className="bg-[#19191b] border-dashboard-border shadow-none overflow-hidden py-0">
             <CardHeader className="border-b border-dashboard-border/50 bg-[#1e1e21]/30 p-6">
               <CardTitle className="text-lg flex items-center gap-2">
                 <UserPlus className="h-5 w-5 text-indigo-400" />
@@ -193,7 +197,7 @@ export default function InviteTeamMemberPage() {
         </div>
 
         <div className="space-y-6">
-          <Card className="bg-[#19191b] border-dashboard-border shadow-none border-dashed border-2 p-1">
+          <Card className="bg-[#19191b] border-dashboard-border shadow-none border-dashed border-2 py-0">
             <CardContent className="bg-[#151518]/50 rounded-xl p-6 space-y-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                 <Sparkles className="h-5 w-5" />

@@ -51,20 +51,11 @@ const Header = () => {
         <div className="h-9 w-9 mr-2"></div>
 
         {/* Search */}
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-4">
           {/* <ModeToggle className="sm:flex hidden" /> */}
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400 dark:text-zinc-500" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search"
-              className="block w-full pl-10 pr-3 py-1.5 border border-gray-300 dark:border-zinc-700 rounded-lg text-sm dark:bg-zinc-800 dark:text-zinc-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <NotificationBellButton />
 
+          <NotificationBellButton />
+          <div className="h-8 w-px bg-dashboard-border" />
           <UserButton />
         </div>
       </div>

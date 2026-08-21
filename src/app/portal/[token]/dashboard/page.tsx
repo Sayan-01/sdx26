@@ -2,7 +2,7 @@ import React from "react";
 import { getClientSession } from "@/lib/client-session";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/db";
-import { CheckSquare, Milestone as MilestoneIcon, TrendingUp, Layout, MessageSquare } from "lucide-react";
+import { CheckSquare, Milestone as MilestoneIcon, TrendingUp, Layout, MessageSquare, Check } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import DashboardHeading from "@/app/dashboard/_components/dashboard-heading";
@@ -92,7 +92,7 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
           <DashboardCard
             title="Recent Milestones"
             link={`/portal/${token}/milestones`}
-            icon={<MilestoneIcon className="h-4 w-4 text-indigo-400" />}
+            icon={<MilestoneIcon className="h-5 w-5 text-indigo-400" />}
           >
             <div className="divide-y divide-zinc-800/60 flex-1 box min-h-0">
               {project.milestones.length > 0 ? (
@@ -144,13 +144,13 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
                     <div className="flex items-center gap-4">
                       <div
                         className={cn(
-                          "w-6 h-6 rounded-lg border flex items-center justify-center transition-colors shrink-0",
-                          item.status === "APPROVED" ? "bg-emerald-500 border-emerald-500" : "border-dashboard-border bg-[#151518]",
+                          "w-6 h-6 rounded-md border flex items-center justify-center transition-colors shrink-0",
+                          item.status === "APPROVED" ? "bg-emerald-500/20 border-emerald-500" : "border-dashboard-border bg-[#151518]",
                         )}
                       >
-                        {item.status === "APPROVED" && <CheckSquare className="h-3 w-3 text-white" />}
+                        {item.status === "APPROVED" && <Check className="h-3 w-3 text-emerald-500" />}
                       </div>
-                      <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">{item.label}</span>
+                      <span className="text-sm text-zinc-200 group-hover:text-white transition-colors">{item.label}</span>
                     </div>
                     <div
                       className={cn(
@@ -175,7 +175,7 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
         <div className="flex flex-col gap-6">
           <DashboardCard
             title="Recent Activity"
-            icon={<TrendingUp className="h-4 w-4 text-sky-400" />}
+            icon={<TrendingUp className="h-5 w-5 text-sky-400" />}
           >
             <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box">
               {project.activityLogs.length > 0 ? (

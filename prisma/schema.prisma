@@ -99,12 +99,14 @@ model User {
 model Invitation {
   id          String      @id @default(uuid())
   agencyId    String
+  name        String
   email       String
   designation Designation
   token       String      @unique
   invitedById String
   expiresAt   DateTime
   acceptedAt  DateTime?
+  status      InviteStatus     @default(PENDING)
   createdAt   DateTime    @default(now())
   agency      Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   invitedBy   User        @relation("InvitedBy", fields: [invitedById], references: [id])
@@ -492,4 +494,10 @@ enum TaskPriority {
   LOW
   MEDIUM
   HIGH
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

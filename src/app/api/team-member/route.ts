@@ -1,18 +1,16 @@
-import prisma from "@/lib/db";
+   import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
 import crypto from "crypto";
 import { sendInviteEmaill } from "@/lib/sendPortalUrl";
 import { getAgencyLimits } from "@/lib/planLimits";
+import { InviteStatus } from "@/generated/prisma";
 
 export const POST = async (req: NextRequest) => {
   try {
-    console.log("POST request received at /api/team-member");
     const { name, email, designation: rawDesignation } = await req.json();
-    console.log("Input data:", { name, email, rawDesignation });
 
     const session = await auth();
-    console.log("Session:", !!session);
 
     if (!name || !email || !rawDesignation) {
       return NextResponse.json({ error: "Please fill all the details" }, { status: 400 });
@@ -37,51 +35,36 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Check if user exists globally by email
-    let user = await prisma.user.findUnique({
-      where: { email },
-    });
+    const normalizedEmail = email.trim().toLowerCase();
 
-    if (user) {
-      console.log("User exists globally:", email);
-      // If user exists, check if they are already a member of this agency
-      const existingMember = await prisma.teamMember.findFirst({
-        where: {
-          userId: user.id,
-          agencyId,
-        },
-      });
-
-      if (existingMember) {
-        console.log("User is already a member of this agency");
-        return NextResponse.json({ error: "This user is already a member of your agency" }, { status: 400 });
-      }
-    } else {
-      console.log("Creating new user for invitation:", email);
-      // Create new user if they don't exist
-      user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: null,
-          role: "TEAM",
-          agencyId,
-        },
-      });
-    }
-
-    console.log("Processing team member for user:", user.id);
-
-    // Create team member record
-    await prisma.teamMember.create({
-      data: {
-        userId: user.id,
-        agencyId,
-        role: "TEAM",
-        designation: designation,
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: normalizedEmail,
+      },
+      select: {
+        id: true,
       },
     });
 
-    console.log("Team member created");
+    if (existingUser) {
+      const alreadyMember = await prisma.teamMember.findUnique({
+        where: {
+          agencyId_userId: {
+            agencyId: agencyId,
+            userId: existingUser.id,
+          },
+        },
+      });
+
+      if (alreadyMember) {
+        return {
+          success: false,
+          message: "User is already a team member",
+        };
+      }
+    }
+
+    ///////////////////////////////////////////////////
 
     const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -89,7 +72,7 @@ export const POST = async (req: NextRequest) => {
     // Clear any previous invitations for this email in this agency to avoid unique constraint errors
     await prisma.invitation.deleteMany({
       where: {
-        email,
+        email: normalizedEmail,
         agencyId,
       },
     });
@@ -97,11 +80,13 @@ export const POST = async (req: NextRequest) => {
     await prisma.invitation.create({
       data: {
         agencyId,
-        email,
+        name: name,
+        email: normalizedEmail,
         designation: designation as any,
         token: token,
         invitedById: session?.user.id as string,
         expiresAt: expiresAt,
+        status: InviteStatus.PENDING,
       },
     });
 
@@ -112,12 +97,10 @@ export const POST = async (req: NextRequest) => {
         agencyId,
         actorUserId: session?.user.id as string,
         action: "sent invitation",
-        entityType: "TEAM_MEMBER",
-        entityId: user.id,
+        entityType: "INVITATION",
         metadata: {
-          email: user.email,
-          name: user.name,
-          role: "TEAM",
+          email: normalizedEmail,
+          name: name,
           designation: designation,
         },
       },

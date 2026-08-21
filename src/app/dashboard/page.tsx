@@ -125,7 +125,7 @@ export default async function DashboardPage() {
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "w-22 h-6 flex items-center justify-center rounded-md text-[10px] font-bold uppercase tracking-wider border",
+                            "w-24 h-6 flex items-center justify-center rounded-md text-[10px] font-bold uppercase tracking-wider border",
                             project.status === "ON_HOLD"
                               ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                               : project.status === "COMPLETED"

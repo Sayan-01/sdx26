@@ -26,15 +26,16 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     );
   }
 
-  const { invitation, user } = data;
+  const { email, name, agencyName } = data;  
+
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center p-6 selection_color selection:bg-white selection:text-zinc-950">
       <SetupPasswordForm 
         token={token} 
-        email={invitation.email} 
-        name={user?.name || ""} 
-        agencyName={invitation.agency.name} 
+        email={email} 
+        name={name}
+        agencyName={agencyName} 
       />
     </div>
   );

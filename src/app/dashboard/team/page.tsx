@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { UserPlus, Search, MoreVertical, Mail, Shield, Trash2, ExternalLink, Plus, Download, Loader2, Edit, UserCheck } from "lucide-react";
+import { UserPlus, Search, MoreVertical, Mail, Shield, Trash2, ExternalLink, Plus, Download, Loader2, Edit, UserCheck, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import DashboardHeading from "../_components/dashboard-heading";
 import Link from "next/link";
-import { getAllTeamMembers } from "../../../../server/teamMember";
+import { getAllTeamMembers, updateMemberRole, updateMemberName, removeMember } from "../../../../server/teamMember";
 import { toast } from "sonner";
 
 export default function AgencyTeamPage() {
@@ -18,12 +20,26 @@ export default function AgencyTeamPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Dialog states
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Form states
+  const [editRole, setEditRole] = useState<"OWNER" | "TEAM">("TEAM");
+  const [editDesignation, setEditDesignation] = useState("");
+  const [editName, setEditName] = useState("");
+
   const fetchTeams = async () => {
     setIsLoading(true);
     try {
       const res = await getAllTeamMembers();
       if (res.success) {
         setTeams(res.teamMembers);
+        console.log(res.teamMembers);
+
       } else {
         toast.error("Failed to fetch team members");
       }
@@ -53,7 +69,7 @@ export default function AgencyTeamPage() {
       member.role,
       member.teamMembers?.[0]?.designation || (member.role === "OWNER" ? "Founder" : "Team Member"),
       new Date(member.createdAt).toLocaleDateString(),
-      member.password ? "Active" : "Pending",
+      member.password ? "ACCEPTED" : "PENDING",
     ]);
 
     const csvContent = [headers, ...csvData].map((e) => e.join(",")).join("\n");
@@ -67,6 +83,83 @@ export default function AgencyTeamPage() {
     link.click();
     document.body.removeChild(link);
     toast.success("CSV file exported successfully!");
+  };
+
+  // ── Dialog openers ──────────────────────────────────────────────────────
+  const openPermissionsDialog = (member: any) => {
+    setSelectedMember(member);
+    setEditRole(member.role || "TEAM");
+    setEditDesignation(member.designation || "");
+    setPermissionsDialogOpen(true);
+  };
+
+  const openProfileDialog = (member: any) => {
+    setSelectedMember(member);
+    setEditName(member.name || "");
+    setProfileDialogOpen(true);
+  };
+
+  const openRemoveDialog = (member: any) => {
+    setSelectedMember(member);
+    setRemoveDialogOpen(true);
+  };
+
+  // ── Handlers ────────────────────────────────────────────────────────────
+  const handleUpdatePermissions = async () => {
+    if (!selectedMember) return;
+    setIsSaving(true);
+    try {
+      const res = await updateMemberRole(selectedMember.id, editRole, editDesignation);
+      if (res.success) {
+        toast.success("Permissions updated successfully");
+        setPermissionsDialogOpen(false);
+        fetchTeams();
+      } else {
+        toast.error(res.error || "Failed to update permissions");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!selectedMember || !editName.trim()) return;
+    setIsSaving(true);
+    try {
+      const res = await updateMemberName(selectedMember.id, editName);
+      if (res.success) {
+        toast.success("Profile updated successfully");
+        setProfileDialogOpen(false);
+        fetchTeams();
+      } else {
+        toast.error(res.error || "Failed to update profile");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleRemoveMember = async () => {
+    if (!selectedMember) return;
+    setIsSaving(true);
+    try {
+      const res = await removeMember(selectedMember.id);
+      if (res.success) {
+        toast.success("Member removed from agency");
+        setRemoveDialogOpen(false);
+        fetchTeams();
+      } else {
+        toast.error(res.error || "Failed to remove member");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -94,7 +187,7 @@ export default function AgencyTeamPage() {
             className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full"
           />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -112,7 +205,7 @@ export default function AgencyTeamPage() {
             disabled={isLoading}
             className="bg-[#19191b] border-dashboard-border text-zinc-400 hover:text-white hover:bg-zinc-800 h-10 w-10 transition-colors"
           >
-            <Plus className={cn("h-4 w-4 transition-transform", isLoading && "animate-spin")} />
+            <RefreshCw className={cn("h-4 w-4 transition-transform", isLoading && "animate-spin")} />
           </Button>
         </div>
       </div>
@@ -162,7 +255,7 @@ export default function AgencyTeamPage() {
                     key={member.id}
                     className="border-dashboard-border hover:bg-[#19191b] transition-colors group"
                   >
-                    <TableCell className="px-5 py-3">
+                    <TableCell className="px-5 py-6">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-zinc-800/50 border border-dashboard-border flex items-center justify-center font-bold text-xs text-zinc-400 group-hover:bg-zinc-800 group-hover:text-white transition-colors uppercase">
                           {(member.name || "?")
@@ -183,8 +276,8 @@ export default function AgencyTeamPage() {
                     <TableCell className="text-zinc-500 text-sm">{new Date(member.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className={cn("w-1.5 h-1.5 rounded-full", member.password ? "bg-emerald-500" : "bg-amber-500")} />
-                        <span className="text-sm font-medium">{member.password ? "Active" : "Pending"}</span>
+                        <div className={cn("w-1.5 h-1.5 rounded-full", member.status == "ACCEPTED" ? "bg-emerald-500" : "bg-amber-500")} />
+                        <span className="text-sm font-medium">{member.status == "ACCEPTED" ? "Accepted" : "Pending"}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -200,18 +293,27 @@ export default function AgencyTeamPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="bg-[#19191b] border-dashboard-border text-zinc-400 w-50"
+                          className="bg-[#19191b] border-dashboard-border text-zinc-400 w-52"
                         >
                           <DropdownMenuLabel className="text-white text-xs">Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator className="bg-dashboard-border" />
-                          <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2">
+                          <DropdownMenuItem
+                            onClick={() => openPermissionsDialog(member)}
+                            className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2"
+                          >
                             <UserCheck className="h-4 w-4" /> Edit Permissions
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2">
+                          <DropdownMenuItem
+                            onClick={() => openProfileDialog(member)}
+                            className="focus:bg-zinc-800 focus:text-white cursor-pointer gap-2"
+                          >
                             <Edit className="h-4 w-4" /> Edit Profile
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-dashboard-border" />
-                          <DropdownMenuItem className="focus:bg-zinc-800 text-red-500 focus:text-red-400 cursor-pointer gap-2">
+                          <DropdownMenuItem
+                            onClick={() => openRemoveDialog(member)}
+                            className="focus:bg-zinc-800 text-red-500 focus:text-red-400 cursor-pointer gap-2"
+                          >
                             <Trash2 className="h-4 w-4" /> Remove from Agency
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -236,15 +338,160 @@ export default function AgencyTeamPage() {
               <h3 className="font-bold">Team Permissions</h3>
               <p className="text-xs text-zinc-500 leading-relaxed">Control exactly what your staff can see – specifically payments and client management.</p>
             </div>
-            <Button
-              variant="link"
-              className="p-0 h-auto text-xs text-zinc-400 hover:text-white"
-            >
-              Manage Roles <ExternalLink className="ml-1 h-3 w-3" />
-            </Button>
+            <Link href="/dashboard/team/roles">
+              <Button
+                variant="link"
+                className="p-0 h-auto text-xs text-zinc-400 hover:text-white"
+              >
+                Manage Roles <ExternalLink className="ml-1 h-3 w-3" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Edit Permissions Dialog ─────────────────────────────────────── */}
+      <Dialog
+        open={permissionsDialogOpen}
+        onOpenChange={setPermissionsDialogOpen}
+      >
+        <DialogContent className="bg-[#19191b] border-dashboard-border text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Permissions</DialogTitle>
+            <DialogDescription className="text-zinc-500">Update role and designation for {selectedMember?.name || selectedMember?.email}.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-4">
+              <Label className="text-zinc-400 text-xs uppercase tracking-widest">Role</Label>
+              <div className="flex gap-4">
+                <Button
+                  size="lg"
+                  type="button"
+                  onClick={() => setEditRole("TEAM")}
+                  className={cn(
+                    "flex-1 border-dashboard-border transition-colors",
+                    editRole === "TEAM" ? "bg-white/70 border border-white opacity-100" : "opacity-50 bg-transparent text-zinc-400  hover:bg-zinc-800",
+                  )}
+                >
+                  Team
+                </Button>
+                <Button
+                  size="lg"
+                  type="button"
+                  onClick={() => setEditRole("OWNER")}
+                  className={cn(
+                    "flex-1 border-dashboard-border transition-colors",
+                    editRole === "OWNER" ? "bg-white/70 border-white opacity-100" : "opacity-50 bg-transparent text-zinc-400  hover:bg-zinc-800",
+                  )}
+                >
+                  Owner
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-zinc-400 text-xs uppercase tracking-widest">Designation</Label>
+              <Input
+                value={editDesignation}
+                onChange={(e) => setEditDesignation(e.target.value)}
+                placeholder="e.g. Designer, Developer, Manager"
+                className="bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700"
+              />
+            </div>
+          </div>
+          <DialogFooter className="bg-transparent border-none p-0 m-0 flex-row gap-4 justify-end">
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => setPermissionsDialogOpen(false)}
+              className="bg-transparent border-dashboard-border text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="lg"
+              onClick={handleUpdatePermissions}
+              disabled={isSaving}
+              className="bg-white/70 text-zinc-950 hover:bg-zinc-200 gap-2"
+            >
+              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Edit Profile Dialog ────────────────────────────────────────── */}
+      <Dialog
+        open={profileDialogOpen}
+        onOpenChange={setProfileDialogOpen}
+      >
+        <DialogContent className="bg-[#19191b] border-dashboard-border text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogDescription className="text-zinc-500">Update name for {selectedMember?.email}.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label className="text-zinc-400 text-xs uppercase tracking-widest">Full Name</Label>
+              <Input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Enter full name"
+                className="bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700"
+              />
+            </div>
+          </div>
+          <DialogFooter className="bg-transparent border-none p-0 m-0 flex-row gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setProfileDialogOpen(false)}
+              className="bg-transparent border-dashboard-border text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateProfile}
+              disabled={isSaving || !editName.trim()}
+              className="bg-white text-zinc-950 hover:bg-zinc-200 gap-2"
+            >
+              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Remove Member Dialog ───────────────────────────────────────── */}
+      <Dialog
+        open={removeDialogOpen}
+        onOpenChange={setRemoveDialogOpen}
+      >
+        <DialogContent className="bg-[#19191b] border-dashboard-border text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Remove Team Member</DialogTitle>
+            <DialogDescription className="text-zinc-500">
+              Are you sure you want to remove <span className="text-white font-medium">{selectedMember?.name || selectedMember?.email}</span> from the agency? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="bg-transparent border-none p-0 m-0 flex-row gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setRemoveDialogOpen(false)}
+              className="bg-transparent border-dashboard-border text-zinc-400 hover:text-white hover:bg-zinc-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRemoveMember}
+              disabled={isSaving}
+              className="bg-red-600 text-white hover:bg-red-700 gap-2"
+            >
+              {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+              Remove Member
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
