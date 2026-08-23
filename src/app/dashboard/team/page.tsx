@@ -271,9 +271,9 @@ export default function AgencyTeamPage() {
                     </TableCell>
                     <TableCell className="text-zinc-400">{member.designation || "Team Member"}</TableCell>
                     <TableCell>
-                      <span className={cn("py-0.5 rounded text-[10px] font-bold uppercase tracking-widest", member.role === "OWNER" ? "text-emerald-500" : "text-zinc-500")}>{member.role}</span>
+                      <span className={cn("py-0.5 rounded text-[10px] font-bold uppercase tracking-widest", member.role === "OWNER" ? "text-emerald-500" : "text-zinc-500")}>{member.role || "TEAM"}</span>
                     </TableCell>
-                    <TableCell className="text-zinc-500 text-sm">{new Date(member.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</TableCell>
+                    <TableCell className="text-zinc-500 text-sm">{member.joinedAt ? new Date(member.joinedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : "—"}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className={cn("w-1.5 h-1.5 rounded-full", member.status == "ACCEPTED" ? "bg-emerald-500" : "bg-amber-500")} />

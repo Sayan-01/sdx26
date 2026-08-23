@@ -18,7 +18,6 @@ export const getAllTeamMembers = async () => {
 
     if (!user?.agencyId) return { success: false, message: "Agency not found", teamMembers: [] };
 
-    // আগে teamMembers fetch করো
     const teamMembers = await prisma.teamMember.findMany({
       where: { agencyId: user.agencyId },
       include: {
@@ -34,7 +33,6 @@ export const getAllTeamMembers = async () => {
       orderBy: { joinedAt: "desc" },
     });
 
-    // তারপর invitations fetch করো
     const invitations = await prisma.invitation.findMany({
       where: {
         agencyId: user.agencyId,
@@ -44,7 +42,7 @@ export const getAllTeamMembers = async () => {
       select: {
         id: true,
         email: true,
-        name :true,
+        name: true,
         designation: true,
         status: true,
         createdAt: true,
@@ -61,7 +59,7 @@ export const getAllTeamMembers = async () => {
       avatarUrl: member.user.avatarUrl,
       designation: member.designation,
       role: member.role,
-      status: "ACCEPTED",
+      status: "ACCEPTED" as const,
       joinedAt: member.joinedAt,
     }));
 
@@ -72,7 +70,6 @@ export const getAllTeamMembers = async () => {
       email: invitation.email,
       avatarUrl: null,
       designation: invitation.designation,
-      role: null,
       status: "PENDING" as const,
       joinedAt: null,
       expiresAt: invitation.expiresAt,
@@ -99,66 +96,268 @@ export const verifyInvitationToken = async (token: string) => {
     where: { email: invitation.email },
   });
 
-  return { email: invitation.email, name: invitation.name, agencyName: invitation.agency.name };
+  return { email: invitation.email, name: invitation.name, agencyName: invitation.agency.name, userExist: !!user };
 };
 
-export const completeInvitation = async (token: string, password: string) => {
+export const completeInvitationForNewUser = async (token: string, name: string, password: string) => {
   const invitation = await prisma.invitation.findUnique({
     where: { token },
   });
 
-  if (!invitation || invitation.expiresAt < new Date() || invitation.acceptedAt) {
-    throw new Error("Invalid or expired invitation");
+  // 🔧 1. Invitation exists check
+  if (!invitation) {
+    return {
+      success: false,
+      message: "Invalid invitation",
+    };
   }
 
-  // Check team member limits
+  // 🔧 2. Invitation status check
+  if (invitation.status !== "PENDING") {
+    return {
+      success: false,
+      message: "Invitation is no longer valid",
+    };
+  }
+
+  // 🔧 3. Expiry check
+  if (invitation.expiresAt < new Date()) {
+    await prisma.invitation.update({
+      where: {
+        id: invitation.id,
+      },
+      data: {
+        status: "REJECTED",
+      },
+    });
+
+    return {
+      success: false,
+      message: "Invitation has expired",
+    };
+  }
+
+  // 🔧 4. Accepted check
+  if (invitation.acceptedAt) {
+    return {
+      success: false,
+      message: "Invitation has already been accepted",
+    };
+  }
+
+  // 🔧 6. Check agency member limit
   const currentMemberCount = await prisma.teamMember.count({
-    where: { agencyId: invitation.agencyId },
+    where: {
+      agencyId: invitation.agencyId,
+    },
   });
+
   const limits = await getAgencyLimits(invitation.agencyId);
+
   if (currentMemberCount >= limits.maxTeamMembers) {
-    const maxSeatsStr = limits.maxTeamMembers >= 999999 ? "unlimited" : `${limits.maxTeamMembers} seats`;
-    throw new Error(`Team member limit reached (${maxSeatsStr}). Cannot accept invitation.`);
+    return {
+      success: false,
+      message: "Your agency has reached its team member limit.",
+    };
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await prisma.user.findUnique({
-    where: { email: invitation.email },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { email: invitation.email },
-      data: { password: hashedPassword },
-    }),
-    prisma.invitation.update({
-      where: { token },
-      data: { acceptedAt: new Date() },
-    }),
-  ]);
-
-  await prisma.activityLog.create({
-    data: {
-      agencyId: invitation.agencyId,
-      actorUserId: user.id,
-      action: "accepted invitation",
-      entityType: "TEAM_MEMBER",
-      entityId: user.id,
-      metadata: {
-        email: user.email,
-        name: user.name,
+  const result = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        name,
+        email: invitation.email,
+        password: hashedPassword,
         role: "TEAM",
-        designation: invitation.designation,
+        agencyId: invitation.agencyId,
       },
-    },
+    });
+
+    const teamMember = await tx.teamMember.create({
+      data: {
+        agencyId: invitation.agencyId,
+        userId: user.id,
+        designation: invitation.designation,
+        role: "TEAM",
+      },
+    });
+
+    await tx.invitation.update({
+      where: {
+        id: invitation.id,
+      },
+      data: {
+        status: "ACCEPTED",
+        acceptedAt: new Date(),
+      },
+    });
+
+    await tx.activityLog.create({
+      data: {
+        agencyId: invitation.agencyId,
+        actorUserId: user.id,
+        action: "ACCEPTED_INVITATION",
+        entityType: "TEAM_MEMBER",
+        entityId: teamMember.id,
+        metadata: {
+          email: user.email,
+          name: user.name,
+          role: "TEAM",
+          designation: invitation.designation,
+        },
+      },
+    });
+
+    return {
+      user,
+      teamMember,
+    };
   });
 
-  return { success: true };
+  return {
+    success: true,
+    message: "Account created successfully",
+    userId: result.user.id,
+  };
+};
+
+export const acceptExistingUserInvitation = async (token: string) => {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id || !session.user.email) {
+      return {
+        success: false,
+        message: "Please login first",
+      };
+    }
+
+    const invitation = await prisma.invitation.findUnique({
+      where: {
+        token,
+      },
+    });
+
+    if (!invitation) {
+      return {
+        success: false,
+        message: "Invalid invitation",
+      };
+    }
+
+    if (invitation.status !== "PENDING") {
+      return {
+        success: false,
+        message: "Invitation is no longer valid",
+      };
+    }
+
+    if (invitation.expiresAt < new Date()) {
+      return {
+        success: false,
+        message: "Invitation has expired",
+      };
+    }
+
+    // 🔥 Important: logged-in email must match invitation email
+    if (session.user.email.toLowerCase() !== invitation.email.toLowerCase()) {
+      return {
+        success: false,
+        message: "This invitation belongs to another email.",
+      };
+    }
+
+    const currentMemberCount = await prisma.teamMember.count({
+      where: {
+        agencyId: invitation.agencyId,
+      },
+    });
+
+    const limits = await getAgencyLimits(invitation.agencyId);
+
+    // ⚠️ Use your actual limit property
+    if (currentMemberCount >= limits.maxTeamMembers) {
+      return {
+        success: false,
+        message: "Agency team member limit reached.",
+      };
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const existingMember = await tx.teamMember.findUnique({
+        where: {
+          agencyId_userId: {
+            agencyId: invitation.agencyId,
+            userId: session.user.id,
+          },
+        },
+      });
+
+      if (existingMember) {
+        throw new Error("You are already a member of this agency.");
+      }
+
+      const teamMember = await tx.teamMember.create({
+        data: {
+          agencyId: invitation.agencyId,
+          userId: session.user.id,
+          designation: invitation.designation,
+          role: "TEAM",
+        },
+      });
+
+      await tx.user.update({
+        where: {
+          id: session.user.id,
+        },
+        data: {
+          agencyId: invitation.agencyId,
+          role: "TEAM",
+        },
+      });
+
+      await tx.invitation.update({
+        where: {
+          id: invitation.id,
+        },
+        data: {
+          status: "ACCEPTED",
+          acceptedAt: new Date(),
+        },
+      });
+
+      await tx.activityLog.create({
+        data: {
+          agencyId: invitation.agencyId,
+          actorUserId: session.user.id,
+          action: "ACCEPTED_INVITATION",
+          entityType: "TEAM_MEMBER",
+          entityId: teamMember.id,
+          metadata: {
+            email: session.user.email,
+            role: "TEAM",
+            designation: invitation.designation,
+          },
+        },
+      });
+
+      return teamMember;
+    });
+
+    return {
+      success: true,
+      message: "You have successfully joined the agency.",
+      teamMemberId: result.id,
+    };
+  } catch (error) {
+    console.error("acceptExistingUserInvitation error:", error);
+
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Failed to accept invitation.",
+    };
+  }
 };
 
 export const updateMemberRole = async (memberId: string, role: "OWNER" | "TEAM", designation: string) => {

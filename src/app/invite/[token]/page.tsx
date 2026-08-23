@@ -1,7 +1,7 @@
 import React from "react";
 import SetupPasswordForm from "@/components/auth/SetupPasswordForm";
 import { Layers } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { verifyInvitationToken } from "../../../../server/teamMember";
 
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
@@ -26,8 +26,11 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     );
   }
 
-  const { email, name, agencyName } = data;  
+  const { email, name, agencyName, userExist } = data;
 
+  if (userExist) {
+    redirect(`/login?callbackUrl=/invite/${token}`);
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center p-6 selection_color selection:bg-white selection:text-zinc-950">
@@ -36,6 +39,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
         email={email} 
         name={name}
         agencyName={agencyName} 
+        userExist={userExist}
       />
     </div>
   );

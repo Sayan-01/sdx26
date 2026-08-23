@@ -8,15 +8,16 @@ import { InviteStatus } from "@/generated/prisma";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { name, email, designation: rawDesignation } = await req.json();
+    const { name, email, designation: rawDesignation, role: rawRole } = await req.json();
 
     const session = await auth();
 
-    if (!name || !email || !rawDesignation) {
+    if (!name || !email || !rawDesignation || !rawRole) {
       return NextResponse.json({ error: "Please fill all the details" }, { status: 400 });
     }
 
     const designation = rawDesignation.toUpperCase();
+    const role = rawRole.toUpperCase();
 
     const agencyId = session?.user.agencyId;
     if (!agencyId) {
@@ -57,10 +58,7 @@ export const POST = async (req: NextRequest) => {
       });
 
       if (alreadyMember) {
-        return {
-          success: false,
-          message: "User is already a team member",
-        };
+        return NextResponse.json({ error: "User is already a team member" }, { status: 400 });
       }
     }
 
