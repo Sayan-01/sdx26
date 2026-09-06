@@ -149,7 +149,7 @@ model Project {
   clientId       String
   description    String?
   deadline       DateTime?
-  status         ProjectStatus    @default(ACTIVE)
+  status         ProjectStatus    @default(PENDING)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   activityLogs   ActivityLog[]
@@ -175,7 +175,7 @@ model Client {
   company           String?
   phone             String?
   avatarUrl         String?
-  isActive          Boolean          @default(true)
+  isActive          Boolean          @default(false)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   actorLogs         ActivityLog[]    @relation("ActorClient")
@@ -423,6 +423,7 @@ enum ProjectMemberRole {
 }
 
 enum ProjectStatus {
+  PENDING
   ACTIVE
   ON_HOLD
   COMPLETED

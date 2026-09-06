@@ -80,18 +80,14 @@ export default function PortalOnboardingClient({ initialItems, token }: PortalOn
       <DashboardCard
         title="Project Resources"
         icon={<FileText className="h-4 w-4 text-indigo-400" />}
-        extra={
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-[#151518] px-3 py-1 rounded-full border border-dashboard-border">
-            {items.length} Items Total
-          </span>
-        }
+        extra={<span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-[#151518] px-3 py-1 rounded-full border border-dashboard-border">{items.length} Items Total</span>}
         className="h-full w-full"
       >
         <div className="divide-y divide-zinc-800/60 overflow-y-auto box">
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex w-full hover:bg-zinc-900/50 transition-colors group px-6 min-h-[95px] items-center border-b border-dashboard-border last:border-0"
+              className="box-1 flex w-full hover:bg-zinc-900/50 transition-colors group px-6 min-h-[95px] items-center border-b border-dashboard-border last:border-0"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 flex-1">
                 <div className="flex items-center gap-5">
@@ -101,16 +97,31 @@ export default function PortalOnboardingClient({ initialItems, token }: PortalOn
                       item.status === "APPROVED" ? "bg-emerald-500/10 text-emerald-500" : item.status === "UPLOADED" ? "bg-indigo-500/10 text-indigo-400" : "bg-zinc-800/20 text-zinc-600",
                     )}
                   >
-                    {item.status === "APPROVED" ? <CheckCircle2 className="h-5 w-5" /> : item.status === "UPLOADED" ? <Clock className="h-5 w-5" /> : <FileText className={`h-5 w-5 ${item.status === "REJECTED" ? "text-red-500" : "text-zinc-600"}`} />}
+                    {item.status === "APPROVED" ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : item.status === "UPLOADED" ? (
+                      <Clock className="h-5 w-5" />
+                    ) : (
+                      <FileText className={`h-5 w-5 ${item.status === "REJECTED" ? "text-red-500" : "text-zinc-600"}`} />
+                    )}
                   </div>
                   <div>
                     <h3 className={cn("font-semibold transition-colors text-sm sm:text-base", item.status === "APPROVED" ? "text-emerald-500" : "text-zinc-200 group-hover:text-white")}>
                       {item.label}
                     </h3>
                     <p className="text-xs text-zinc-500 mt-0.5 font-medium leading-relaxed">
-                      Item status: <span className="text-zinc-400 lowercase">{item.status}</span> 
-                      {item.fileUrl && <span className="text-zinc-700 mx-1">•</span>} 
-                      {item.fileUrl && <a href={item.fileUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400/80 hover:text-indigo-300 transition-colors">view file</a>}
+                      Item status: <span className="text-zinc-400 lowercase">{item.status}</span>
+                      {item.fileUrl && <span className="text-zinc-700 mx-1">•</span>}
+                      {item.fileUrl && (
+                        <a
+                          href={item.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-400/80 hover:text-indigo-300 transition-colors"
+                        >
+                          view file
+                        </a>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -127,7 +138,7 @@ export default function PortalOnboardingClient({ initialItems, token }: PortalOn
                         className="h-9 px-5 bg-white text-zinc-950 hover:bg-zinc-200 font-bold rounded-lg shadow-sm transition-all active:scale-95 text-[11px] uppercase tracking-wider"
                       >
                         <Upload className="h-3.5 w-3.5 mr-2" />
-                        Update
+                        {item.status === "REJECTED" ? "Resubmit" : "Submit"}
                       </Button>
                     ) : (
                       <div
@@ -148,7 +159,10 @@ export default function PortalOnboardingClient({ initialItems, token }: PortalOn
         </div>
       </DashboardCard>
 
-      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+      <Dialog
+        open={uploadDialogOpen}
+        onOpenChange={setUploadDialogOpen}
+      >
         <DialogContent className="bg-[#19191b] border-dashboard-border text-white">
           <DialogHeader>
             <DialogTitle>Provide Resource: {selectedItem?.label}</DialogTitle>
@@ -163,16 +177,22 @@ export default function PortalOnboardingClient({ initialItems, token }: PortalOn
                 onChange={(e) => setFileUrl(e.target.value)}
                 className="bg-[#151518]"
               />
-              <p className="text-[10px] text-zinc-500 italic">
-                Note: In production, this would be a file upload. For now, please provide a URL.
-              </p>
+              <p className="text-[10px] text-zinc-500 italic">Note: In production, this would be a file upload. For now, please provide a URL.</p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setUploadDialogOpen(false)} className="border-dashboard-border">
+            <Button
+              variant="outline"
+              onClick={() => setUploadDialogOpen(false)}
+              className="border-dashboard-border"
+            >
               Cancel
             </Button>
-            <Button onClick={handleUpload} disabled={isSubmitting} className="bg-white text-zinc-950 hover:bg-zinc-200">
+            <Button
+              onClick={handleUpload}
+              disabled={isSubmitting}
+              className="bg-white text-zinc-950 hover:bg-zinc-200"
+            >
               {isSubmitting ? "Submitting..." : "Submit Resource"}
             </Button>
           </DialogFooter>

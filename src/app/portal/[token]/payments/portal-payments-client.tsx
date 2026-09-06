@@ -124,7 +124,7 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
         <DashboardCard
           title="Invoice History"
           icon={<Receipt className="h-4 w-4 text-indigo-400" />}
-          className="lg:col-span-2 h-full w-full"
+          wrapperClassName="lg:col-span-2 h-full w-full"
           extra={
             <Button variant="ghost" size="sm" className="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest h-6">
               Download All

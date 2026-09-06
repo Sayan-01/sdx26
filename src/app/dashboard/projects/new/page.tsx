@@ -204,7 +204,7 @@ export default function NewProjectPage() {
 
               <div className="space-y-5">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Project Name</label>
+                  <label className="text-xs font-bold tracking-widest text-zinc-500 ml-1">Project Name</label>
                   <Input
                     {...register("projectName")}
                     placeholder="e.g. Q1 Brand Identity"
@@ -214,7 +214,7 @@ export default function NewProjectPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Focus Area & Description</label>
+                  <label className="text-xs font-bold tracking-widest text-zinc-500 ml-1">Focus Area & Description</label>
                   <Input
                     {...register("projectDescription")}
                     placeholder="e.g. Strategy, UI/UX and Asset Delivery"
@@ -237,7 +237,7 @@ export default function NewProjectPage() {
 
               <div className="space-y-5">
                 <div className="space-y-2.5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Contact Name</label>
+                  <label className="text-xs font-bold tracking-widest text-zinc-500 ml-1">Contact Name</label>
                   <Input
                     {...register("clientName")}
                     placeholder="e.g. Sarah J. Parker"
@@ -247,7 +247,7 @@ export default function NewProjectPage() {
                 </div>
 
                 <div className="space-y-2.5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Email for Magic Link</label>
+                  <label className="text-xs font-bold tracking-widest text-zinc-500 ml-1">Email for Magic Link</label>
                   <Input
                     {...register("clientEmail")}
                     type="email"

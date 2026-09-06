@@ -74,7 +74,7 @@ export default async function MilestonesPage({ params }: { params: Promise<{ id:
                         <div
                           className={cn(
                             "w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 border border-dashboard-border/50",
-                            isPaid ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : isInReview ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-zinc-800/50 text-zinc-400"
+                            isPaid ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : isInReview ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-zinc-800/50 text-zinc-400",
                           )}
                         >
                           {isPaid ? <CheckCircle2 className="h-5 w-5" /> : i + 1}
@@ -90,7 +90,7 @@ export default async function MilestonesPage({ params }: { params: Promise<{ id:
                                   ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                                   : isInProgress
                                     ? "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
-                                    : "bg-zinc-800/50 text-zinc-400 border-dashboard-border/50"
+                                    : "bg-zinc-800/50 text-zinc-400 border-dashboard-border/50",
                             )}
                           >
                             {milestone.status.replace("_", " ")}
@@ -100,8 +100,8 @@ export default async function MilestonesPage({ params }: { params: Promise<{ id:
                       <p className="text-sm text-zinc-400 leading-relaxed md:pl-14">{milestone.description || "No description provided."}</p>
                     </div>
 
-                    <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 xl:gap-8 bg-[#19191b] border border-dashboard-border/50 p-4 rounded-xl w-full xl:w-auto">
-                      <div className="flex flex-wrap lg:flex-nowrap items-center gap-6 w-full lg:w-auto">
+                    <div className="grid grid-cols-3  bg-[#19191b] border border-dashboard-border/50 p-4 rounded-xl w-full xl:w-auto">
+                      <div className="col-span-2 flex flex-wrap lg:flex-nowrap items-center gap-6 w-full lg:w-auto">
                         <div className="space-y-1">
                           <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold flex items-center gap-1.5">
                             <DollarSign className="h-3 w-3" /> Amount
@@ -115,6 +115,7 @@ export default async function MilestonesPage({ params }: { params: Promise<{ id:
                           </p>
                           <p className="text-sm font-semibold text-zinc-300">{milestone.dueDate ? format(new Date(milestone.dueDate), "MMM dd, yyyy") : "No date set"}</p>
                         </div>
+                        <div className="w-px h-8 bg-zinc-800 hidden lg:block" />
                       </div>
                       <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto justify-between lg:justify-end">
                         {/* Progress bar */}
@@ -134,14 +135,14 @@ export default async function MilestonesPage({ params }: { params: Promise<{ id:
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
+                            className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg bg-zinc-800"
                           >
                             <MessageSquare className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
+                            className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg bg-zinc-800"
                           >
                             <MoreVertical className="h-4 w-4" />
                           </Button>

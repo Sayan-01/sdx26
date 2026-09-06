@@ -3,9 +3,7 @@ import prisma from "@/lib/db";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 
-const SESSION_SECRET = new TextEncoder().encode(
-  process.env.SESSION_SECRET || process.env.AUTH_SECRET
-);
+const SESSION_SECRET = new TextEncoder().encode(process.env.SESSION_SECRET || process.env.AUTH_SECRET);
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,9 +18,9 @@ export async function POST(req: NextRequest) {
       where: { token },
       include: {
         client: true,
-        project: true,
       },
     });
+    console.log(magicLink, "magicLink");
 
     // 2. Checks
     if (!magicLink) {
@@ -41,6 +39,15 @@ export async function POST(req: NextRequest) {
     await prisma.magicLink.update({
       where: { id: magicLink.id },
       data: { usedAt: new Date() },
+    });
+
+    await prisma.client.update({
+      where: {
+        id: magicLink.client?.id,
+      },
+      data: {
+        isActive: true,
+      },
     });
 
     // 4. Generate JWT
@@ -77,8 +84,8 @@ export async function POST(req: NextRequest) {
         entityType: "PROJECT",
         entityId: magicLink.projectId,
         metadata: {
-            token: token
-        }
+          token: token,
+        },
       },
     });
 
