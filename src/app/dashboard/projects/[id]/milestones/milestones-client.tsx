@@ -31,6 +31,14 @@ import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -141,6 +149,45 @@ type Props = {
   teamMembers: TeamMember[];
   currentUserId: string;
 };
+
+const statusConfig: Record<
+  MilestoneStatus,
+  { label: string; badgeClass: string; dotClass: string }
+> = {
+  PENDING: {
+    label: "Pending",
+    badgeClass: "bg-zinc-800/60 text-zinc-400 border-zinc-700/50 hover:bg-zinc-800",
+    dotClass: "bg-zinc-400",
+  },
+  IN_PROGRESS: {
+    label: "In Progress",
+    badgeClass: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20",
+    dotClass: "bg-indigo-400",
+  },
+  IN_REVIEW: {
+    label: "In Review",
+    badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20",
+    dotClass: "bg-amber-400",
+  },
+  APPROVED: {
+    label: "Approved",
+    badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20",
+    dotClass: "bg-emerald-400",
+  },
+  PAID: {
+    label: "Paid",
+    badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20",
+    dotClass: "bg-emerald-400",
+  },
+};
+
+const items: { label: string; value: MilestoneStatus; ownerOnly?: boolean }[] = [
+  { label: "Pending", value: "PENDING" },
+  { label: "In Progress", value: "IN_PROGRESS" },
+  { label: "In Review", value: "IN_REVIEW" },
+  { label: "Approved", value: "APPROVED", ownerOnly: true },
+  { label: "Paid", value: "PAID", ownerOnly: true },
+];
 
 export default function MilestonesClient({
   projectId,
@@ -477,6 +524,7 @@ export default function MilestonesClient({
               milestone.status === "APPROVED" || milestone.status === "PAID";
             const isInReview = milestone.status === "IN_REVIEW";
             const isInProgress = milestone.status === "IN_PROGRESS";
+            const currentConfig = statusConfig[milestone.status] || statusConfig.PENDING;
 
             return (
               <div
@@ -492,13 +540,7 @@ export default function MilestonesClient({
                     <div
                       className={cn(
                         "w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 border mt-0.5",
-                        isCompleted
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : isInReview
-                          ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                          : isInProgress
-                          ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
-                          : "bg-zinc-800/60 text-zinc-400 border-zinc-700/50"
+                        currentConfig.badgeClass
                       )}
                     >
                       {isCompleted ? <CheckCircle className="h-5 w-5" /> : index + 1}
@@ -512,106 +554,76 @@ export default function MilestonesClient({
 
                         {/* Status dropdown or badge */}
                         {userRole.isOwner || userRole.isMember ? (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button
-                                disabled={statusLoading[milestone.id]}
-                                className={cn(
-                                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase border transition-colors cursor-pointer",
-                                  isCompleted
-                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
-                                    : isInReview
-                                    ? "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20"
-                                    : isInProgress
-                                    ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20"
-                                    : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:bg-zinc-800"
-                                )}
-                              >
-                                {statusLoading[milestone.id] ? (
-                                  <Loader2 className="h-3 w-3 animate-spin" />
-                                ) : (
-                                  <span className="relative flex h-1.5 w-1.5">
-                                    <span
-                                      className={cn(
-                                        "relative inline-flex rounded-full h-1.5 w-1.5",
-                                        isCompleted
-                                          ? "bg-emerald-400"
-                                          : isInReview
-                                          ? "bg-amber-400"
-                                          : isInProgress
-                                          ? "bg-indigo-400"
-                                          : "bg-zinc-400"
-                                      )}
-                                    />
-                                  </span>
-                                )}
-                                {milestone.status.replace("_", " ")}
-                                <ChevronDown className="h-2.5 w-2.5 opacity-60 ml-0.5" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="start"
-                              className="bg-[#19191b] border-dashboard-border text-zinc-200 text-xs"
-                            >
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleStatusChange(milestone.id, "PENDING")
-                                }
-                                className="cursor-pointer hover:bg-zinc-800"
-                              >
-                                PENDING
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleStatusChange(milestone.id, "IN_PROGRESS")
-                                }
-                                className="cursor-pointer hover:bg-zinc-800 text-indigo-400"
-                              >
-                                IN PROGRESS
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleStatusChange(milestone.id, "IN_REVIEW")
-                                }
-                                className="cursor-pointer hover:bg-zinc-800 text-amber-400"
-                              >
-                                IN REVIEW
-                              </DropdownMenuItem>
-
-                              {/* Owner-only statuses */}
-                              {userRole.isOwner && (
-                                <>
-                                  <DropdownMenuSeparator className="bg-zinc-800" />
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleStatusChange(milestone.id, "APPROVED")
-                                    }
-                                    className="cursor-pointer hover:bg-zinc-800 text-emerald-400 font-semibold"
-                                  >
-                                    APPROVED (Owner)
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleStatusChange(milestone.id, "PAID")
-                                    }
-                                    className="cursor-pointer hover:bg-zinc-800 text-emerald-400 font-semibold"
-                                  >
-                                    PAID (Owner)
-                                  </DropdownMenuItem>
-                                </>
+                          <Select
+                            value={milestone.status}
+                            onValueChange={(val) =>
+                              handleStatusChange(milestone.id, val as MilestoneStatus)
+                            }
+                            disabled={statusLoading[milestone.id]}
+                          >
+                            <SelectTrigger
+                              className={cn(
+                                "px-2 pr-1 !h-7 rounded-md border text-[9px] font-bold uppercase tracking-wider transition-colors gap-1.5 cursor-pointer shadow-none",
+                                currentConfig.badgeClass
                               )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                            >
+                              {statusLoading[milestone.id] ? (
+                                <span className="flex items-center gap-1.5">
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                  <span>Updating...</span>
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1.5">
+                                  <SelectValue placeholder={currentConfig.label} />
+                                </span>
+                              )}
+                            </SelectTrigger>
+                            <SelectContent className="bg-[#19191b] ring-zinc-600 text-zinc-200 -mt-0.5">
+                              <SelectGroup>
+                                {items
+                                  .filter(
+                                    (item) =>
+                                      !item.ownerOnly ||
+                                      userRole.isOwner ||
+                                      item.value === milestone.status
+                                  )
+                                  .map((item) => {
+                                    const config = statusConfig[item.value];
+                                    return (
+                                      <SelectItem
+                                        key={item.value}
+                                        value={item.value}
+                                        className="text-xs cursor-pointer focus:bg-zinc-800 focus:text-white"
+                                      >
+                                        <span className="flex items-center gap-1.5">
+                                          <span
+                                            className={cn(
+                                              "w-1.5 h-1.5 rounded-full",
+                                              config.dotClass
+                                            )}
+                                          />
+                                          <span className="">{item.label}</span>
+                                        </span>
+                                      </SelectItem>
+                                    );
+                                  })}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
                         ) : (
                           <div
                             className={cn(
-                              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase border",
-                              isCompleted
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40"
+                              "px-2 !h-7 rounded-md border text-[9px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5",
+                              currentConfig.badgeClass
                             )}
                           >
-                            {milestone.status.replace("_", " ")}
+                            <span
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                currentConfig.dotClass
+                              )}
+                            />
+                            {currentConfig.label}
                           </div>
                         )}
                       </div>

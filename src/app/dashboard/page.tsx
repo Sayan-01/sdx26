@@ -91,9 +91,7 @@ export default async function DashboardPage() {
         >
           <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box">
             {recentProjects.length === 0 ? (
-              <div className="p-8 text-center text-sm text-zinc-500">
-                {isOwner ? "No projects found. Create one to get started." : "No projects assigned to you yet."}
-              </div>
+              <div className="p-8 text-center text-sm text-zinc-500">{isOwner ? "No projects found. Create one to get started." : "No projects assigned to you yet."}</div>
             ) : (
               recentProjects.map((project) => (
                 <Link
@@ -115,7 +113,7 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full pl-14 sm:pl-0">
-                      <div className="hidden md:block text-right w-24">
+                      <div className="hidden md:block text-right w-[200px]">
                         <div className="flex justify-between items-end mb-1.5">
                           <p className="text-[10px] text-zinc-500 font-medium">Progress</p>
                           <p className="text-[10px] text-zinc-400 font-medium">{project.progress}%</p>
