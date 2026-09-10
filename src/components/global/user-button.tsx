@@ -28,7 +28,7 @@ const UserButton = () => {
       }
     };
     fetchAgency();
-  }, [session?.user?.id]);
+  }, []);
 
   const firstName = session?.user?.name?.split(" ")[0] ?? "";
   const initials = session?.user?.name

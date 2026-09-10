@@ -106,12 +106,7 @@ const UpdateStatus = ({
       onValueChange={handleStatusChange}
       disabled={loading}
     >
-      <SelectTrigger
-        className={cn(
-          "px-2 pr-1 !h-7 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider transition-colors gap-1.5 cursor-pointer shadow-none",
-          currentConfig.badgeClass
-        )}
-      >
+      <SelectTrigger className={cn("px-2 pr-1 !h-7 rounded-md border text-[9px] font-bold uppercase tracking-wider transition-colors gap-1.5 cursor-pointer shadow-none", currentConfig.badgeClass)}>
         {loading ? (
           <span className="flex items-center gap-1.5">
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -123,7 +118,7 @@ const UpdateStatus = ({
           </span>
         )}
       </SelectTrigger>
-      <SelectContent className="bg-[#19191b] border-dashboard-border text-zinc-200">
+      <SelectContent className="bg-[#19191b] ring-zinc-600 text-zinc-200">
         <SelectGroup>
           {items.map((item) => {
             const config = statusConfig[item.value];
