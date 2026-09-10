@@ -15,6 +15,7 @@ interface SetupPasswordFormProps {
   name: string;
   agencyName: string;
   userExist?: boolean;
+  currentLoggedInEmail?: string;
 }
 
 export default function SetupPasswordForm({
@@ -23,12 +24,17 @@ export default function SetupPasswordForm({
   name,
   agencyName,
   userExist,
+  currentLoggedInEmail,
 }: SetupPasswordFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const isEmailMismatch = Boolean(
+    currentLoggedInEmail && currentLoggedInEmail.toLowerCase() !== email.toLowerCase()
+  );
 
   const handleAcceptInvitation = async () => {
     try {
@@ -72,7 +78,7 @@ export default function SetupPasswordForm({
       }
 
       toast.success("Account created successfully!");
-      router.push("/login");
+      router.push(`/auth/login?email=${encodeURIComponent(email)}`);
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -92,7 +98,7 @@ export default function SetupPasswordForm({
           <p className="text-zinc-400">
             You've been invited to join <span className="text-white font-medium">{agencyName}</span>.
             {userExist
-              ? " You already have an account — just confirm to join."
+              ? " You already have an account — confirm below to join."
               : " Set your password to get started."}
           </p>
         </div>
@@ -112,26 +118,48 @@ export default function SetupPasswordForm({
             </Field>
           </FieldGroup>
 
-          <p className="text-sm text-zinc-400 text-center">
-            You already have a MileStack account. Click below to login and join the agency.
-          </p>
+          {isEmailMismatch ? (
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm text-center space-y-3">
+              <p>
+                You are currently logged in as <strong className="text-white">{currentLoggedInEmail}</strong>, but this invitation was sent to <strong className="text-white">{email}</strong>.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={async () => {
+                  const { signOut } = await import("next-auth/react");
+                  await signOut({ callbackUrl: `/auth/login?callbackUrl=/invite/${token}&email=${encodeURIComponent(email)}` });
+                }}
+                className="w-full text-xs border-amber-500/40 text-amber-200 hover:bg-amber-500/20"
+              >
+                Switch Account
+              </Button>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-zinc-400 text-center">
+                You already have an account. Click below to accept the invitation and join the agency.
+              </p>
 
-          <Button
-            onClick={handleAcceptInvitation}
-            className="w-full h-12 bg-white text-zinc-950 hover:bg-zinc-200 transition-all font-semibold"
-            disabled={loading}
-          >
-            {loading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <>
-                Login & Join Agency
-                <LogIn className="ml-2 h-4 w-4" />
-              </>
-            )}
-          </Button>
+              <Button
+                onClick={handleAcceptInvitation}
+                className="w-full h-12 bg-white text-zinc-950 hover:bg-zinc-200 transition-all font-semibold"
+                disabled={loading}
+              >
+                {loading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    Accept & Join Agency
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </>
+          )}
         </div>
       ) : (
+
         /* NEW USER */
         <div className="space-y-6">
           <FieldGroup>

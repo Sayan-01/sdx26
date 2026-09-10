@@ -22,6 +22,7 @@ export default function SettingsPage() {
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
 
   // Form state
+  const [res, setRes] = useState<any>("")
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,6 +30,9 @@ export default function SettingsPage() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [role, setRole] = useState("");
+
+  
 
   // Original values for discard
   const [originalValues, setOriginalValues] = useState({
@@ -44,17 +48,20 @@ export default function SettingsPage() {
     const loadSettings = async () => {
       try {
         const res = await getSettingsData();
+
         if (res.success && res.user) {
           const nameParts = (res.user.name || "").split(" ");
           const fName = nameParts[0] || "";
           const lName = nameParts.slice(1).join(" ") || "";
 
+          setRes(res);
           setFirstName(fName);
           setLastName(lName);
           setEmail(res.user.email || "");
           setAgencyName(res.user.agencyName || "");
           setWebsiteUrl(res.user.agencySlug ? `${res.user.agencySlug}.com` : "");
           setAvatarUrl(res.user.avatarUrl || null);
+          setRole(res.user.role || "");
 
           setOriginalValues({
             firstName: fName,
@@ -91,12 +98,19 @@ export default function SettingsPage() {
       toast.error("First name is required");
       return;
     }
+    if(res.user?.email !== email) {
+      toast.error("Email cannot be changed");
+      return;
+    }
+    if (role !== "OWNER" && (res.user?.agencyName !== agencyName || res.user?.agencySlug !== websiteUrl)) {
+      toast.error("You are not authorized to update agency details");
+      return;
+    }
     setIsSaving(true);
     try {
       const res = await updateSettings({
         firstName,
         lastName,
-        email,
         agencyName,
         websiteUrl,
         newPassword: newPassword || undefined,
@@ -172,7 +186,11 @@ export default function SettingsPage() {
         title="Settings"
         description="Manage your agency profile, personal details, and preferences."
       />
-      <form className="w-full" onSubmit={handleSave}>
+
+      <form
+        className="w-full"
+        onSubmit={handleSave}
+      >
         <DashboardCard
           title="General Settings"
           icon={<Settings className="h-4 w-4 text-zinc-400" />}
@@ -244,6 +262,7 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Agency Name</label>
                   <Input
+                    disabled={role !== "OWNER"}
                     value={agencyName}
                     onChange={(e) => setAgencyName(e.target.value)}
                     className="bg-[#19191b] border-dashboard-border focus-visible:ring-zinc-700"
@@ -253,6 +272,7 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Website URL</label>
                   <Input
+                    disabled={role !== "OWNER"}
                     value={websiteUrl}
                     onChange={(e) => setWebsiteUrl(e.target.value)}
                     className="bg-[#19191b] border-dashboard-border focus-visible:ring-zinc-700"
@@ -268,8 +288,6 @@ export default function SettingsPage() {
                     className="bg-[#19191b] border-dashboard-border focus-visible:ring-zinc-700"
                   />
                 </div>
-
-                
               </div>
             </div>
 
@@ -296,13 +314,14 @@ export default function SettingsPage() {
       </form>
 
       {/* ── Avatar URL Dialog ─────────────────────────────────────────── */}
-      <Dialog open={avatarDialogOpen} onOpenChange={setAvatarDialogOpen}>
+      <Dialog
+        open={avatarDialogOpen}
+        onOpenChange={setAvatarDialogOpen}
+      >
         <DialogContent className="bg-[#19191b] border-dashboard-border text-white sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Update Avatar</DialogTitle>
-            <DialogDescription className="text-zinc-500">
-              Paste your avatar image URL below.
-            </DialogDescription>
+            <DialogDescription className="text-zinc-500">Paste your avatar image URL below.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {avatarUrlInput && (

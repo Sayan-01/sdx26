@@ -46,7 +46,6 @@ export const getSettingsData = async () => {
 export const updateSettings = async (data: {
   firstName: string;
   lastName: string;
-  email: string;
   agencyName: string;
   websiteUrl: string;
   newPassword?: string;

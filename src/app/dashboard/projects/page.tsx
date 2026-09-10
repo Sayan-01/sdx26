@@ -18,6 +18,7 @@ export default function ProjectsPage() {
   const [view, setView] = useState<"grid" | "list">("grid");
 
   const [projects, setProjects] = useState<ProjectCard>([]);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -27,6 +28,9 @@ export default function ProjectsPage() {
       setIsLoading(true);
       try {
         const response = await getAllProjects();
+        if (response.userRole) {
+          setUserRole(response.userRole);
+        }
         if (response.projects) {
           const formattedProjects = response.projects.map((p: any) => {
             // Calculate real progress based on milestones
@@ -95,14 +99,16 @@ export default function ProjectsPage() {
           title="Projects"
           description="Manage and track your agency's creative projects and client delivery."
         />
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard/projects/new">
-            <Button className="bg-white text-zinc-950 hover:bg-zinc-200 gap-2 font-bold shadow-lg shadow-white/5 transition-all hover:scale-[1.02] active:scale-[0.98]">
-              <Plus className="h-4 w-4" />
-              New Project
-            </Button>
-          </Link>
-        </div>
+        {userRole === "OWNER" && (
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard/projects/new">
+              <Button className="bg-white text-zinc-950 hover:bg-zinc-200 gap-2 font-bold shadow-lg shadow-white/5 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <Plus className="h-4 w-4" />
+                New Project
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Stats Summary */}

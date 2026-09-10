@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import Sidebar from "./_components/sidebar";
 import Header from "./_components/header";
 import { auth } from "../../../auth";
-import { Sora } from "next/font/google";
+import { Roboto_Mono, Sora } from "next/font/google";
 import { redirect } from "next/navigation";
 
-const roboto_Mono = Sora({ subsets: ["latin"] });
+const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();

@@ -9,13 +9,16 @@ import Eyebrow from "../global/Eyebrow";
 
 export default function CTASection() {
   return (
-    <section id="cta" className="relative border-b border-border bg-surface overflow-hidden">
+    <section
+      id="cta"
+      className="relative border-b border-border bg-surface overflow-hidden"
+    >
       {/* Subtle purple background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[350px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,oklch(0.55_0.22_295_/_0.06),transparent_70%)] blur-[80px]"
       />
-      
+
       <div className="container-page py-24 md:py-32">
         <div className="relative overflow-hidden bg-white rounded-3xl border border-zinc-200 bg-linear-to-br from-blue-500/50 via-white to-purple-500/50 p-10 text-zinc-900 shadow-elevated md:p-16">
           {/* Elegant grid background pattern fade-in with fixed light opacity */}
@@ -23,28 +26,24 @@ export default function CTASection() {
             aria-hidden
             className="pointer-events-none absolute inset-0 opacity-[0.35] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]"
             style={{
-              backgroundImage:
-                "linear-gradient(to right, rgba(0,0,0,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.2) 1px, transparent 1px)",
+              backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.2) 1px, transparent 1px)",
               backgroundSize: "56px 56px",
             }}
           />
-          
+
           <div className="relative mx-auto max-w-4xl text-center">
-            <Eyebrow className="border-purple-200 bg-purple-50 text-purple-700 font-semibold">
-              Get started
-            </Eyebrow>
-            
+            <Eyebrow className="border-purple-200 bg-purple-50 text-purple-700 font-semibold">Get started</Eyebrow>
+
             <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-zinc-900 sm:text-5xl md:text-6xl">
-              Stop managing clients across 10 tools.
-              <br />
-              Start using <Italic className="text-purple-600">Milestack.</Italic>
+              Stop managing clients across <br />
+              10 tools. Start using
+              <br /> <Italic className="text-purple-600">Milestack.</Italic>
             </h2>
-            
+
             <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-zinc-600 md:text-lg">
-              Join the elite agencies who've centralized their collaboration and
-              reclaimed their focus. Early-access seats are limited.
+              Join the elite agencies who've centralized their collaboration and reclaimed their focus. Early-access seats are limited.
             </p>
-            
+
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/auth/register"
@@ -60,7 +59,7 @@ export default function CTASection() {
                 Book a Demo
               </Link>
             </div>
-            
+
             <p className="mt-8 text-xs text-zinc-500 flex items-center justify-center gap-2 flex-wrap">
               <span>No credit card required</span>
               <span className="text-zinc-300">•</span>

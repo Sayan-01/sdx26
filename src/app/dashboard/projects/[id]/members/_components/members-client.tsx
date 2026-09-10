@@ -143,14 +143,14 @@ export default function MembersClient({ projectId, initialMembers }: Props) {
                   <div
                     className={cn(
                       "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border",
-                      member.role === "ADMIN"
+                      member.role === "OWNER"
                         ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                         : member.role === "VIEWER"
                           ? "bg-zinc-800/80 text-zinc-400 border-dashboard-border/50"
                           : "bg-blue-500/10 text-blue-500 border-blue-500/20",
                     )}
                   >
-                    {member.role === "ADMIN" ? <ShieldCheck className="h-3 w-3" /> : member.role === "VIEWER" ? <Shield className="h-3 w-3" /> : <ShieldAlert className="h-3 w-3" />}
+                    {member.role === "OWNER" ? <ShieldCheck className="h-3 w-3" /> : member.role === "VIEWER" ? <Shield className="h-3 w-3" /> : <ShieldAlert className="h-3 w-3" />}
                     {member.role}
                   </div>
                   <div className="flex items-center gap-1">
@@ -175,10 +175,10 @@ export default function MembersClient({ projectId, initialMembers }: Props) {
                             <DropdownMenuLabel>Change Role</DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-zinc-800" />
                             <DropdownMenuItem
-                              onClick={() => handleUpdateRole(member.id, "ADMIN")}
+                              onClick={() => handleUpdateRole(member.id, "OWNER")}
                               className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
                             >
-                              Admin
+                              Owner
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleUpdateRole(member.id, "MEMBER")}

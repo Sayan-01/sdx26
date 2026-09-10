@@ -229,7 +229,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-zinc-200 group-hover/member:text-white transition-colors">{member.user.name}</p>
-                        <p className={cn("text-xs font-medium mt-0.5", member.role === "ADMIN" ? "text-indigo-500" : "text-zinc-500")}>{member.role}</p>
+                        <p className={cn("text-xs font-medium mt-0.5", member.role === "OWNER" ? "text-indigo-500" : "text-zinc-500")}>{member.role}</p>
                       </div>
                     </div>
                   ))

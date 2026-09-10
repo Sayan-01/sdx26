@@ -147,7 +147,7 @@ export default function AgencyTeamPage() {
     if (!selectedMember) return;
     setIsSaving(true);
     try {
-      const res = await removeMember(selectedMember.id);
+      const res = await removeMember(selectedMember.userId);
       if (res.success) {
         toast.success("Member removed from agency");
         setRemoveDialogOpen(false);

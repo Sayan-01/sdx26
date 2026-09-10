@@ -78,14 +78,14 @@ Preparation checklist for pushing the codebase to production:
 - [ ] **Prisma Migrations:** Apply current database migrations to production (Neon PostgreSQL database).
 - [ ] **Seed Base Plans:** Ensure default subscription plans (`starter`, `pro`) are seeded in the database.
 - [ ] **Production Environment Variables:** Set up production keys for:
-  - [ ] `DATABASE_URL` (Neon Production String)
-  - [ ] `AUTH_SECRET` & `SESSION_SECRET`
-  - [ ] `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` (Production Callback URLs configured)
-  - [ ] `GITHUB_CLIENT_ID` & `GITHUB_CLIENT_SECRET` (Production Callback URLs configured)
-  - [ ] `EMAIL_USER` & `EMAIL_PASSWORD` (SMTP configuration for emails)
-  - [ ] `POLAR_ACCESS_TOKEN` & `POLAR_WEBHOOK_SECRET` (Switch sandbox to Live mode)
-  - [ ] `INTERNAL_SECRET`
-  - [ ] `NEXT_PUBLIC_URL_DOMAIN` (Your custom domain)
-  - [ ] `NEXT_PUBLIC_URL_SCHEME` (Set to `https://`)
-  - [ ] `UPLOADTHING_TOKEN` (Real token for cloud storage)
+  - [*] `DATABASE_URL` (Neon Production String)
+  - [*] `AUTH_SECRET` & `SESSION_SECRET`
+  - [*] `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` (Production Callback URLs configured)
+  - [*] `GITHUB_CLIENT_ID` & `GITHUB_CLIENT_SECRET` (Production Callback URLs configured)
+  - [*] `EMAIL_USER` & `EMAIL_PASSWORD` (SMTP configuration for emails)
+  - [*] `POLAR_ACCESS_TOKEN` & `POLAR_WEBHOOK_SECRET` (Switch sandbox to Live mode)
+  - [*] `INTERNAL_SECRET`
+  - [*] `NEXT_PUBLIC_URL_DOMAIN` (Your custom domain)
+  - [*] `NEXT_PUBLIC_URL_SCHEME` (Set to `https://`)
+  - [*] `UPLOADTHING_TOKEN` (Real token for cloud storage)
 - [ ] **Subdomain DNS Setup:** Configure wildcard DNS records (`*.milestack.com`) pointing to the hosting provider (e.g., Vercel) to enable subdomain tenant routing.
