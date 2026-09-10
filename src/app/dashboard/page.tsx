@@ -16,13 +16,15 @@ export default async function DashboardPage() {
     return <div className="p-6 text-red-500">Error loading dashboard data: {result.error}</div>;
   }
 
-  const { stats: fetchedStats, recentProjects, activities, userName } = result.data;
+  const { stats: fetchedStats, recentProjects, activities, userName, isOwner } = result.data;
 
   const stats = [
     { label: "Active Projects", value: fetchedStats.activeProjects.toString(), icon: <Briefcase className="h-4 w-4" />, color: "text-blue-500", bg: "bg-blue-500/10" },
     { label: "Pending Approvals", value: fetchedStats.pendingApprovals.toString(), icon: <Clock className="h-4 w-4" />, color: "text-amber-500", bg: "bg-amber-500/10" },
     { label: "Completed Milestones", value: fetchedStats.completedMilestones.toString(), icon: <CheckCircle2 className="h-4 w-4" />, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-    { label: "Payment Pending", value: `$${fetchedStats.pendingPayments.toLocaleString()}`, icon: <DollarSign className="h-4 w-4" />, color: "text-rose-500", bg: "bg-rose-500/10" },
+    isOwner
+      ? { label: "Payment Pending", value: `$${fetchedStats.pendingPayments.toLocaleString()}`, icon: <DollarSign className="h-4 w-4" />, color: "text-rose-500", bg: "bg-rose-500/10" }
+      : { label: "My Tasks Due", value: fetchedStats.assignedTasks.toString(), icon: <Clock className="h-4 w-4" />, color: "text-indigo-500", bg: "bg-indigo-500/10" },
   ];
 
   const getActivityIconAndColor = (type: string) => {
@@ -46,15 +48,17 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <DashboardHeading
-          title={`Welcome back`}
-          description="Here's what's happening with your agency today."
+          title={`Welcome back, ${userName}`}
+          description={isOwner ? "Here's what's happening with your agency today." : "Here's an overview of your assigned projects and tasks."}
         />
-        <Link href="/dashboard/projects/new">
-          <Button className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
-            <Plus className="h-4 w-4" />
-            New Project
-          </Button>
-        </Link>
+        {isOwner && (
+          <Link href="/dashboard/projects/new">
+            <Button className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
+              <Plus className="h-4 w-4" />
+              New Project
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Stats Grid */}
@@ -87,7 +91,9 @@ export default async function DashboardPage() {
         >
           <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box">
             {recentProjects.length === 0 ? (
-              <div className="p-8 text-center text-sm text-zinc-500">No projects found. Create one to get started.</div>
+              <div className="p-8 text-center text-sm text-zinc-500">
+                {isOwner ? "No projects found. Create one to get started." : "No projects assigned to you yet."}
+              </div>
             ) : (
               recentProjects.map((project) => (
                 <Link

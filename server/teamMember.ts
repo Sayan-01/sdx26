@@ -412,6 +412,8 @@ export const removeMember = async (memberId: string) => {
   const target = await prisma.user.findFirst({
     where: { id: memberId, agencyId: session.user.agencyId },
   });
+  console.log(memberId, session.user.agencyId, target);
+  
   if (!target) return { success: false, error: "Member not found" };
   if (target.role === "OWNER") return { success: false, error: "Cannot remove the agency owner" };
 

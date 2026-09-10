@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Field, FieldError, FieldGroup } from "../ui/field";
@@ -23,10 +23,14 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false); // Loading state
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const emailParam = searchParams.get("email");
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      email: emailParam || "",
       password: "",
     },
   });
@@ -36,6 +40,7 @@ const LoginForm = () => {
     const password = await values.password;
 
     if (!email || !password) {
+      setLoading(false);
       return setError("Filled all details");
     } else {
       try {
@@ -45,9 +50,14 @@ const LoginForm = () => {
         });
         let data = await res.json();
         if (res.ok) {
-          router.refresh();
           setSuccess(data.message);
-          setLoading(false); // Set loading to false
+          setLoading(false);
+          router.refresh();
+          if (callbackUrl) {
+            router.push(callbackUrl);
+          } else {
+            router.push("/dashboard");
+          }
         } else {
           setLoading(false); // Set loading to false
           setError(data.message);
@@ -108,12 +118,12 @@ const LoginForm = () => {
         <h4 className="text-blue-100/80 mt-4 text-center text-sm">
           Don't have an acoount?{" "}
           <span className=" text-blue-600 underline">
-            <Link href={`/auth/register`}>Register</Link>
+            <Link href={callbackUrl ? `/auth/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : `/auth/register`}>Register</Link>
           </span>
         </h4>
       </form>
       <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-6 h-[1.5px] w-full" />
-      <Socials />
+      <Socials callbackUrl={callbackUrl || undefined} />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import SetupPasswordForm from "@/components/auth/SetupPasswordForm";
 import { Layers } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { verifyInvitationToken } from "../../../../server/teamMember";
+import { auth } from "../../../../auth";
 
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -27,9 +28,11 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   }
 
   const { email, name, agencyName, userExist } = data;
+  const session = await auth();
 
-  if (userExist) {
-    redirect(`/login?callbackUrl=/invite/${token}`);
+  // If the user already has an account and is NOT logged in, redirect to login with callbackUrl
+  if (userExist && !session) {
+    redirect(`/auth/login?callbackUrl=/invite/${token}&email=${encodeURIComponent(email)}`);
   }
 
   return (
@@ -40,7 +43,9 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
         name={name}
         agencyName={agencyName} 
         userExist={userExist}
+        currentLoggedInEmail={session?.user?.email ?? undefined}
       />
     </div>
   );
 }
+

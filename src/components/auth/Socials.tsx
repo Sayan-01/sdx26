@@ -3,12 +3,13 @@ import { Git_login, Goo_login } from "../../../server/auth/auth";
 import { Google } from "@/icons";
 import { FaGithub } from "react-icons/fa";
 
-const Socials = () => {
+const Socials = ({ callbackUrl }: { callbackUrl?: string }) => {
+  const handleGoogleLogin = Goo_login.bind(null, callbackUrl);
   return (
     <div className="flex flex-col space-y-4">
-      <form action={Goo_login}>
+      <form action={handleGoogleLogin}>
         <button
-          className="bg-[#111111] relative group/btn flex space-x-2 items-center justify-center px-4 w-full text-white rounded-lg border border-zinc-800 h-[42px] font-medium shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+          className="bg-[#111111] relative group/btn flex space-x-2 items-center justify-center px-4 w-full text-white rounded-lg border border-zinc-800 h-[42px] font-medium shadow-[0px_0px_1px_1px_var(--neutral-800)] cursor-pointer"
           type="submit"
         >
           <Google />
@@ -19,6 +20,7 @@ const Socials = () => {
     </div>
   );
 };
+
 
 const BottomGradient = () => {
   return (

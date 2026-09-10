@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Settings, Users, CheckSquare, Milestone, FileBox, Activity, MoreVertical, ExternalLink, AlertCircle, Briefcase } from "lucide-react";
+import { Settings, Users, CheckSquare, Milestone, FileBox, Activity, MoreVertical, ExternalLink, AlertCircle, Briefcase, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getProjectById } from "@server/projects";
+import UpdateStatus from "./_components/update-status";
 
 export default function ProjectLayout({ children, params }: { children: React.ReactNode; params: Promise<{ id: string }> }) {
   const pathname = usePathname();
   const { id } = React.use(params);
   const [project, setProject] = React.useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getProject = async () => {
@@ -45,9 +47,14 @@ export default function ProjectLayout({ children, params }: { children: React.Re
               {project ? (
                 <>
                   <h1 className="text-xl font-bold text-zinc-100">{project.name}</h1>
-                  <div className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider shrink-0">
-                    {project.status === "ACTIVE" ? "Active" : project.status}
-                  </div>
+                  
+                  <UpdateStatus
+                    project={project}
+                    loading={loading}
+                    setLoading={setLoading}
+                    setProject={setProject}
+                  />
+                  
                 </>
               ) : (
                 <>

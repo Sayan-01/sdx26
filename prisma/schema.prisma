@@ -417,7 +417,7 @@ enum Designation {
 }
 
 enum ProjectMemberRole {
-  ADMIN
+  OWNER
   MEMBER
   VIEWER
 }
