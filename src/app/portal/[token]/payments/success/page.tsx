@@ -46,7 +46,7 @@ export default function PaymentSuccessPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in zoom-in duration-500">
       <DashboardCard className="max-w-md w-full p-8 text-center border-dashboard-border shadow-xl bg-[#19191b]">
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-5">
           {status === "verifying" && (
             <div className="w-20 h-20 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
               <Loader2 className="h-10 w-10 text-indigo-500 animate-spin" />

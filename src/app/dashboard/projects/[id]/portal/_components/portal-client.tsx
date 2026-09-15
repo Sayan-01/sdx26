@@ -46,7 +46,7 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Status Card */}
         <Card className="lg:col-span-2 bg-[#151518] border-dashboard-border shadow-none overflow-hidden relative group">
           <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">

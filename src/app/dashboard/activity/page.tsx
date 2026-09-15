@@ -179,7 +179,7 @@ export default function ActivityPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full pb-5">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full pb-5">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <DashboardHeading
           title="Activity Feed"
@@ -194,9 +194,9 @@ export default function ActivityPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 flex-1 min-h-0">
         {/* Main Feed Column */}
-        <div className="xl:col-span-2 flex flex-col gap-6 ">
+        <div className="xl:col-span-2 flex flex-col gap-5 ">
           {/* Filters & Search */}
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <div className="relative grow w-full">
@@ -304,7 +304,7 @@ export default function ActivityPage() {
         </div>
 
         {/* Sidebar Column */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]  card_shadow">
             <div className="flex items-center gap-2 px-5 pt-3">
               <BarChart3 className="h-4 w-4 text-indigo-500" />

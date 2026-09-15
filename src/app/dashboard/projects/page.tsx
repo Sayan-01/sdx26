@@ -93,8 +93,8 @@ export default function ProjectsPage() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700 pb-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="space-y-5 animate-in fade-in duration-700 pb-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
         <DashboardHeading
           title="Projects"
           description="Manage and track your agency's creative projects and client delivery."
@@ -112,7 +112,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((stat, i) => (
           <Card
             key={i}
@@ -224,14 +224,14 @@ export default function ProjectsPage() {
 
       {/* Projects Display */}
       {view === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-all duration-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 transition-all duration-0">
           {isLoading ? (
             Array.from({ length: 8 }).map((_, i) => (
               <Card
                 key={i}
                 className="bg-[#19191b] border-dashboard-border/60 p-0 overflow-hidden"
               >
-                <CardContent className="p-6 flex flex-col h-full space-y-5">
+                <CardContent className="p-5 flex flex-col h-full space-y-5">
                   <div className="flex items-start justify-between">
                     <div className="w-12 h-12 rounded-2xl bg-zinc-800/50 animate-pulse border border-dashboard-border/50" />
                     <div className="w-20 h-6 rounded-full bg-zinc-800/50 animate-pulse" />
@@ -281,9 +281,9 @@ export default function ProjectsPage() {
                 <Card className="bg-[#19191b] border-dashboard-border/60 hover:border-zinc-600 transition-all duration-300  overflow-hidden p-0 relative">
                   <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                  <CardContent className="p-6 flex flex-col h-full space-y-5">
+                  <CardContent className="p-5 flex flex-col h-full space-y-5">
                     <div className="flex items-start justify-between">
-                      <div className="w-12 h-12 rounded-2xl bg-[#151518] border border-dashboard-border flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-zinc-800 transition-all duration-300 shadow-inner">
+                      <div className="w-12 h-12 rounded-2xl bg-[#ff9162] border border-dashboard-border flex items-center justify-center text-white group-hover:text-white group-hover:bg-zinc-800 transition-all duration-300 shadow-inner">
                         <Briefcase className="h-5 w-5" />
                       </div>
                       <div

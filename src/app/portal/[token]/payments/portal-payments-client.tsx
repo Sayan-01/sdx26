@@ -85,7 +85,7 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
   ];
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-700 pb-10 h-full">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-700 pb-10 h-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <DashboardHeading 
           title="Finance & Billing" 
@@ -101,7 +101,7 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 shrink-0">
         {stats.map((stat, i) => (
           <div key={i} className="relative flex items-center gap-4 p-5 rounded-xl bg-[#19191b] border border-dashboard-border group card_shadow transition-all duration-300 hover:border-zinc-700 overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -120,7 +120,7 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 min-h-0">
         <DashboardCard
           title="Invoice History"
           icon={<Receipt className="h-4 w-4 text-indigo-400" />}
@@ -141,9 +141,9 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
                invoices.map((inv) => (
                  <div
                    key={inv.id}
-                   className="flex w-full hover:bg-zinc-900/50 transition-colors group px-6 py-5 items-center"
+                   className="flex w-full hover:bg-zinc-900/50 transition-colors group px-5 py-5 items-center"
                  >
-                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 flex-1">
+                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 flex-1">
                      <div className="flex items-center gap-5">
                        <div className={cn(
                          "w-12 h-12 rounded-xl border flex items-center justify-center transition-all duration-300 shrink-0 shadow-inner group-hover:scale-105",
@@ -199,7 +199,7 @@ export default function PortalPaymentsClient({ token, invoices }: { token: strin
           </div>
         </DashboardCard>
 
-        <div className="flex flex-col gap-6 lg:col-span-1">
+        <div className="flex flex-col gap-5 lg:col-span-1">
           <DashboardCard title="Saved Wallet" icon={<CreditCard className="h-4 w-4 text-indigo-400" />}>
              <div className="p-5 flex flex-col gap-4">
                 <Card className="bg-[#151518] shadow-none border-dashboard-border/60 p-6 space-y-6">

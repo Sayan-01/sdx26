@@ -100,7 +100,7 @@ export default function InviteTeamMemberPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 space-y-6">
           <Card className="bg-[#19191b] border-dashboard-border shadow-none overflow-hidden py-0">
             <CardHeader className="border-b border-dashboard-border/50 bg-[#1e1e21]/30 p-6">
@@ -115,7 +115,7 @@ export default function InviteTeamMemberPage() {
               noValidate
               className="p-6 space-y-6"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2.5">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                     <UserPlus className="h-3 w-3" /> Full Name
@@ -141,7 +141,7 @@ export default function InviteTeamMemberPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2.5">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                     <Shield className="h-3 w-3" /> Designation

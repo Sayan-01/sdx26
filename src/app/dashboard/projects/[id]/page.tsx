@@ -28,18 +28,18 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
   const teamMembers = project.projectMembers;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 flex-1 min-h-0">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 flex-1 min-h-0">
         {/* Main Status Column */}
-        <div className="xl:col-span-2 flex flex-col gap-6 min-h-0">
+        <div className="xl:col-span-2 flex flex-col gap-5 min-h-0">
           <DashboardCard
             title="Current Milestone"
             icon={<Zap className="h-4 w-4 text-emerald-500" />}
-            className="p-6"
+            className="p-5"
           >
             {currentMilestone ? (
               <>
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-5">
                   <div className="space-y-4">
                     {currentMilestone.dueDate && (
                       <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider">
@@ -148,7 +148,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                 upcomingTasks.map((task, i) => (
                   <div
                     key={task.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-zinc-900/50 transition-colors group"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 hover:bg-zinc-900/50 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-zinc-800/50 flex items-center justify-center text-lg border border-dashboard-border/50">
@@ -159,7 +159,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                         <div className="text-xs text-zinc-500 mt-0.5">{task.assignee ? `Assigned to ${task.assignee.name}` : "Unassigned"}</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-5">
                       <div className="flex items-center gap-2 px-2.5 py-1 rounded-md border border-dashboard-border/50 bg-zinc-900/50">
                         <div className={cn("w-1.5 h-1.5 rounded-full", task.priority === "HIGH" ? "bg-rose-500" : task.priority === "MEDIUM" ? "bg-amber-500" : "bg-emerald-500")} />
                         <span className="text-xs font-medium text-zinc-400 capitalize">{task.priority.toLowerCase()}</span>
@@ -177,7 +177,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
         </div>
 
         {/* Sidebar/Quick Actions Column */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           <DashboardCard
             title="Quick Activity"
             link={`/dashboard/projects/${id}/activity`}
@@ -187,7 +187,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                 activityLogs.map((log, i) => (
                   <div
                     key={log.id}
-                    className="flex gap-4 px-6 py-6 hover:bg-zinc-900/50 transition-colors group"
+                    className="flex gap-4 px-5 py-5 hover:bg-zinc-900/50 transition-colors group"
                   >
                     
                     <div className="flex-1 space-y-1">
@@ -240,7 +240,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
               <Link href={`/dashboard/projects/${id}/settings`}>
                 <Button
                   variant="outline"
-                  className="w-full mt-6 text-xs font-medium border-dashboard-border hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
+                  className="w-full mt-5 text-xs font-medium border-dashboard-border hover:bg-zinc-800/50 text-zinc-400 hover:text-white"
                 >
                   Manage Team
                 </Button>

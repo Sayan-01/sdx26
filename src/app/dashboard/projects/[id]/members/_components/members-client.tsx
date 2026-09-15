@@ -82,7 +82,7 @@ export default function MembersClient({ projectId, initialMembers }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full ">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full ">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-bold">Project Team</h2>

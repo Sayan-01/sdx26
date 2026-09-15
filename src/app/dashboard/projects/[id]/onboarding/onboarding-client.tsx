@@ -101,7 +101,7 @@ export default function OnboardingClient({ initialItems, projectId }: Onboarding
   const progressPercentage = stats.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-bold">Onboarding Checklist</h2>
@@ -163,16 +163,16 @@ export default function OnboardingClient({ initialItems, projectId }: Onboarding
         </div>
       </div>
 
-      <div className="flex flex-col gap-6 min-h-0 flex-1">
+      <div className="flex flex-col gap-5 min-h-0 flex-1">
         {/* Progress Bar Card */}
-        <Card className="bg-[#19191b] border-dashboard-border p-6 rounded-xl">
+        <Card className="bg-[#19191b] border-dashboard-border p-5 rounded-xl">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-4">
             <div className="space-y-1">
               <span className="text-xs font-semibold tracking-wider text-zinc-500 uppercase">Overall Progress</span>
               <div className="text-3xl font-bold text-zinc-200">{progressPercentage}%</div>
             </div>
 
-            <div className="flex flex-wrap gap-4 sm:gap-6">
+            <div className="flex flex-wrap gap-4 sm:gap-5">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 <span className="text-sm font-medium text-zinc-300">
@@ -221,7 +221,7 @@ export default function OnboardingClient({ initialItems, projectId }: Onboarding
                 items.map((item) => (
                   <div
                     key={item.id}
-                    className="group p-4 px-6 hover:bg-zinc-900/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-5 border-b"
+                    className="group p-4 px-5 hover:bg-zinc-900/50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-5 border-b"
                   >
                     <div className="flex items-start md:items-center gap-4 relative z-10 w-full group/inner">
                       <div

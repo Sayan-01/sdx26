@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const result = await getDashboardData();
 
   if (result.error || !result.data) {
-    return <div className="p-6 text-red-500">Error loading dashboard data: {result.error}</div>;
+    return <div className="p-6 text-red-500">{result.error}</div>;
   }
 
   const { stats: fetchedStats, recentProjects, activities, userName, isOwner } = result.data;
@@ -45,7 +45,7 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <DashboardHeading
           title={`Welcome back, ${userName}`}
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 shrink-0">
         {stats.map((stat, i) => (
           <Card
             key={i}
@@ -81,7 +81,7 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 min-[900px]:grid-cols-3 gap-6 flex-1 min-h-0">
+      <div className="grid grid-cols-1 min-[900px]:grid-cols-3 gap-5 flex-1 min-h-0">
         {/* Recent Projects */}
         <DashboardCard
           title="Recent Projects"
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full pl-14 sm:pl-0">
+                    <div className="flex items-center justify-between sm:justify-end gap-5 sm:w-auto w-full pl-14 sm:pl-0">
                       <div className="hidden md:block text-right w-[200px]">
                         <div className="flex justify-between items-end mb-1.5">
                           <p className="text-[10px] text-zinc-500 font-medium">Progress</p>
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
                   >
                     <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-dashboard-border/30", style.bg, style.color)}>{style.icon}</div>
                     <div className="flex-1 space-y-1">
-                      <p className="text-sm text-zinc-300 group-hover:text-white transition-colors leading-snug">{item.text}</p>
+                      <p className="text-sm text-zinc-300 group-hover:text-white transition-colors leading-snug line_2">{item.text}</p>
                       <p className="text-sm text-zinc-500 font-medium flex items-center gap-1.5">
                         <Clock className="h-3 w-3" />
                         {formatDistanceToNow(new Date(item.time), { addSuffix: true })}

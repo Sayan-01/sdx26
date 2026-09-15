@@ -64,12 +64,14 @@ export function SidebarComp({
   sidebarNav,
   sidebarUtils,
   activePlan,
+  upgradeCard = true,
 }: {
   userId: string | undefined;
   defaultOption?: boolean;
   sidebarNav: any[];
   sidebarUtils: any[];
   activePlan?: string;
+  upgradeCard?: boolean;
 }) {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
@@ -147,7 +149,7 @@ export function SidebarComp({
         <div className="mt-0 pt-3  relative">
           <div className="h-[60px] bg-gradient-to-b from-transparent via-zinc-900 z-10 to-zinc-900 pointer-events-none absolute -top-[40px] left-0 w-full md:hidden block" />
 
-          <UpgradeCard activePlan={activePlan} />
+          {upgradeCard && <UpgradeCard activePlan={activePlan} />}
           {sidebarUtils.map((item, index) => (
             <Link
               key={index}

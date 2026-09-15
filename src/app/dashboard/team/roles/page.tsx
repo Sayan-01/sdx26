@@ -209,7 +209,7 @@ export default function ManageRolesPage() {
   const activeCount = Object.values(roles[activeRole]).filter(Boolean).length;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-8">
+    <div className="space-y-5 animate-in fade-in duration-500 pb-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -256,7 +256,7 @@ export default function ManageRolesPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
         {/* Role selector sidebar */}
         <div className="space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 px-1">

@@ -129,7 +129,7 @@ export default function FilesClient({
   );
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-bold">Project Files</h2>
@@ -148,7 +148,7 @@ export default function FilesClient({
       </div>
 
       {limits && (
-        <div className="p-5 rounded-2xl bg-zinc-900/50 border border-dashboard-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-5 rounded-2xl bg-zinc-900/50 border border-dashboard-border flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-1 shrink-0">
             <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Plan Storage Limit</h4>
             <p className="text-sm text-zinc-300 font-medium">

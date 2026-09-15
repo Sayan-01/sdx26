@@ -419,7 +419,7 @@ export default function MilestonesClient({
   ).length;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
       {/* Header & Role Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5">
@@ -459,8 +459,8 @@ export default function MilestonesClient({
       </div>
 
       {/* KPI Overview Bar */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-[#19191b] border-dashboard-border p-4 rounded-xl">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <Card className="bg-[#19191b] border-dashboard-border p-5 rounded-xl">
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-400 font-medium">Milestones</span>
             <CheckCircle2 className="h-4 w-4 text-indigo-400" />
@@ -473,7 +473,7 @@ export default function MilestonesClient({
           </div>
         </Card>
 
-        <Card className="bg-[#19191b] border-dashboard-border p-4 rounded-xl">
+        <Card className="bg-[#19191b] border-dashboard-border p-5 rounded-xl">
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-400 font-medium">Work Breakdown</span>
             <CheckSquare className="h-4 w-4 text-emerald-400" />
@@ -486,7 +486,7 @@ export default function MilestonesClient({
           </div>
         </Card>
 
-        <Card className="bg-[#19191b] border-dashboard-border p-4 rounded-xl">
+        <Card className="bg-[#19191b] border-dashboard-border p-5 rounded-xl">
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-400 font-medium">Total Phase Budget</span>
             <DollarSign className="h-4 w-4 text-emerald-500" />
@@ -499,7 +499,7 @@ export default function MilestonesClient({
           </div>
         </Card>
 
-        <Card className="bg-[#19191b] border-dashboard-border p-4 rounded-xl">
+        <Card className="bg-[#19191b] border-dashboard-border p-5 rounded-xl">
           <div className="flex items-center justify-between">
             <span className="text-xs text-zinc-400 font-medium">Discussions</span>
             <MessageSquare className="h-4 w-4 text-amber-400" />
@@ -514,7 +514,7 @@ export default function MilestonesClient({
       </div>
 
       {/* Main Milestones List */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {milestones.length > 0 ? (
           milestones.map((milestone, index) => {
             const isExpanded = !!expandedMilestones[milestone.id];
@@ -535,7 +535,7 @@ export default function MilestonesClient({
               >
                 {/* Milestone Primary Header */}
                 <div className="p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-5">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                  <div className="flex items-center gap-5 flex-1 min-w-0">
                     {/* Stage number badge */}
                     <div
                       className={cn(

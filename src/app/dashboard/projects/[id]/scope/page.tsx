@@ -44,7 +44,7 @@ export default function ScopeLogPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 h-full">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-bold">Scope Log</h2>
@@ -76,7 +76,7 @@ export default function ScopeLogPage() {
         <Card className="bg-[#151518] shadow-none flex-1 flex flex-col overflow-hidden min-h-0 p-0 border-0 rounded-xl">
           <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box">
             {requests.map((req) => (
-              <div key={req.id} className="group flex flex-col md:flex-row md:items-center justify-between gap-6 px-5 py-4 hover:bg-zinc-900/50 transition-colors">
+              <div key={req.id} className="group flex flex-col md:flex-row md:items-center justify-between gap-5 px-5 py-4 hover:bg-zinc-900/50 transition-colors">
                  
                  <div className="flex items-start md:items-center gap-4 flex-grow w-full">
                     <div className={cn(

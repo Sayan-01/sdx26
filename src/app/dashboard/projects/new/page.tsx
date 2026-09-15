@@ -189,7 +189,7 @@ export default function NewProjectPage() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-1 lg:grid-cols-5 gap-6 p-0"
+        className="grid grid-cols-1 lg:grid-cols-5 gap-5 p-0"
       >
         <div className="lg:col-span-3 space-y-6">
           <Card className="bg-[#19191b] border-dashboard-border  overflow-hidden group p-6">

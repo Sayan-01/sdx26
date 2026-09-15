@@ -294,8 +294,8 @@ export default function PortalMilestonesClient({
   ];
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-700 pb-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-700 pb-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
         <DashboardHeading
           title="Project Roadmap & Deliverables"
           description="Track the progress of each development phase, review actionable deliverables, and discuss feedback directly with the team."
@@ -303,7 +303,7 @@ export default function PortalMilestonesClient({
       </div>
 
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((stat, i) => (
           <Card key={i} className="bg-[#19191b] border-dashboard-border p-4 rounded-xl">
             <div className="flex items-center justify-between">
@@ -319,7 +319,7 @@ export default function PortalMilestonesClient({
       </div>
 
       
-        <div className="space-y-4 ">
+        <div className="space-y-5">
           {milestones.length > 0 ? (
             milestones.map((m, i) => {
               const isExpanded = !!expandedMilestones[m.id];

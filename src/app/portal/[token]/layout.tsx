@@ -8,7 +8,7 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import { Roboto_Mono, Sora } from "next/font/google";
 
-const roboto_Mono = Sora({ subsets: ["latin"] });
+const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
 
 export default async function PortalLayout({ children, params }: { children: React.ReactNode; params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -117,6 +117,7 @@ export default async function PortalLayout({ children, params }: { children: Rea
           defaultOption={true}
           sidebarNav={clientSidebarNav}
           sidebarUtils={clientSidebarUtils}
+          upgradeCard={false}
         />
       </aside>
 
@@ -147,8 +148,8 @@ export default async function PortalLayout({ children, params }: { children: Rea
           </div>
         </header>
         {/* Page Main Content */}
-        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-6">
-          <div className="mx-auto w-full">{children}</div>
+        <main className="box h-[calc(100vh-64px)] overflow-y-auto flex box p-4 md:p-5 lg:p-6">
+          <div className="mx-auto w-full h-full flex flex-col min-h-0">{children}</div>
         </main>
       </div>
     </div>

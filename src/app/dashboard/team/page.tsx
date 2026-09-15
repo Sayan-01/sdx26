@@ -163,7 +163,7 @@ export default function AgencyTeamPage() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-5">
+    <div className="space-y-5 animate-in fade-in duration-500 pb-5">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <DashboardHeading
           title="Agency Team"
@@ -327,7 +327,7 @@ export default function AgencyTeamPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <Card className="bg-[#19191b] border-dashboard-border group relative card_shadow transition-all duration-300 p-0 overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-indigo-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <CardContent className="p-5 space-y-4">
