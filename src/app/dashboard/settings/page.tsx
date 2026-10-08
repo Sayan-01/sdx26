@@ -196,7 +196,7 @@ export default function SettingsPage() {
           icon={<Settings className="h-4 w-4 text-zinc-400" />}
         >
           <div className="flex flex-col flex-1">
-            <div className="p-8 flex-1 overflow-y-auto">
+            <div className="p-5 flex-1 overflow-y-auto">
               <p className="text-zinc-500 text-sm mb-6">Update your account information, agency details, and security preferences.</p>
 
               <div className="flex items-center gap-6 mb-8 pb-8 border-b border-zinc-800/60">

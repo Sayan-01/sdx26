@@ -139,7 +139,7 @@ export default function MembersClient({ projectId, initialMembers }: Props) {
                   </div>
                 </div>
 
-                <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 w-full sm:w-auto mt-2 sm:mt-0 pl-14 sm:pl-0">
+                <div className="flex items-center justify-between gap-4 w-full sm:w-auto mt-2 sm:mt-0 pl-14 sm:pl-0">
                   <div
                     className={cn(
                       "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border",

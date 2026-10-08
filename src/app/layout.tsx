@@ -4,24 +4,26 @@ import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
-
+import { auth } from "../../auth";
+import { Analytics } from "@vercel/analytics/next"
 
 const main = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-
 export const metadata: Metadata = {
   title: "Milestack",
   description: "The client collaboration workspace for modern web agencies.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html
       lang="en"
@@ -36,7 +38,8 @@ export default function RootLayout({
           height={2}
           showSpinner={false}
         />
-        <SessionProvider>{children}</SessionProvider> <Toaster />
+        <SessionProvider session={session}>{children}</SessionProvider> <Toaster />
+      <Analytics />
       </body>
     </html>
   );

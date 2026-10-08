@@ -1,5 +1,4 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,23 +11,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, LogOut, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Sign_Out, getUserAgency } from "../../../server/auth/auth";
-import { useSession } from "next-auth/react";
+import { auth } from "../../../auth";
 
-const UserButton = () => {
-  const { data: session } = useSession();
-  const [logoUrl, setLogoUrl] = useState<string>("");
-
-  useEffect(() => {
-    const fetchAgency = async () => {
-      if (session?.user?.id) {
-        const agency = await getUserAgency();
-        if (agency?.logoUrl) {
-          setLogoUrl(agency.logoUrl);
-        }
-      }
-    };
-    fetchAgency();
-  }, []);
+const UserButton = async () => {
+  const session = await auth();
+  const agency = await getUserAgency();
+  const logoUrl = agency?.logoUrl || "";
 
   const firstName = session?.user?.name?.split(" ")[0] ?? "";
   const initials = session?.user?.name

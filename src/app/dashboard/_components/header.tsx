@@ -1,14 +1,18 @@
 "use client";
 import NotificationBellButton from "@/components/global/notification-bell-button";
-import UserButton from "@/components/global/user-button";
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Bell, PlusSquare, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
 
-const Header = () => {
+interface HeaderProps {
+  userButton: React.ReactNode;
+}
+
+const Header = ({ userButton }: HeaderProps) => {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const current = segments[segments.length - 1] || "Home";
@@ -56,7 +60,7 @@ const Header = () => {
 
           <NotificationBellButton />
           <div className="h-8 w-px bg-dashboard-border" />
-          <UserButton />
+          {userButton}
         </div>
       </div>
     </header>

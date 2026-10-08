@@ -9,6 +9,7 @@ import Header from "./_components/header";
 import { auth } from "../../../auth";
 import { Roboto_Mono, Sora } from "next/font/google";
 import { redirect } from "next/navigation";
+import UserButton from "@/components/global/user-button";
 
 const roboto_Mono = Roboto_Mono({ subsets: ["latin"] });
 
@@ -31,7 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         />
       </aside>
       <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed border-dashboard-border">
-        <Header />
+        <Header userButton={<UserButton />} />
         {isBasicPlan && (
           <div className="bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 flex items-center justify-between gap-4 animate-in slide-in-from-top duration-500">
             <div className="flex items-center gap-2">

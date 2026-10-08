@@ -3,21 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { auth } from "../../../auth";
 import ThemeToggle from "./theme-toggle";
-
-function Logo() {
-  return (
-    <Link href="/" className="flex items-center gap-2 group">
-      <div className="grid h-7 w-7 place-items-center rounded-md bg-primary text-primary-foreground transition-transform group-hover:scale-[1.02]">
-        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 18 L10 10 L14 14 L20 6" />
-        </svg>
-      </div>
-      <span className="font-display text-[15px] font-semibold tracking-tight text-foreground group-hover:text-foreground/90 transition-colors">
-        Milestack
-      </span>
-    </Link>
-  );
-}
+import  Logo  from "../global/logo";
 
 export default async function Navbar() {
   const session = await auth();
@@ -31,7 +17,7 @@ export default async function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between">
-        <Logo />
+        <Logo fullName={true}/>
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((l) => (
             <Link

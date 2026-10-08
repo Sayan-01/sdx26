@@ -52,7 +52,7 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
           <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
             <Shield className="w-48 h-48 text-indigo-500" />
           </div>
-          <CardHeader className="pb-4 relative z-10">
+          <CardHeader className=" relative z-10">
             <div className="flex items-center gap-3 mb-2">
               <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
                 <Zap className="h-4 w-4 text-indigo-400" />
@@ -102,7 +102,7 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
               <Button
                 onClick={generateLink}
                 disabled={loading}
-                className="h-12 px-10 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl gap-2.5 shadow-lg shadow-indigo-600/20 transition-all active:scale-95 disabled:opacity-50"
+                className="h-12 px-10 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl gap-2.5 transition-all active:scale-95 disabled:opacity-50"
               >
                 {loading ? <RefreshCw className="h-4 w-4 animate-spin text-white/50" /> : <Send className="h-4 w-4" />}
                 {portalUrl ? "Regenerate & Re-send Link" : "Generate & Send Portal Access"}
