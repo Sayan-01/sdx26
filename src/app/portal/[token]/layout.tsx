@@ -85,6 +85,11 @@ export default async function PortalLayout({ children, params }: { children: Rea
       icon: "FileText",
     },
     {
+      title: "Scope & Changes",
+      href: `/portal/${token}/scope`,
+      icon: "AlertCircle",
+    },
+    {
       title: "Payments",
       href: `/portal/${token}/payments`,
       icon: "CreditCard",

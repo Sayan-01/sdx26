@@ -37,7 +37,7 @@ export default function CTASection() {
             <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-zinc-900 sm:text-5xl md:text-6xl">
               Stop managing clients across <br />
               10 tools. Start using
-              <br /> <Italic className="text-purple-600">Milestack.</Italic>
+              <br /> <Italic className="text-purple-600">SDX26.</Italic>
             </h2>
 
             <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-zinc-600 md:text-lg">

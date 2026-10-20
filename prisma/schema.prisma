@@ -62,6 +62,7 @@ model Agency {
   invitations   Invitation[]
   notifications Notification[]
   projects      Project[]
+  changeRequests ChangeRequest[]
   subscription  Subscription?
 }
 
@@ -71,6 +72,7 @@ model User {
   email                   String           @unique
   password                String?
   role                    UserRole         @default(OWNER)
+  source                  String?
   varifiedToken           String?
   varifiedTokenExpire     DateTime?
   avatarUrl               String?
@@ -160,6 +162,7 @@ model Project {
   milestones     Milestone[]
   notifications  Notification[]
   onboardingItem OnboardingItem[]
+  changeRequests ChangeRequest[]
   agency         Agency           @relation(fields: [agencyId], references: [id])
   client         Client           @relation(fields: [clientId], references: [id])
   tasks          Task[]
@@ -185,6 +188,7 @@ model Client {
   notifications     Notification[]   @relation("ClientNotifications")
   onboardingUploads OnboardingItem[] @relation("UploadedBy")
   projects          Project[]
+  changeRequests    ChangeRequest[]
 
   @@unique([agencyId, email])
   @@map("clients")
@@ -223,9 +227,10 @@ model Milestone {
   updatedAt   DateTime        @updatedAt
   files       File[]
   messages    Message[]
-  project     Project         @relation(fields: [projectId], references: [id])
-  payments    Payment?
-  tasks       Task[]
+  project       Project         @relation(fields: [projectId], references: [id])
+  payments      Payment?
+  tasks         Task[]
+  changeRequest ChangeRequest?
 
   @@unique([projectId, orderIndex])
   @@map("milestones")
@@ -501,4 +506,52 @@ enum InviteStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum ChangeRequestStatus {
+  SUBMITTED
+  NEEDS_REVISION
+  PENDING_CLIENT_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+  CONVERTED
+}
+
+enum ScopeType {
+  IN_SCOPE
+  NEW_REQUEST
+}
+
+enum ChangeRequestCreator {
+  AGENCY
+  CLIENT
+}
+
+model ChangeRequest {
+  id                   String              @id @default(cuid())
+  agencyId             String
+  projectId            String
+  clientId             String?
+  requestedByRole      ChangeRequestCreator
+  title                String
+  description          String?
+  scopeType            ScopeType           @default(NEW_REQUEST)
+  status               ChangeRequestStatus @default(SUBMITTED)
+  costImpact           Float?              @default(0)
+  timelineImpact       String?
+  agencyNote           String?
+  clientNote           String?
+  convertedMilestoneId String?             @unique
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  agency               Agency              @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  project              Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  client               Client?             @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  convertedMilestone   Milestone?          @relation(fields: [convertedMilestoneId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, status])
+  @@index([agencyId])
+  @@map("change_requests")
 }

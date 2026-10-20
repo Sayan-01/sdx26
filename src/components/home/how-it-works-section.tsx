@@ -6,7 +6,7 @@ import Eyebrow from "../global/Eyebrow";
 
 const workflow = [
   { title: "Invite Client", body: "Send a secure magic link to your client. No passwords to remember — just instant access to their portal." },
-  { title: "Collect Assets", body: "Automate onboarding. Milestack chases logos, copy, and credentials so you can start working faster." },
+  { title: "Collect Assets", body: "Automate onboarding. SDX26 chases logos, copy, and credentials so you can start working faster." },
   { title: "Deliver & Approve", body: "Share work in structured milestones. Get clear feedback and one-click approvals that build an audit trail." },
   { title: "Get Paid", body: "Link invoices to milestones. Clients pay directly through the portal as soon as work is approved." },
 ];
@@ -21,7 +21,7 @@ export default function HowItWorksSection() {
             Simple, structured, <Italic>effective.</Italic>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-            Stop guessing where things stand. Milestack provides a clear path
+            Stop guessing where things stand. Our application provides a clear path
             from kickoff to final payment for every project.
           </p>
         </div>

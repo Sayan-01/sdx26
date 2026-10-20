@@ -31,7 +31,7 @@ export default function AboutSection() {
           </h2>
           <div className="mt-7 space-y-5 text-base leading-relaxed text-muted-foreground md:text-lg text-center">
             <p>
-              We started Milestack because we were tired of the "email chaos." We saw too many talented designers and developers losing sleep over missed feedback, delayed payments, and clients who
+              We started SDX26 because we were tired of the "email chaos." We saw too many talented designers and developers losing sleep over missed feedback, delayed payments, and clients who
               felt out of the loop.
             </p>
             <p>Our mission is to help agencies reclaim their time and provide a world-class experience to their clients. Professional work deserves a professional workspace.</p>

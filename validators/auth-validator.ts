@@ -5,6 +5,7 @@ export const registerSchema = z.object({
   password: z.string().min(6),
   username: z.string().min(1),
   otp: z.string().min(6, "Otp must be 6 characters"),
+  source: z.string().optional(),
 });
 
 export const loginSchema = z.object({

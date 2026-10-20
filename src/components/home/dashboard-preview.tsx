@@ -31,7 +31,7 @@ export function DashboardMock() {
               </svg>
             </div>
             <div>
-              <div className="font-semibold text-foreground leading-none">Milestack.</div>
+              <div className="font-semibold text-foreground leading-none">SDX26.</div>
               <div className="text-[8px] text-muted-foreground mt-0.5">For Modern Agencies</div>
             </div>
           </div>

@@ -48,7 +48,7 @@ export const POST = async (req: Request) => {
   // if (emailRes.status != 200) return NextResponse.json({ message: "Something was wrong via send email" }, { status: 500 });
   // return NextResponse.json({ message: "Verification email send" }, { status: 200 });`
 
-  const { username, email, password, otp, expires } = await req.json();
+  const { username, email, password, otp, expires, source } = await req.json();
   let hashPass = await bcrypt.hash(password, 10);
   const newUser = await prisma.user.create({
     data: {
@@ -58,6 +58,7 @@ export const POST = async (req: Request) => {
       varifiedToken: otp, // Ensure field names match Prisma schema
       varifiedTokenExpire: expires,
       role: "OWNER",
+      source: source || null,
     },
   });
   if (newUser) {

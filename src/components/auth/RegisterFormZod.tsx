@@ -15,6 +15,13 @@ import { generateVerificationToken } from "@/utils/token";
 import { IsUserEmailExist, sendCodeThroughNodemailer } from "@/lib/queries";
 import { Button } from "../ui/button";
 import { ArrowRight, Layers, Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const RegisterForm = () => {
   const [error, setError] = useState("");
@@ -29,13 +36,14 @@ const RegisterForm = () => {
 
   const router = useRouter();
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
       username: "",
       otp: "",
+      source: "",
     },
   });
 
@@ -66,7 +74,7 @@ const RegisterForm = () => {
     setExpires(expires);
   };
 
-  const onSubmit = async (values: { username: string; email: string; password: string; otp: string }) => {
+  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     setLoading(true); // Set loading to true
     const { username, email, password, otp } = values;
 
@@ -115,7 +123,7 @@ const RegisterForm = () => {
         </Link>
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{step === 1 ? "Create your account" : "Setup your agency"}</h1>
-          <p className="text-zinc-400">{step === 1 ? "Join Milestack now to streamline your client collaboration in one place." : "Tell us a bit about your agency to get started."}</p>
+          <p className="text-zinc-400">{step === 1 ? "Join SDX26 now to streamline your client collaboration in one place." : "Tell us a bit about your agency to get started."}</p>
         </div>
       </div>
       <form
@@ -140,6 +148,28 @@ const RegisterForm = () => {
               {...form.register("email")}
             />
             <FieldError errors={[form.formState.errors.email]} />
+          </Field>
+
+          <Field>
+            <Select
+              value={form.watch("source")}
+              onValueChange={(val) => form.setValue("source", val, { shouldValidate: true })}
+            >
+              <SelectTrigger className="w-full rounded-lg h-[42px]!  border-zinc-800 border bg-transparent text-sm text-zinc-100 placeholder:opacity-40 data-placeholder:text-zinc-500">
+                <SelectValue placeholder="How did you hear about us?" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#151518] border-zinc-800 text-zinc-200 left-0.5 p-1.75 w-[90%]">
+                <SelectItem value="google">Google Search</SelectItem>
+                <SelectItem value="twitter">X (Twitter)</SelectItem>
+                <SelectItem value="linkedin">LinkedIn</SelectItem>
+                <SelectItem value="youtube">YouTube</SelectItem>
+                <SelectItem value="instagram">Instagram</SelectItem>
+                <SelectItem value="friend">Friend / Colleague</SelectItem>
+                <SelectItem value="community">Agency Community / Slack</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+            <FieldError errors={[form.formState.errors.source]} />
           </Field>
 
           <Field>

@@ -7,6 +7,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { CheckIcon, ClockIcon, LockIcon, XIcon } from "lucide-react";
+import Logo from "@/components/global/logo";
 
 type State = "verifying" | "redirecting" | "already_used" | "expired" | "invalid" | "error";
 
@@ -92,30 +93,7 @@ export default function PortalEntryPage() {
 
   return (
     <div style={styles.root}>
-      {/* Brand mark */}
-      <div style={styles.brand}>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <rect
-            width="24"
-            height="24"
-            rx="6"
-            fill="var(--accent)"
-          />
-          <path
-            d="M7 12h10M7 8h6M7 16h8"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-        <span style={styles.brandName}>Milestack</span>
-      </div>
-
+      <Logo fullName={true} />
       <div
         style={styles.card}
         className="fade-up"

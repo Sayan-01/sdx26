@@ -22,7 +22,7 @@ export default async function HeroSection() {
             className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-soft transition-colors hover:text-foreground"
           >
             <Sparkles className="h-3.5 w-3.5 text-accent" />
-            Milestack is now in Early Access
+            SDX26 is now in Early Access
             <ArrowRight className="h-3 w-3" />
           </Link>
 
@@ -33,7 +33,7 @@ export default async function HeroSection() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl sm:text-base text-sm leading-relaxed text-muted-foreground md:text-lg">
-            Milestack helps agencies manage client projects, collect assets, share deliverables, gather feedback, and track milestones — all in one professional workspace.
+            Our app helps agencies manage client projects, collect assets, share deliverables, gather feedback, and track milestones — all in one professional workspace.
           </p>
 
           <div className="mt-9 flex flex-row items-center justify-center gap-3 sm:flex-row">

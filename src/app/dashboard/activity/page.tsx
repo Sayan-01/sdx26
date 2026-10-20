@@ -1,41 +1,216 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
-import { Bell, CheckCircle2, Clock, FileBox, MessageSquare, UserPlus, CreditCard, Briefcase, Layers, Search, BarChart3, Users, Zap, Filter, Loader2, MoreVertical } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Bell, RefreshCw, Search } from "lucide-react";
+import { format, formatDistanceToNow, isToday, isYesterday } from "date-fns";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import DashboardHeading from "../_components/dashboard-heading";
 import { getActivityLogs, markAllLogsAsRead } from "../../../../server/activity";
-import { formatDistanceToNow, isToday, isYesterday } from "date-fns";
-import { toast } from "sonner";
+
+type ActivityLog = {
+  id: string;
+  action: string;
+  entityType?: string | null;
+  entityId?: string | null;
+  createdAt: Date | string;
+  isRead: boolean;
+  actorUser?: { name: string } | null;
+  actorClient?: { name: string } | null;
+  project?: { id: string; name: string } | null;
+  metadata?: any;
+};
+
+
+type Filter = "All" | "Files" | "Messages" | "Approvals";
+type ActivityLevel = "High" | "Medium" | "Low";
+
+const FILTERS: Filter[] = ["All", "Files", "Messages", "Approvals"];
+const SURFACE = "rounded-2xl border border-dashboard-border bg-[#131316]";
+
+const getActor = (log: ActivityLog) => log.actorUser?.name || log.actorClient?.name || "Someone";
+
+const getTarget = (log: ActivityLog) => log.metadata?.label || log.metadata?.name || log.metadata?.email || log.entityId || null;
+
+// Raw database IDs (e.g. "cmv99c2vu0003xkbpx49d95xi") are noise to a reader.
+// Shorten them and keep the full value in the tooltip.
+const isOpaqueId = (value: string) => /^[a-z0-9]{20,}$/i.test(value);
+const displayTarget = (value: string) => (isOpaqueId(value) ? `${value.slice(0, 8)}…` : value);
+
+const matchesFilter = (log: ActivityLog, filter: Filter) => {
+  const action = log.action ?? "";
+  switch (filter) {
+    case "Files":
+      return log.entityType === "FILE";
+    case "Messages":
+      return log.entityType === "MESSAGE" || /comment/i.test(action);
+    case "Approvals":
+      return /approved/i.test(action);
+    default:
+      return true;
+  }
+};
+
+const matchesSearch = (log: ActivityLog, term: string) => {
+  if (!term) return true;
+  const haystack = [log.action, getActor(log), log.project?.name, getTarget(log)].filter(Boolean).join(" ").toLowerCase();
+  return haystack.includes(term.toLowerCase());
+};
+
+const toLevel = (count: number): ActivityLevel => (count > 10 ? "High" : count > 5 ? "Medium" : "Low");
+
+const LEVEL_DOT: Record<ActivityLevel, string> = {
+  High: "bg-emerald-400",
+  Medium: "bg-amber-400",
+  Low: "bg-zinc-600",
+};
+
+function groupByDay(logs: ActivityLog[]) {
+  const groups = [
+    { label: "Today", items: [] as ActivityLog[] },
+    { label: "Yesterday", items: [] as ActivityLog[] },
+    { label: "Earlier", items: [] as ActivityLog[] },
+  ];
+
+  for (const log of logs) {
+    const date = new Date(log.createdAt);
+    if (isToday(date)) groups[0].items.push(log);
+    else if (isYesterday(date)) groups[1].items.push(log);
+    else groups[2].items.push(log);
+  }
+
+  return groups.filter((group) => group.items.length > 0);
+}
+
+function Avatar({ name }: { name: string }) {
+  return (
+    <div
+      aria-hidden
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-300 ring-1 ring-inset ring-white/5"
+    >
+      {name.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
+function ActivityRow({ log }: { log: ActivityLog }) {
+  const actor = getActor(log);
+  const target = getTarget(log);
+  const createdAt = new Date(log.createdAt);
+
+  return (
+    <li className={cn("group relative flex gap-4 px-5 py-4 transition-colors hover:bg-white/[0.02]", !log.isRead && "bg-blue-500/[0.03] hover:bg-blue-500/[0.05]")}>
+      {!log.isRead && (
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-0.5 bg-blue-500"
+        />
+      )}
+
+      <Avatar name={actor} />
+
+      <div className="min-w-0 flex-1">
+        <p className={cn("text-sm leading-6", log.isRead ? "text-zinc-400" : "text-zinc-300")}>
+          <span className="font-medium text-zinc-100">{actor}</span> {log.action}
+        </p>
+
+        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-500">
+          {target && (
+            <code
+              title={target}
+              className="max-w-[16rem] truncate rounded-md bg-zinc-800/70 px-1.5 py-0.5 font-mono text-[11px] text-zinc-300"
+            >
+              {displayTarget(target)}
+            </code>
+          )}
+          {log.project && (
+            <span>
+              in <span className="text-zinc-300">{log.project.name}</span>
+            </span>
+          )}
+          <span
+            aria-hidden
+            className="text-zinc-700"
+          >
+            ·
+          </span>
+          <time
+            dateTime={createdAt.toISOString()}
+            title={format(createdAt, "PPpp")}
+            className="tabular-nums"
+          >
+            {formatDistanceToNow(createdAt, { addSuffix: true })}
+          </time>
+        </div>
+      </div>
+
+      {!log.isRead && <span className="sr-only">Unread.</span>}
+    </li>
+  );
+}
+
+function FeedSkeleton() {
+  return (
+    <ul className="divide-y divide-dashboard-border">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <li
+          key={i}
+          className="flex gap-4 px-5 py-4"
+        >
+          <div className="skeleton-shimmer h-8 w-8 shrink-0 rounded-full" />
+          <div className="flex-1 space-y-2 pt-1">
+            <div className="skeleton-shimmer h-3.5 w-3/5 rounded" />
+            <div className="skeleton-shimmer h-3 w-1/3 rounded" />
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Panel({ title, meta, children }: { title: string; meta?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <section className={cn(SURFACE, "overflow-hidden")}>
+      <header className="flex items-center justify-between border-b border-dashboard-border px-5 py-3">
+        <h2 className="text-xs font-medium uppercase tracking-wider text-zinc-500">{title}</h2>
+        {meta}
+      </header>
+      {children}
+    </section>
+  );
+}
 
 export default function ActivityPage() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<Filter>("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchLogs = async () => {
-    setIsLoading(true);
+  const fetchLogs = useCallback(async () => {
     try {
       const res = await getActivityLogs();
-      if (res.success) {
-        setLogs(res.logs);
-      } else {
-        toast.error("Failed to load activity feed");
-      }
-    } catch (error) {
+      if (res.success) setLogs(res.logs as ActivityLog[]);
+      else toast.error("Failed to load activity feed");
+    } catch {
       toast.error("Error fetching activities");
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  // Refresh keeps existing rows on screen; only the icon spins.
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchLogs();
+    setIsRefreshing(false);
   };
 
   useEffect(() => {
     fetchLogs();
-  }, []);
+  }, [fetchLogs]);
 
   const handleMarkAllRead = async () => {
     try {
@@ -44,320 +219,230 @@ export default function ActivityPage() {
         setLogs((prev) => prev.map((log) => ({ ...log, isRead: true })));
         toast.success("All activities marked as read");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update status");
     }
   };
 
-  const filteredLogs = useMemo(() => {
-    return logs.filter((log) => {
-      // Search
-      const textToSearch = `${log.action} ${log.actorUser?.name} ${log.actorClient?.name} ${log.project?.name} ${log.metadata?.name || ""}`.toLowerCase();
-      const matchesSearch = textToSearch.includes(searchTerm.toLowerCase());
+  const unreadCount = useMemo(() => logs.filter((l) => !l.isRead).length, [logs]);
 
-      // Category Filter
-      if (activeFilter === "All") return matchesSearch;
-      if (activeFilter === "Files") return matchesSearch && log.entityType === "FILE";
-      if (activeFilter === "Messages") return matchesSearch && (log.entityType === "MESSAGE" || log.action?.includes("comment"));
-      if (activeFilter === "Approvals") return matchesSearch && log.action?.includes("APPROVED");
+  const filterCounts = useMemo(() => Object.fromEntries(FILTERS.map((f) => [f, logs.filter((l) => matchesFilter(l, f)).length])) as Record<Filter, number>, [logs]);
 
-      return matchesSearch;
-    });
-  }, [logs, searchTerm, activeFilter]);
-
-  // Group by date
-  const groupedLogs = useMemo(() => {
-    const sorted = [...filteredLogs].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-    return {
-      today: sorted.filter((l) => isToday(new Date(l.createdAt))),
-      yesterday: sorted.filter((l) => isYesterday(new Date(l.createdAt))),
-      older: sorted.filter((l) => !isToday(new Date(l.createdAt)) && !isYesterday(new Date(l.createdAt))),
-    };
-  }, [filteredLogs]);
-
-  // Stats
-  const activityStats = useMemo(() => {
-    const fileCount = logs.filter((l) => l.entityType === "FILE" || (l.entityType === "ONBOARDING" && l.action?.includes("Uploaded"))).length;
-
-    const msgCount = logs.filter((l) => l.entityType === "MESSAGE" || l.action?.includes("MESSAGE") || l.action?.includes("comment")).length;
-
-    const completedCount = logs.filter((l) => l.action?.includes("Approved") || l.action?.includes("Completed")).length;
-
-    return [
-      { label: "Files Uploaded", value: fileCount.toString(), icon: <FileBox className="text-blue-500 h-4 w-4" /> },
-      { label: "Tasks Completed", value: completedCount.toString(), icon: <CheckCircle2 className="text-emerald-500 h-4 w-4" /> },
-      { label: "Messages", value: msgCount.toString(), icon: <MessageSquare className="text-amber-500 h-4 w-4" /> },
-    ];
-  }, [logs]);
-
-  // Trending Projects (mock logic based on real projects present in logs)
-  const trendingProjects = useMemo(() => {
-    const projectActivity: Record<string, { count: number; name: string }> = {};
-    logs.forEach((log) => {
-      if (log.project) {
-        projectActivity[log.project.id] = {
-          count: (projectActivity[log.project.id]?.count || 0) + 1,
-          name: log.project.name,
-        };
-      }
-    });
-
-    return Object.values(projectActivity)
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 3)
-      .map((p, i) => ({
-        name: p.name,
-        activity: p.count > 10 ? "High" : p.count > 5 ? "Medium" : "Low",
-        color: p.count > 10 ? "bg-emerald-500" : p.count > 5 ? "bg-amber-500" : "bg-zinc-500",
-      }));
-  }, [logs]);
-
-  const getIcon = (action: string, type: string) => {
-    const a = action.toLowerCase();
-    const t = type.toLowerCase();
-
-    if (a.includes("file") || t === "file" || (t === "onboarding" && a.includes("uploaded"))) return <FileBox className="h-4 w-4" />;
-    if (a.includes("approved") || a.includes("checklist") || a.includes("onboarding")) return <CheckCircle2 className="h-4 w-4" />;
-    if (a.includes("payment") || t === "payment") return <CreditCard className="h-4 w-4" />;
-    if (a.includes("message") || a.includes("comment") || t === "message") return <MessageSquare className="h-4 w-4" />;
-    if (a.includes("team") || t === "team_member") return <UserPlus className="h-4 w-4" />;
-    if (a.includes("project") || t === "project") return <Briefcase className="h-4 w-4" />;
-    return <Bell className="h-4 w-4" />;
-  };
-
-  const getLogContent = (log: any) => {
-    const actor = log.actorUser?.name || log.actorClient?.name || "Someone";
-    const target = log.metadata?.label || log.metadata?.name || log.metadata?.email || log.entityId || "item";
-    let actionTxt = log.action;
-
-    return (
-      <p className="text-sm leading-relaxed">
-        <span className="font-bold text-white">{actor}</span> <span className="text-zinc-400">{actionTxt}</span>{" "}
-        <span className="font-bold text-zinc-300 uppercase tracking-tight text-[11px]">{target}</span>{" "}
-        {log.project && (
-          <>
-            <span className="text-zinc-500 text-xs">in</span> <span className="text-zinc-300 font-medium cursor-pointer hover:text-white transition-colors">{log.project.name}</span>
-          </>
-        )}
-      </p>
-    );
-  };
-
-  const ActivityItem = ({ activity }: { activity: any }) => (
-    <div
-      className={cn(
-        "p-4 rounded-xl border transition-all flex items-start gap-4 group ",
-        !activity.isRead ? "bg-[#19191b] border-dashboard-border card_shadow" : "bg-[#151518] border-dashboard-border/50 hover:bg-[#19191b] ",
-      )}
-    >
-      <div
-        className={cn(
-          "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-          !activity.isRead ? "bg-white text-zinc-950" : "bg-zinc-800/50 border border-dashboard-border/50 text-zinc-500 group-hover:text-zinc-300 shadow-inner",
-        )}
-      >
-        {getIcon(activity.action, activity.entityType)}
-      </div>
-
-      <div className="grow space-y-1 pt-0.5">
-        {getLogContent(activity)}
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] text-zinc-600 uppercase tracking-widest font-bold">{formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}</span>
-          {!activity.isRead && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />}
-        </div>
-      </div>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-500 hover:text-white"
-      >
-        Details
-      </Button>
-    </div>
+  const visibleLogs = useMemo(
+    () => logs.filter((log) => matchesFilter(log, activeFilter) && matchesSearch(log, searchTerm)).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [logs, activeFilter, searchTerm],
   );
 
-  return (
-    <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full pb-5">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <DashboardHeading
-          title="Activity Feed"
-          description="Stay updated with everything happening across your agency."
-        />
-        <Button
-          variant="outline"
-          onClick={handleMarkAllRead}
-          className="border-dashboard-border bg-[#19191b] hover:bg-zinc-800"
-        >
-          Mark all as read
-        </Button>
-      </div>
+  const sections = useMemo(() => groupByDay(visibleLogs), [visibleLogs]);
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 flex-1 min-h-0">
-        {/* Main Feed Column */}
-        <div className="xl:col-span-2 flex flex-col gap-5 ">
-          {/* Filters & Search */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <div className="relative grow w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+  const stats = useMemo(
+    () => [
+      {
+        label: "Files",
+        value: logs.filter((l) => l.entityType === "FILE" || (l.entityType === "ONBOARDING" && /uploaded/i.test(l.action))).length,
+      },
+      {
+        label: "Done",
+        value: logs.filter((l) => /approved|completed/i.test(l.action)).length,
+      },
+      {
+        label: "Messages",
+        value: logs.filter((l) => l.entityType === "MESSAGE" || /message|comment/i.test(l.action)).length,
+      },
+    ],
+    [logs],
+  );
+
+  const projects = useMemo(() => {
+    const counts = new Map<string, { id: string; name: string; count: number }>();
+    for (const log of logs) {
+      if (!log.project) continue;
+      const prev = counts.get(log.project.id);
+      counts.set(log.project.id, {
+        id: log.project.id,
+        name: log.project.name,
+        count: (prev?.count ?? 0) + 1,
+      });
+    }
+    return [...counts.values()]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3)
+      .map((p) => ({ id: p.id, name: p.name, level: toLevel(p.count) }));
+  }, [logs]);
+
+  const isFiltered = activeFilter !== "All" || searchTerm.trim() !== "";
+
+  const clearFilters = () => {
+    setActiveFilter("All");
+    setSearchTerm("");
+  };
+
+  return (
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
+      <DashboardHeading
+        title="Activity"
+        description={unreadCount > 0 ? `${unreadCount} unread across your agency.` : "You're all caught up."}
+      />
+
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+        {/* Feed */}
+        <section className={cn(SURFACE, "min-w-0 overflow-hidden")}>
+          <div className="flex items-center justify-between gap-4 border-b border-dashboard-border px-5 py-4">
+            <div className="flex items-center gap-3">
+              <h2 className="text-sm font-medium text-zinc-100">Recent activity</h2>
+              {unreadCount > 0 && <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium tabular-nums text-blue-400">{unreadCount} unread</span>}
+            </div>
+            <Button
+              size="sm"
+              onClick={handleMarkAllRead}
+              disabled={unreadCount === 0}
+              className="rounded-2xl border border-dashboard-border bg-[#131316] text-[#ffffff]/80"
+            >
+              Mark all as read
+            </Button>
+          </div>
+
+          <div className="flex  flex-col gap-3 border-b border-dashboard-border px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div
+              role="group"
+              aria-label="Filter activity"
+              className="inline-flex w-fit rounded-lg bg-[#19191b] p-1"
+            >
+              {FILTERS.map((filter) => {
+                const active = activeFilter === filter;
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setActiveFilter(filter)}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                      active ? "bg-zinc-800 text-zinc-100 shadow-sm" : "text-zinc-500 hover:text-zinc-300",
+                    )}
+                  >
+                    {filter}
+                    <span className="tabular-nums text-[11px] text-zinc-600">{filterCounts[filter] ?? 0}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="relative w-full sm:w-64">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
               <Input
-                placeholder="Search activity..."
+                aria-label="Search activity"
+                placeholder="Search activity"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-10 bg-[#151518] border-dashboard-border focus-visible:ring-zinc-700 w-full card_shadow"
+                className="h-8 border-dashboard-border bg-[#19191b] pl-9 text-sm placeholder:text-zinc-600 focus-visible:ring-zinc-700"
               />
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
-              {["All", "Files", "Messages", "Approvals"].map((filter) => (
-                <Button
-                  key={filter}
-                  variant={activeFilter === filter ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setActiveFilter(filter)}
-                  className={cn(
-                    "h-10 px-4 rounded-lg shrink-0",
-                    activeFilter === filter ? "bg-white text-black hover:bg-zinc-200" : "bg-[#151518] border-dashboard-border hover:bg-zinc-800 text-zinc-400",
-                  )}
-                >
-                  {filter}
-                </Button>
-              ))}
-            </div>
           </div>
 
-          {/* Activity Logs */}
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center h-64 space-y-4">
-              <Loader2 className="h-8 w-8 animate-spin text-zinc-700" />
-              <p className="text-zinc-500 text-sm animate-pulse">Building your timeline...</p>
+            <FeedSkeleton />
+          ) : sections.length === 0 ? (
+            <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800/60">
+                <Bell className="h-4 w-4 text-zinc-500" />
+              </div>
+              <p className="text-sm font-medium text-zinc-200">{isFiltered ? "No matching activity" : "No activity yet"}</p>
+              <p className="mt-1 text-xs text-zinc-500">{isFiltered ? "Try a different filter or search term." : "Events will appear here as your team works."}</p>
+              {isFiltered && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="mt-4"
+                >
+                  Clear filters
+                </Button>
+              )}
             </div>
           ) : (
-            <div className="space-y-8 flex-1 overflow-y-auto no-scrollbar">
-              {groupedLogs.today.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                    Today
-                  </h3>
-                  <div className="space-y-3">
-                    {groupedLogs.today.map((act) => (
-                      <ActivityItem
-                        key={act.id}
-                        activity={act}
+            <div>
+              {sections.map((section) => (
+                <div key={section.label}>
+                  <div className="sticky top-0 z-10 flex items-center justify-between border-b border-dashboard-border  px-5 py-2 backdrop-blur">
+                    <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500">{section.label}</h3>
+                    <span className="text-xs tabular-nums text-zinc-600">{section.items.length}</span>
+                  </div>
+                  <ul className="divide-y divide-dashboard-border">
+                    {section.items.map((log) => (
+                      <ActivityRow
+                        key={log.id}
+                        log={log}
                       />
                     ))}
-                  </div>
+                  </ul>
                 </div>
-              )}
-
-              {groupedLogs.yesterday.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Yesterday</h3>
-                  <div className="space-y-3">
-                    {groupedLogs.yesterday.map((act) => (
-                      <ActivityItem
-                        key={act.id}
-                        activity={act}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {groupedLogs.older.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Older Activities</h3>
-                  <div className="space-y-3">
-                    {groupedLogs.older.map((act) => (
-                      <ActivityItem
-                        key={act.id}
-                        activity={act}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {filteredLogs.length === 0 && (
-                <div className="h-64 flex flex-col items-center justify-center space-y-2">
-                  <Bell className="h-10 w-10 text-zinc-800" />
-                  <p className="font-bold text-zinc-400">Quiet for now...</p>
-                  <p className="text-xs text-zinc-500">No matching activities found in this filter.</p>
-                </div>
-              )}
-
-              {logs.length > 0 && (
-                <div className="pt-4 pb-8 text-center">
-                  <Button
-                    variant="ghost"
-                    onClick={fetchLogs}
-                    className="text-zinc-500 hover:text-white gap-2"
-                  >
-                    Refresh activity
-                    <Clock className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
+              ))}
             </div>
           )}
-        </div>
 
-        {/* Sidebar Column */}
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b]  card_shadow">
-            <div className="flex items-center gap-2 px-5 pt-3">
-              <BarChart3 className="h-4 w-4 text-indigo-500" />
-              <h2 className="text-md font-semibold text-zinc-200">Agency Stats</h2>
+          <div className="flex items-center justify-between border-t border-dashboard-border px-5 py-3">
+            <p className="text-xs tabular-nums text-zinc-500">
+              Showing {visibleLogs.length} of {logs.length}
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="gap-2 text-zinc-500 hover:text-zinc-200"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", isRefreshing && "animate-spin")} />
+              Refresh
+            </Button>
+          </div>
+        </section>
+
+        {/* Sidebar */}
+        <aside className="space-y-4 xl:sticky xl:top-6">
+          <Panel title="Overview">
+            <div className="grid grid-cols-3 divide-x divide-dashboard-border">
+              {stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="px-5 py-4"
+                >
+                  <p className="text-2xl font-semibold tabular-nums text-zinc-100">{stat.value}</p>
+                  <p className="mt-1 text-xs text-zinc-500">{stat.label}</p>
+                </div>
+              ))}
             </div>
-            <Card className="bg-[#151518] shadow-none flex-1 flex flex-col overflow-hidden min-h-0 p-5 rounded-b-xl border-t border-dashboard-border/60 border-0">
-              <div className="space-y-4">
-                {activityStats.map((stat, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-3 rounded-lg bg-[#19191b] border border-dashboard-border/50 shadow-sm"
+          </Panel>
+
+          <Panel
+            title="Projects"
+            meta={<span className="text-xs tabular-nums text-zinc-600">{projects.length}</span>}
+          >
+            {projects.length === 0 ? (
+              <p className="px-5 py-6 text-sm text-zinc-500">No project activity yet.</p>
+            ) : (
+              <ul className="divide-y divide-dashboard-border">
+                {projects.map((project) => (
+                  <li
+                    key={project.id}
+                    className="flex items-center justify-between gap-3 px-5 py-3"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-zinc-800/50 border border-dashboard-border/50 flex items-center justify-center">{stat.icon}</div>
-                      <span className="text-sm font-medium text-zinc-300">{stat.label}</span>
-                    </div>
-                    <span className="text-lg font-bold text-white transition-all">{stat.value}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-
-          <div className="flex flex-col gap-3 min-h-0 border border-dashboard-border rounded-xl bg-[#19191b] card_shadow">
-            <div className="flex items-center gap-2 px-5 pt-3">
-              <Zap className="h-4 w-4 text-amber-500" />
-              <h2 className="text-md font-semibold text-zinc-200">Active Projects</h2>
-            </div>
-            <Card className="bg-[#151518] shadow-none flex-1 flex flex-col overflow-hidden min-h-0 p-0 transform rounded-b-xl border-t border-dashboard-border/60 border-0">
-              <div className="divide-y divide-zinc-800/60 box">
-                {trendingProjects.length > 0 ? (
-                  trendingProjects.map((p, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between px-5 py-4 hover:bg-zinc-900/50 transition-colors"
+                    <span
+                      className="truncate text-sm text-zinc-200"
+                      title={project.name}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-zinc-800/80 border border-dashboard-border flex items-center justify-center text-xs font-bold text-zinc-400">{p.name.charAt(0)}</div>
-                        <span className="text-sm font-medium text-zinc-200 truncate max-w-[120px]">{p.name}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className={cn("w-1.5 h-1.5 rounded-full", p.color)} />
-                        <span className="text-xs text-zinc-500">{p.activity}</span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-10 text-center text-xs text-zinc-600">No project activity yet</div>
-                )}
-              </div>
-            </Card>
-          </div>
-        </div>
+                      {project.name}
+                    </span>
+                    <span className="flex shrink-0 items-center gap-2 text-xs text-zinc-500">
+                      <span className={cn("h-1.5 w-1.5 rounded-full", LEVEL_DOT[project.level])} />
+                      {project.level} activity
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+        </aside>
       </div>
     </div>
   );

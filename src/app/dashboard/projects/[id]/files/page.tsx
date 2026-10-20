@@ -1,5 +1,5 @@
 import React from "react";
-import { getFilesByProjectId, getProjectById } from "@server/projects";
+import { getFilesByProjectId, getProjectById, getMilestonesByProjectId } from "@server/projects";
 import { notFound } from "next/navigation";
 import FilesClient from "./_components/files-client";
 
@@ -7,6 +7,7 @@ export default async function FilesPage({ params }: { params: Promise<{ id: stri
   const { id } = await params;
   const result = await getFilesByProjectId(id);
   const projectResult = await getProjectById(id);
+  const milestonesResult = await getMilestonesByProjectId(id);
 
   if (result.error || projectResult.error || !projectResult.project) {
     return (
@@ -22,11 +23,13 @@ export default async function FilesPage({ params }: { params: Promise<{ id: stri
   const storageUsed = await getAgencyStorageUsed(agencyId);
 
   const rawFiles = result.files || [];
+  const milestones = milestonesResult.milestones || [];
 
   return (
     <FilesClient
       projectId={id}
       rawFiles={rawFiles as any}
+      milestones={milestones as any}
       limits={limits}
       storageUsed={storageUsed}
     />

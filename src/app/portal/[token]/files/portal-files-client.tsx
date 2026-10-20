@@ -10,7 +10,15 @@ import {
   Download,
   Image as ImageIcon,
   FileArchive,
-  FileText
+  FileText,
+  Link as LinkIcon,
+  ExternalLink,
+  Globe,
+  Layers,
+  Video,
+  GitBranch,
+  ArrowUpRight,
+  Milestone as MilestoneIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +31,12 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
 
   const getFileIcon = (type: string | null) => {
     const t = (type || "").toLowerCase();
-    if (t.includes("image") || t.includes("png") || t.includes("jpg")) return <ImageIcon className="h-4 w-4" />;
+    if (t.includes("figma")) return <Layers className="h-4 w-4" />;
+    if (t.includes("preview") || t.includes("website") || t.includes("staging")) return <Globe className="h-4 w-4" />;
+    if (t.includes("video") || t.includes("loom")) return <Video className="h-4 w-4" />;
+    if (t.includes("github")) return <GitBranch className="h-4 w-4" />;
+    if (t.startsWith("link")) return <LinkIcon className="h-4 w-4" />;
+    if (t.includes("image") || t.includes("png") || t.includes("jpg") || t.includes("webp")) return <ImageIcon className="h-4 w-4" />;
     if (t.includes("zip") || t.includes("rar") || t.includes("archive")) return <FileArchive className="h-4 w-4" />;
     if (t.includes("pdf")) return <FileText className="h-4 w-4" />;
     return <FileBox className="h-4 w-4" />;
@@ -31,6 +44,11 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
 
   const getIconStyles = (type: string | null) => {
     const t = (type || "").toLowerCase();
+    if (t.includes("figma")) return { bg: "bg-purple-500/10", color: "text-purple-400" };
+    if (t.includes("preview") || t.includes("website") || t.includes("staging")) return { bg: "bg-emerald-500/10", color: "text-emerald-400" };
+    if (t.includes("video") || t.includes("loom")) return { bg: "bg-rose-500/10", color: "text-rose-400" };
+    if (t.includes("github")) return { bg: "bg-slate-500/10", color: "text-slate-300" };
+    if (t.startsWith("link")) return { bg: "bg-cyan-500/10", color: "text-cyan-400" };
     if (t.includes("image") || t.includes("png") || t.includes("jpg")) return { bg: "bg-blue-500/10", color: "text-blue-500" };
     if (t.includes("zip") || t.includes("rar") || t.includes("archive")) return { bg: "bg-amber-500/10", color: "text-amber-500" };
     if (t.includes("pdf")) return { bg: "bg-rose-500/10", color: "text-rose-500" };
@@ -38,7 +56,7 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
   };
 
   const formatSize = (bytes: number) => {
-    if (!bytes) return "Unknown size";
+    if (!bytes || bytes === 0) return "0 KB";
     const mb = bytes / (1024 * 1024);
     if (mb < 1) {
       const kb = bytes / 1024;
@@ -49,19 +67,24 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
 
   const files = rawFiles.map(file => {
     const styles = getIconStyles(file.fileType);
+    const sizeInBytes = file.fileVersions?.[0]?.fileSizeBytes ? Number(file.fileVersions[0].fileSizeBytes) : 0;
+    const isLinkType = (file.fileType || "").toLowerCase().startsWith("link");
+    const activeUrl = file.url || file.fileUrl || "";
+
     return {
       id: file.id,
       name: file.fileName,
       type: file.fileType || "unknown",
-      size: formatSize(0), // Size typically fetched from FileVersion
-      version: 1, 
-      status: file.status.toLowerCase(),
-      uploader: file.uploader?.name || "Unknown",
+      size: isLinkType ? "External Link" : formatSize(sizeInBytes),
+      version: file.fileVersions?.length ? Math.max(...file.fileVersions.map((v: any) => v.versionNumber || 1)) : 1, 
+      status: (file.status ? file.status.toLowerCase() : "uploaded"),
+      uploader: file.uploader?.name || "Project Team",
       at: formatDistanceToNow(new Date(file.createdAt), { addSuffix: true }),
-      milestone: file.milestone?.title || "No milestone",
-      fileUrl: file.fileUrl,
+      milestone: file.milestone?.title || "General Deliverable",
+      fileUrl: activeUrl,
       iconBg: styles.bg,
-      iconColor: styles.color
+      iconColor: styles.color,
+      isLink: isLinkType
     };
   });
 
@@ -77,8 +100,8 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
     <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <DashboardHeading 
-          title="Project Deliverables" 
-          description="Review and download the latest assets shared by your project team." 
+          title="Project Deliverables &amp; Assets" 
+          description="Review, inspect staging previews, and download the latest assets shared by your project team." 
         />
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="relative group flex-1 sm:w-64">
@@ -87,17 +110,14 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
                placeholder="Search assets..." 
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)}
-               className="h-10 pl-9 bg-[#151518] border-dashboard-border rounded-xl focus-visible:ring-indigo-500/20 text-xs"
+               className="h-10 pl-9 bg-[#151518] border-dashboard-border rounded-xl focus-visible:ring-indigo-500/20 text-xs text-zinc-200"
              />
           </div>
-          <Button variant="outline" size="icon" className="h-10 w-10 border-dashboard-border bg-[#151518] text-zinc-500">
-             <Filter className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
       <DashboardCard
-        title="Files & Assets"
+        title="Files &amp; Assets"
         icon={<FileBox className="h-4 w-4 text-indigo-400" />}
         extra={
           <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-[#151518] px-3 py-1 rounded-full border border-dashboard-border">
@@ -109,7 +129,7 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
           {files.length === 0 ? (
             <div className="p-8 text-center text-sm text-zinc-500 flex flex-col items-center justify-center h-full min-h-[300px]">
               <FileBox className="h-10 w-10 text-zinc-700 mb-4 opacity-50" />
-              <p>No files have been uploaded yet.</p>
+              <p>No deliverables or files have been shared yet.</p>
             </div>
           ) : (
             filteredFiles.map((file) => (
@@ -123,17 +143,33 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
                   </div>
                   <div className="space-y-1 flex-grow">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h3 className="font-semibold text-sm text-zinc-200 group-hover:text-white transition-colors">{file.name}</h3>
+                      <a 
+                        href={file.fileUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="font-semibold text-sm text-zinc-200 group-hover:text-white transition-colors hover:underline flex items-center gap-1.5"
+                      >
+                        <span>{file.name}</span>
+                        {file.isLink && <ArrowUpRight className="size-3 text-zinc-500" />}
+                      </a>
                       <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-800/50 border border-dashboard-border/50 text-[10px] text-zinc-400 font-medium">
                         <History className="h-3 w-3" />v{file.version}
                       </div>
+                      {file.isLink && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/50 text-cyan-400 border border-cyan-800/50 font-mono">
+                          Link
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 font-medium tracking-wide">
                       <span className="text-zinc-400 uppercase tracking-widest text-[10px]">{file.size}</span>
                       <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                      <span>{file.milestone}</span>
+                      <span className="flex items-center gap-1 text-zinc-400">
+                        <MilestoneIcon className="size-3 text-indigo-400" />
+                        {file.milestone}
+                      </span>
                       <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                      <span>By {file.uploader}</span>
+                      <span>Shared by {file.uploader}</span>
                       <span className="w-1 h-1 rounded-full bg-zinc-700" />
                       <span>{file.at}</span>
                     </div>
@@ -161,17 +197,19 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
+                          title={file.isLink ? "Open Link" : "Preview"}
                         >
-                          <Eye className="h-4 w-4" />
+                          {file.isLink ? <ExternalLink className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
                       </a>
                     )}
-                    {file.fileUrl && (
+                    {file.fileUrl && !file.isLink && (
                       <a href={file.fileUrl} download>
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg"
+                          title="Download"
                         >
                           <Download className="h-4 w-4" />
                         </Button>

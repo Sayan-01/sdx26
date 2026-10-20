@@ -20,7 +20,7 @@ export default function Logo({ fullName, className }: { fullName: boolean; class
         </svg>
         
       </div>
-      {fullName && <span className="font-display text-[15px] font-semibold tracking-tight text-foreground group-hover:text-foreground/90 transition-colors">Milestack</span>}
+      {fullName && <span className="font-display text-[15px] font-semibold tracking-tight text-foreground group-hover:text-foreground/90 transition-colors">SDX26</span>}
     </Link>
   );
 }

@@ -13,7 +13,7 @@ const main = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Milestack",
+  title: "SDX26",
   description: "The client collaboration workspace for modern web agencies.",
 };
 

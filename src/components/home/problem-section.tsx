@@ -6,7 +6,7 @@ const problems = [
   {
     icon: Mail,
     title: "Lost feedback in email threads",
-    body: "Searching through 'Re: Re: Feedback' chains is where productivity goes to die. Milestack keeps every conversation tied to the actual deliverable.",
+    body: "Searching through 'Re: Re: Feedback' chains is where productivity goes to die. SDX26 keeps every conversation tied to the actual deliverable.",
   },
   {
     icon: AlertTriangle,

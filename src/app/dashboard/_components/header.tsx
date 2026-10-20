@@ -7,6 +7,7 @@ import { Bell, PlusSquare, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import AiAgentBtn from "./agent_components/ai-agent-btn";
 
 interface HeaderProps {
   userButton: React.ReactNode;
@@ -57,6 +58,7 @@ const Header = ({ userButton }: HeaderProps) => {
         {/* Search */}
         <div className="ml-auto flex items-center gap-4">
           {/* <ModeToggle className="sm:flex hidden" /> */}
+          {/* <AiAgentBtn/> */}
 
           <NotificationBellButton />
           <div className="h-8 w-px bg-dashboard-border" />

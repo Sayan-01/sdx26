@@ -3,6 +3,7 @@
 import UpgradeCard from "@/app/dashboard/_components/upgrade-card";
 import { cn } from "@/lib/utils";
 import {
+  AlertCircle,
   ArrowBigDown,
   Bell,
   Brain,
@@ -54,6 +55,7 @@ const iconMap: Record<string, any> = {
   FileText,
   CreditCard,
   LayoutDashboard,
+  AlertCircle,
   CheckSquare,
   Milestone,
 };
@@ -112,7 +114,7 @@ export function SidebarComp({
               <Layers size={18} />
             </div>
             <div>
-              <h1 className={`px-3 text-black dark:text-white font-semibold`}>Milestack.</h1>
+              <h1 className={`px-3 text-black dark:text-white font-semibold`}>SDX26.</h1>
               <p className="px-3 text-black dark:text-zinc-400 text-xs">For Modern Agencies</p>
             </div>
           </Link>

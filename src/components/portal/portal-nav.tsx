@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Logo from "../global/logo";
 
 export function PortalNav({ token }: { token: string }) {
   const pathname = usePathname();
@@ -32,18 +33,7 @@ export function PortalNav({ token }: { token: string }) {
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-[280px] border-r border-dashboard-border bg-[#151518] flex flex-col z-50">
       <div className="flex flex-col h-full relative">
-        {/* Logo Area */}
-        <div className="px-8 py-10">
-          <div className="flex items-center gap-3.5 group cursor-pointer">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/10 group-hover:scale-110 transition-transform">
-              <Layers className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight">Milestack</span>
-              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Client Portal</span>
-            </div>
-          </div>
-        </div>
+        <Logo fullName/>
 
         {/* Navigation */}
         <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto box">

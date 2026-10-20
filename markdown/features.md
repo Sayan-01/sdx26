@@ -56,14 +56,14 @@ A premium, white-label client portal and onboarding platform designed for agenci
 - [x] Client Dashboard: High-level overview of project health, sprint progress bar, recent files, and immediate action items.
 - [x] Onboarding: Configurable requirement lists per project (logos, copy, links, assets), status tracking, and AI-powered guidance.
 - [x] Milestones: View project milestones and current status.
-- [x] Files: Upload files to the project, each file can be assigned a category (logo, copy, credentials).
+- [x] Files: Review deliverables and staging previews, view milestone associations, download assets, inspect version history (v1, v2), and track approval status.
 - [x] Payments: make a payment for the milestone, each payment can be assigned a milestone and amount.
 
 ## Projects
 - [x] Manage Project: Create a new project with a unique token. -> clients can access project using this token (special magic link).
 - [x] Add Milestones: Add milestones to the project, each milestone can have multiple tasks, each task can have multiple subtasks.
 - [x] Manage Team: Add team members to the project, each team member can be assigned a role (owner, member, client).
-- [x] Manage Files: Upload files to the project, each file can be assigned a category (logo, copy, credentials).
+- [x] Manage Files & Deliverables: Upload binary assets and external deliverable links (Figma, Staging previews, Loom, GitHub), assign deliverables to specific milestones, manage in-place versioning (v1, v2...) with change notes, update review statuses, and live optimistic updates without page reload.
 - [x] Manage Tasks: Manage tasks, each task can be assigned a status (pending, in-progress, completed).
 
 ## System & Infrastructure (Implemented but missing from original list)

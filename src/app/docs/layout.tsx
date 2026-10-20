@@ -11,7 +11,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/20">M</div>
-              <span className="font-bold text-white tracking-tight text-lg">Milestack Docs</span>
+              <span className="font-bold text-white tracking-tight text-lg">SDX26 Docs</span>
             </div>
 
             <nav className="hidden md:flex items-center gap-6">

@@ -18,12 +18,12 @@ export const DOCS_DATA: DocCategory[] = [
       {
         title: "Introduction",
         slug: "introduction",
-        description: "Welcome to Milestack, the ultimate collaboration workspace for modern agencies.",
+        description: "Welcome to SDX26, the ultimate collaboration workspace for modern agencies.",
         content: `
-          Milestack is a specialized client collaboration hub designed to bridge the gap between web agencies and their clients. It centralizes project management, approvals, files, and feedback into a single, professional, and branded workspace.
+          SDX26 is a specialized client collaboration hub designed to bridge the gap between web agencies and their clients. It centralizes project management, approvals, files, and feedback into a single, professional, and branded workspace.
 
-          ## Why Milestack?
-          In a world of scattered email threads, WhatsApp messages, and "final_v2_ACTUAL" file chaos, Milestack provides a single source of truth.
+          ## Why SDX26?
+          In a world of scattered email threads, WhatsApp messages, and "final_v2_ACTUAL" file chaos, SDX26 provides a single source of truth.
 
           ### Core Pillars
           - **Transparency**: Clients see exactly what you are working on.
@@ -33,15 +33,15 @@ export const DOCS_DATA: DocCategory[] = [
         `,
       },
       {
-        title: "Why Choose Milestack",
-        slug: "why-milestack",
-        description: "Understand the competitive edge Milestack gives to your agency.",
+        title: "Why Choose SDX26",
+        slug: "why-SDX26",
+        description: "Understand the competitive edge SDX26 gives to your agency.",
         content: `
-          Milestack isn't just another project management tool like ClickUp or Trello. It's built specifically for the **agency-client relationship**.
+          SDX26 isn't just another project management tool like ClickUp or Trello. It's built specifically for the **agency-client relationship**.
 
           ## Solving Real Problems
           
-          | Problem | Milestack Solution |
+          | Problem | SDX26 Solution |
           | --- | --- |
           | **Onboarding Friction** | Structured checklists for asset collection. |
           | **Approval Failures** | Formal approval flow with versioning. |
@@ -49,7 +49,7 @@ export const DOCS_DATA: DocCategory[] = [
           | **Scope Creep** | Dedicated Change Request Log. |
 
           ## Human API Syndrome
-          Agency owners often act as "Human APIs," manually transferring data between clients and teams. Milestack automates this flow, letting your team focus on creation while the platform handles the coordination.
+          Agency owners often act as "Human APIs," manually transferring data between clients and teams. SDX26 automates this flow, letting your team focus on creation while the platform handles the coordination.
         `,
       },
     ],
@@ -83,7 +83,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "projects-management",
         description: "How to create, configure, and manage project workflows.",
         content: `
-          Creating a project in Milestack is designed to be lightning-fast.
+          Creating a project in SDX26 is designed to be lightning-fast.
 
           ## Creating a New Project
           1. Click **"New Project"** on the dashboard.
@@ -120,21 +120,77 @@ export const DOCS_DATA: DocCategory[] = [
       {
         title: "File Upload & Approval",
         slug: "file-approvals",
-        description: "Master the deliverable review process with version control.",
+        description: "Master project deliverables, staging preview links, milestone associations, and version control.",
         content: `
-          Milestack eliminates the "which version is this?" problem with a robust file versioning and approval system.
+          SDX26 eliminates the "which version is this?" chaos with an enterprise-grade asset management and approval workflow designed specifically for modern agencies and their clients.
 
-          ## The Review Flow
-          1. **Upload**: Agency uploads a deliverable (PDF, Image, Figma link) to a milestone.
-          2. **Review**: Client receives a notification to review the file.
-          3. **Action**: Client can **Approve**, **Request Changes**, or **Comment**.
-          4. **Revision**: If changes are requested, the agency uploads a new version.
+          ## 1. Supported Deliverable Types
 
-          ### Versioning
-          Each file upload creates a version history. Clients are always shown the latest version by default but can browse previous versions for context.
-          
-          ### Auto-Approval Timer
-          Agencies can set a 48-hour auto-approval window. If the client doesn't provide feedback within the window, the deliverable is automatically marked as approved.
+          Agencies deliver a combination of static assets and interactive preview environments. SDX26 natively supports both:
+
+          ### A. Binary Files & Documents
+          - **Design Assets**: High-resolution PNGs, SVGs, JPGs, and raster exports.
+          - **Documents & Specs**: PDFs, project briefs, architecture diagrams, and contracts.
+          - **Archives & Packages**: ZIP, TAR, and RAR deliverables containing source files or asset bundles.
+          - *Storage Metering*: Uploaded binary files are automatically tracked against your Agency Plan Quota (e.g., Starter vs. Pro storage limits).
+
+          ### B. External Deliverable Links
+          - 🌐 **Website Staging & Previews**: Live preview deployments (e.g., Vercel, Netlify, staging subdomains).
+          - 🎨 **Figma Prototypes & Canvases**: Direct links to interactive Figma frames, design systems, and flows.
+          - 🎥 **Loom & Video Walkthroughs**: Asynchronous video walkthroughs and client demo recordings.
+          - 💻 **GitHub Branches & Pull Requests**: Code review and engineering deliverable links.
+          - 🔗 **Cloud & Drive Links**: Google Docs, Notion deliverables, or external drives.
+          - *Zero Storage Cost*: External links do not consume any agency storage limit (0 MB used).
+
+          ---
+
+          ## 2. Milestone Association
+
+          Deliverables are directly coupled to project milestones:
+          - **Milestone Assignment**: During upload, select which project milestone the asset satisfies (e.g., *Milestone #1: Wireframes & UX Flow*, *Milestone #2: Frontend Alpha*).
+          - **General Assets**: Non-milestone resources can be tagged as *General Deliverables* (e.g., brand guidelines, meeting notes).
+          - **Milestone Filters**: Agencies and clients can filter the files repository by milestone to see exactly what belongs to each sprint.
+
+          ---
+
+          ## 3. Semantic Versioning & Iterations (v1, v2, v3...)
+
+          Prevent duplicate file clutter with in-place versioning for both files and links:
+
+          - **Adding a New Version**: Click **+ New Version** on any existing file or link to release an updated deliverable.
+          - **Change Notes**: Include a concise note describing what changed (e.g., *"v2: Adjusted responsive layout on tablet and updated checkout dark mode"*).
+          - **Automatic Increments**: SDX26 increments the version number automatically (\`v1\` ➔ \`v2\` ➔ \`v3\`) and updates the active live link.
+          - **Version History Audit Trail**: Clicking the version pill badge opens the full chronological audit trail with past versions, change notes, timestamps, authors, and 1-click links to inspect previous iterations.
+
+          ---
+
+          ## 4. The Review & Approval Lifecycle
+
+          Every deliverable transitions through clear, color-coded review states:
+
+          1. 🟡 **Uploaded** (\`UPLOADED\`): Deliverable is added by the agency and queued for client review.
+          2. 🟣 **Under Review** (\`UNDER_REVIEW\`): Client or QA team is actively inspecting the asset or staging preview.
+          3. 🟢 **Approved** (\`APPROVED\`): Client has verified and signed off on the deliverable.
+          4. 🔴 **Revision Requested** (\`REVISION_REQUESTED\`): Client requested changes, prompting the agency to publish a new version.
+
+          > [!TIP]
+          > Linking deliverables to specific milestones ensures clients can review outputs in context before approving the milestone payment.
+
+          ---
+
+          ## 5. Client Portal Experience
+
+          Clients access project assets through their secure, passwordless **Magic Link Portal** (\`/portal/[token]/files\`):
+          - **No Account Barrier**: Instant, frictionless access via tokenized URLs.
+          - **Direct Previews**: 1-click preview for external staging links and Figma canvases in a new tab.
+          - **Direct Downloads**: Immediate file downloads for binary assets and archives.
+          - **Status & Milestone Visibility**: Complete transparency into deliverable versions, authors, and milestone completion.
+
+          ---
+
+          ## 6. Live Non-Blocking Updates
+
+          All file uploads, link creations, version updates, and deletions utilize **Optimistic & Live State Updates** combined with background Next.js server sync (\`router.refresh()\`). Changes appear instantly with zero page flicker and no hard browser reloads.
         `,
       },
       {
@@ -145,7 +201,7 @@ export const DOCS_DATA: DocCategory[] = [
           The Onboarding Checklist is the first thing a client sees. It ensures you have everything you need to start the project.
 
           ## Setup
-          When a project is created, Milestack generates a default checklist:
+          When a project is created, SDX26 generates a default checklist:
           - Logo (Vector format)
           - Brand Guidelines
           - Domain/Hosting Access
@@ -162,7 +218,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "team-management",
         description: "Organize your agency staff and assign them to the right projects.",
         content: `
-          Milestack supports multi-user collaboration with granular roles.
+          SDX26 supports multi-user collaboration with granular roles.
 
           ## Agency Roles
           - **Owner**: Full access to billing, project creation, and team management.
@@ -196,7 +252,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "agency-payments",
         description: "Track invoices and payment status across all projects.",
         content: `
-          Milestack integrates with **Polar.sh** to handle payments seamlessly.
+          SDX26 integrates with **Polar.sh** to handle payments seamlessly.
 
           ## Financial Tracking
           The Finance tab shows:
@@ -205,25 +261,43 @@ export const DOCS_DATA: DocCategory[] = [
           - **Pending Balance**: Invoiced but not yet paid.
 
           ### Polar Integration
-          When a milestone is approved, a payment link is automatically generated via Polar.sh. Once the client pays, Milestack receives a webhook and automatically marks the milestone as **PAID**.
+          When a milestone is approved, a payment link is automatically generated via Polar.sh. Once the client pays, SDX26 receives a webhook and automatically marks the milestone as **PAID**.
         `,
       },
       {
         title: "Scope Creep Protection",
         slug: "scope-creep",
-        description: "Handle out-of-scope requests without losing revenue.",
+        description: "Handle out-of-scope requests with transparent cost & timeline proposals.",
         content: `
-          Scope creep is the #1 killer of agency profit margins. Milestack helps you manage it professionally.
+          Scope creep is the #1 killer of agency profit margins. SDX26 helps you protect your revenue with an audit-backed Change Request system.
 
-          ## The Change Request Log
-          When a client asks for something "extra":
-          1. Log it in the **Scope Log**.
-          2. Set an estimated cost and time.
-          3. Send it to the client for approval.
-          4. Once approved, it automatically converts into a new Milestone or Task.
+          ## How It Works: Bi-Directional Flow
 
-          > [!NOTE]
-          > This keeps the original project scope clean and ensures you are compensated for additional work.
+          Both **Agency and Client** can initiate Change Requests:
+
+          ### Case A: Client Request
+          1. **Client Request**: Client submits a request from the Client Portal (e.g., *"Add a coupon system to the website"*). Initial status: \`SUBMITTED\`.
+          2. **Agency Review**: Agency assesses the request, selects the scope type (\`IN_SCOPE\` or \`NEW_REQUEST\`), defines the official proposed cost and estimated timeline impact.
+          3. **Client Approval**: The proposal appears in the Client Portal as \`PENDING_CLIENT_APPROVAL\`. The client reviews the breakdown and can **Approve**, **Reject**, or **Request Revision**.
+          4. **Auto-Conversion**: When the client approves, SDX26 automatically converts the request into a new Milestone under the project (status: \`CONVERTED\`).
+
+          ### Case B: Agency Request
+          1. **Agency Proposal**: Agency identifies an extra feature or out-of-scope deliverable (e.g., *"Add admin dashboard for an additional $300 and 5 extra days"*).
+          2. **Official Proposal**: Agency logs the request in \`projects/[id]/scope\` with proposed cost and timeline impact, sending it directly for client review (\`PENDING_CLIENT_APPROVAL\`).
+          3. **Client Approval**: Client approves in the portal, instantly converting it into a paid milestone.
+
+          ## Three Golden Rules of Scope Management
+          1. **Bi-directional Initiation**: Both Agency and Client can initiate change requests.
+          2. **Agency Cost & Timeline Authority**: Only the Agency proposes the official cost and timeline; the Client explicitly approves, rejects, or requests revision.
+          3. **Strict Single Conversion**: New milestones or tasks are generated only after approval, and strictly once. Rejected requests never create work.
+
+          ## Change Request Lifecycle & Statuses
+          - \`SUBMITTED\`: Client-submitted request awaiting Agency proposal.
+          - \`NEEDS_REVISION\`: Client requested revision on the proposed cost or timeline.
+          - \`PENDING_CLIENT_APPROVAL\`: Agency proposed official pricing & timeline, awaiting client response.
+          - \`APPROVED\` / \`CONVERTED\`: Approved by client and auto-converted into an active project milestone.
+          - \`REJECTED\`: Declined by client (no work or fee created).
+          - \`CANCELLED\`: Cancelled by agency or client before approval.
         `,
       },
       {
@@ -231,7 +305,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "magic-link-sending",
         description: "How to invite clients and manage their access.",
         content: `
-          Milestack uses Magic Links for a frictionless client experience. No passwords required.
+          SDX26 uses Magic Links for a frictionless client experience. No passwords required.
 
           ## How to Invite
           1. Go to **Project Details** → **Portal** tab.
@@ -295,17 +369,18 @@ export const DOCS_DATA: DocCategory[] = [
         `,
       },
       {
-        title: "Reviewing Files",
+        title: "Reviewing Files & Deliverables",
         slug: "client-file-review",
-        description: "The process for clients to give feedback on deliverables.",
+        description: "The process for clients to inspect assets, preview staging links, and give feedback.",
         content: `
-          Clients can review work directly in the portal.
+          Clients can review all shared deliverables directly in the portal (\`/portal/[token]/files\`).
 
-          ## Feedback Actions
-          - **View**: Inspect high-res versions of designs or documents.
-          - **Approve**: Confirm the version is final.
-          - **Request Change**: Open a feedback thread to request adjustments.
-          - **Comment**: General questions or context.
+          ## Deliverable Actions
+          - **1-Click Previews**: Launch live staging websites, Figma prototypes, or Loom video walkthroughs in a new tab.
+          - **File Inspection**: View high-resolution images, design exports, and PDF documents.
+          - **Direct Download**: Download asset bundles and source files instantly.
+          - **Version Inspection**: Click version badges (e.g. \`v1\`, \`v2\`) to view change logs and past iterations.
+          - **Approval Status**: Track real-time status (\`UPLOADED\`, \`UNDER_REVIEW\`, \`APPROVED\`, \`REVISION_REQUESTED\`).
         `,
       },
       {
@@ -313,7 +388,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "client-approvals",
         description: "Formalizing the sign-off process.",
         content: `
-          Approvals in Milestack are legally binding in the context of the project contract.
+          Approvals in SDX26 are legally binding in the context of the project contract.
 
           ## Milestone Sign-off
           When all deliverables for a milestone are approved, the client is prompted to approve the milestone itself.
@@ -348,7 +423,7 @@ export const DOCS_DATA: DocCategory[] = [
           1. Client clicks **"Pay Now"** on an approved milestone.
           2. They are redirected to a secure checkout page.
           3. They pay via Credit Card, Apple Pay, or Google Pay.
-          4. Upon completion, they are redirected back to Milestack, and their status is updated instantly.
+          4. Upon completion, they are redirected back to SDX26, and their status is updated instantly.
         `,
       },
     ],
@@ -359,9 +434,9 @@ export const DOCS_DATA: DocCategory[] = [
       {
         title: "Roles & Permissions",
         slug: "roles-permissions",
-        description: "Understanding access levels in Milestack.",
+        description: "Understanding access levels in SDX26.",
         content: `
-          Milestack uses a hybrid Role-Based Access Control (RBAC) system.
+          SDX26 uses a hybrid Role-Based Access Control (RBAC) system.
 
           ## Role Hierarchy
           
@@ -391,21 +466,22 @@ export const DOCS_DATA: DocCategory[] = [
       {
         title: "File Versioning System",
         slug: "versioning-system",
-        description: "How Milestack handles revisions and file history.",
+        description: "How SDX26 handles revisions for both files and external preview links.",
         content: `
-          Milestack solves the "v2_final" problem by grouping all revisions under a single file entity.
+          SDX26 eliminates "v2_final_FINAL" confusion by managing all revisions in-place under a single deliverable entity.
 
-          ## How Versioning Works
-          - Each upload to a file slot creates a new version (v1, v2, v3...).
-          - The latest version is always the "Active" one.
-          - Comments are linked to the specific version they were made on.
-          - If a client approves v3, it is clearly marked as the approved version.
+          ## Key Versioning Principles
+          - **Dual Support**: Works seamlessly for both binary files (PDFs, ZIPs, images) and external links (Figma, Staging previews).
+          - **In-Place Updates**: Releasing an update increments the version (\`v1\` ➔ \`v2\`) without creating duplicate file clutter.
+          - **Change Notes**: Each version includes a concise note (e.g., *"v2: Updated checkout dark mode and responsive layout"*).
+          - **Audit Trail**: Full chronological history with timestamps, authors, and 1-click access to previous versions.
+          - **Milestone Cohesion**: Deliverables remain anchored to their assigned milestone throughout all version iterations.
         `,
       },
       {
         title: "Approval Workflow",
         slug: "approval-workflow",
-        description: "The logic behind the Milestack sign-off engine.",
+        description: "The logic behind the SDX26 sign-off engine.",
         content: `
           The approval workflow is designed to prevent bottlenecks.
 
@@ -420,7 +496,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "activity-system",
         description: "The internal engine that tracks every action.",
         content: `
-          Every mutation in the Milestack database triggers an Activity Log entry.
+          Every mutation in the SDX26 database triggers an Activity Log entry.
 
           ## Metadata Structure
           Logs aren't just text; they contain JSON metadata like:
@@ -438,9 +514,9 @@ export const DOCS_DATA: DocCategory[] = [
       {
         title: "Auth Flow",
         slug: "api-auth",
-        description: "How Milestack handles authentication.",
+        description: "How SDX26 handles authentication.",
         content: `
-          Milestack uses a dual-auth system:
+          SDX26 uses a dual-auth system:
           - **Agency**: NextAuth.js (Auth.js) for email/password or OAuth.
           - **Client**: Custom JWT-based Magic Link session tracking.
 
@@ -476,23 +552,42 @@ export const DOCS_DATA: DocCategory[] = [
         `,
       },
       {
-        title: "File APIs",
+        title: "File APIs & Actions",
         slug: "api-files",
-        description: "Technical reference for file management.",
+        description: "Technical reference for deliverable management, links, and versioning.",
         content: `
-          Handle uploads and status changes.
+          Manage deliverables, external preview links, versions, and review statuses programmatically or via Server Actions.
 
-          ### Upload File
-          \`POST /api/projects/:id/files\`
+          ### 1. Upload File or Deliverable Link
+          \`uploadFile(projectId, data)\`
           
-          ### Update Status
-          \`PATCH /api/projects/:id/files/:fileId\`
-          
-          \`\`\`json
+          \`\`\`typescript
           {
-            "status": "APPROVED"
+            fileName: "Staging Preview v1",
+            fileType: "link/preview", // or "link/figma", "application/pdf", etc.
+            url: "https://staging.domain.com",
+            fileSizeBytes: 0, // 0 for external links (preserves storage quota)
+            milestoneId?: string
           }
           \`\`\`
+
+          ### 2. Publish New Version
+          \`addFileVersion(fileId, projectId, data)\`
+          
+          \`\`\`typescript
+          {
+            url: "https://staging-v2.domain.com",
+            changeNote: "Revised navigation and mobile layout"
+          }
+          \`\`\`
+
+          ### 3. Update Review Status
+          \`updateFileStatus(fileId, projectId, status)\`
+          - Status values: \`UPLOADED\`, \`UNDER_REVIEW\`, \`APPROVED\`, \`REVISION_REQUESTED\`
+
+          ### 4. Delete Asset
+          \`deleteFile(fileId, projectId)\`
+          - Permanently cleans up all child versions and unlinks associated messages.
         `,
       },
       {
@@ -504,7 +599,7 @@ export const DOCS_DATA: DocCategory[] = [
 
           ## Logic
           1. Create a checkout for a specific milestone.
-          2. Use metadata to link the Polar \`orderId\` to the Milestack \`milestoneId\`.
+          2. Use metadata to link the Polar \`orderId\` to the SDX26 \`milestoneId\`.
           3. Listen for webhooks to confirm payment.
         `,
       },
@@ -513,7 +608,7 @@ export const DOCS_DATA: DocCategory[] = [
         slug: "api-webhooks",
         description: "Subscribing to system events.",
         content: `
-          Milestack currently supports inbound webhooks from Polar.sh.
+          SDX26 currently supports inbound webhooks from Polar.sh.
 
           ## Polar Webhook
           - **Endpoint**: \`/api/webhooks/polar\`

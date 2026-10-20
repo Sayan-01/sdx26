@@ -11,8 +11,8 @@ These features are either partially built (mocked) or missing completely, and mu
 ### 1. 📂 Production-Ready File & Asset Uploads
 - [ ] **Replace Mock S3 URL:** Change the simulated S3 URL (`simulatedUrl`) in [files-client.tsx](file:///d:/SAYAN-X/abc/sdx26/src/app/dashboard/projects/[id]/files/_components/files-client.tsx) and [portal-onboarding-client.tsx](file:///d:/SAYAN-X/abc/sdx26/src/app/portal/[token]/onboarding/portal-onboarding-client.tsx) with a real storage upload handler.
 - [ ] **Integrate UploadThing/AWS S3:** Configure the existing `uploadthing` package in the backend API to securely store uploaded brand assets, logo files, and milestone deliverables.
-- [ ] **Track File Sizes & Versions:** Ensure uploaded file metadata (size, version number, storage keys) is correctly saved in the `FileVersion` database model.
-- [ ] **File Delete Action:** Complete the handler for the file deletion button (`Trash2`) on the files list.
+- [x] **Track File Sizes & Versions:** Ensure uploaded file metadata (size, version number, storage keys) is correctly saved in the `FileVersion` database model. (Implemented with in-place v1, v2... versioning and change notes)
+- [x] **File Delete Action:** Complete the handler for the file deletion button (`Trash2`) on the files list. (Implemented with confirmation modal and server action)
 
 ### 2. 📝 Milestone Task Status Management
 - [ ] **Complete/Update Task Actions:** Create server actions to update a task's status (`PENDING` ➔ `IN_PROGRESS` ➔ `COMPLETED`), change assignees, or adjust priority.
@@ -55,7 +55,7 @@ Fix broken links and incomplete views to guarantee a seamless client experience.
 
 ### 2. 🔍 Real Search & Filters
 - [ ] **Project Dashboard Search:** Wire up the search input and filters in the project overview list to search by client or project name.
-- [ ] **Files Search & Filters:** Wire up the search input and filter button in [portal-files-client.tsx](file:///d:/SAYAN-X/abc/sdx26/src/app/portal/[token]/files/portal-files-client.tsx) to filter resources by milestone or uploader.
+- [x] **Files Search & Filters:** Wire up the search input and filter button in [portal-files-client.tsx](file:///d:/SAYAN-X/abc/sdx26/src/app/portal/[token]/files/portal-files-client.tsx) to filter resources by milestone or uploader. (Implemented across both dashboard and portal)
 
 ---
 

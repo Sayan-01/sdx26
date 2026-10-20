@@ -1,8 +1,8 @@
-# Milestack — Client Collaboration & Project Hub for Agencies
+# SDX26 — Client Collaboration & Project Hub for Agencies
 
-Milestack is a unified collaboration workspace designed specifically for modern agencies and their clients. It brings project planning, asset collection, milestone approvals, team task management, and client communication into one clear, professional dashboard.
+SDX26 is a unified collaboration workspace designed specifically for modern agencies and their clients. It brings project planning, asset collection, milestone approvals, team task management, and client communication into one clear, professional dashboard.
 
-Instead of juggling lost email threads, messy cloud storage folders, and scattered messaging apps, Milestack gives agencies and clients a single shared source of truth.
+Instead of juggling lost email threads, messy cloud storage folders, and scattered messaging apps, SDX26 gives agencies and clients a single shared source of truth.
 
 ---
 
@@ -16,7 +16,7 @@ When creative, digital, and development agencies work with clients, communicatio
 * Getting formal client approval on milestones and payments feels disjointed and slow.
 
 ### The Solution
-Milestack simplifies the entire client lifecycle into an organized, stage-by-stage journey:
+SDX26 simplifies the entire client lifecycle into an organized, stage-by-stage journey:
 * **One Dashboard for Agencies**: Full visibility over all active projects, team task assignments, pending reviews, and financial milestones.
 * **Frictionless Client Portal**: Clients access their dedicated project space securely via private links—no complex account setup required.
 * **Structured Stage Gating**: Work moves forward systematically through clear milestones, approval checkpoints, and task tracking.
@@ -25,7 +25,7 @@ Milestack simplifies the entire client lifecycle into an organized, stage-by-sta
 
 ## User Roles in the System
 
-Milestack is built around three distinct types of users, each with tailored views and permissions:
+SDX26 is built around three distinct types of users, each with tailored views and permissions:
 
 ```mermaid
 graph TD
@@ -108,7 +108,7 @@ graph LR
 ---
 
 ### 3. Client Portal Access & Asset Collection
-1. **Magic Link Generation**: Milestack creates an encrypted, passwordless client access link.
+1. **Magic Link Generation**: SDX26 creates an encrypted, passwordless client access link.
 2. **Client Portal Entry**: The client opens their dedicated portal in any web browser without needing to remember a password.
 3. **Fulfilling Checklist**: The client views the required onboarding items, uploads files directly, and marks items complete.
 4. **Agency Verification**: The agency team inspects uploaded assets, approving them or requesting revisions.
@@ -117,7 +117,7 @@ graph LR
 sequenceDiagram
     autonumber
     actor Agency as Agency Team
-    participant System as Milestack Platform
+    participant System as SDX26 Platform
     actor Client as Client
     
     Agency->>System: Create Project & Define Checklist
@@ -175,7 +175,7 @@ graph TD
 
 ---
 
-## Design Principles Behind Milestack
+## Design Principles Behind SDX26
 
 1. **Radical Simplicity for Clients**
    Clients should never feel overwhelmed by internal agency complexity. They get a focused, clean environment highlighting exactly what requires their attention right now.

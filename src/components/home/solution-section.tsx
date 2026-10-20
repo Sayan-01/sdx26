@@ -202,7 +202,7 @@ export default function Solution() {
             One structured system to <Italic>rule them all.</Italic>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-            Milestack replaces your scattered mess of tools with a single, professional source of truth for you and your clients.
+            Our application replaces your scattered mess of tools with a single, professional source of truth for you and your clients.
           </p>
         </div>
 

@@ -1008,17 +1008,36 @@ export const getFilesByProjectId = async (projectId: string) => {
     include: {
       uploader: {
         select: {
+          id: true,
           name: true,
+          email: true,
+          avatarUrl: true,
         },
       },
       milestone: {
         select: {
+          id: true,
           title: true,
+          status: true,
         },
       },
       fileVersions: {
         select: {
+          id: true,
+          versionNumber: true,
+          storageKey: true,
+          fileName: true,
           fileSizeBytes: true,
+          changeNote: true,
+          createdAt: true,
+          uploadedBy: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: {
+          versionNumber: "desc",
         },
       },
     },
@@ -1027,7 +1046,15 @@ export const getFilesByProjectId = async (projectId: string) => {
     },
   });
 
-  return { success: true, files };
+  const serializedFiles = files.map((f) => ({
+    ...f,
+    fileVersions: f.fileVersions.map((fv) => ({
+      ...fv,
+      fileSizeBytes: Number(fv.fileSizeBytes),
+    })),
+  }));
+
+  return { success: true, files: serializedFiles };
 };
 
 export const getPortalFilesByProjectId = async (projectId: string, agencyId: string) => {
@@ -1050,7 +1077,15 @@ export const getPortalFilesByProjectId = async (projectId: string, agencyId: str
         },
         fileVersions: {
           select: {
+            id: true,
+            versionNumber: true,
+            storageKey: true,
             fileSizeBytes: true,
+            changeNote: true,
+            createdAt: true,
+          },
+          orderBy: {
+            versionNumber: "desc",
           },
         },
       },
@@ -1059,7 +1094,15 @@ export const getPortalFilesByProjectId = async (projectId: string, agencyId: str
       },
     });
 
-    return { success: true, files };
+    const serializedFiles = files.map((f) => ({
+      ...f,
+      fileVersions: f.fileVersions.map((fv) => ({
+        ...fv,
+        fileSizeBytes: Number(fv.fileSizeBytes),
+      })),
+    }));
+
+    return { success: true, files: serializedFiles };
   } catch (error) {
     console.error(error);
     return { error: "Failed to fetch files" };
@@ -1122,10 +1165,12 @@ export const uploadFile = async (
     return { error: "Agency not found" };
   }
 
-  // Enforce storage limits
-  const storageCheck = await checkStorageLimit(user.agencyId, data.fileSizeBytes);
-  if (!storageCheck.allowed) {
-    return { error: storageCheck.error };
+  // Enforce storage limits only for actual files (> 0 bytes)
+  if (data.fileSizeBytes > 0) {
+    const storageCheck = await checkStorageLimit(user.agencyId, data.fileSizeBytes);
+    if (!storageCheck.allowed) {
+      return { error: storageCheck.error };
+    }
   }
 
   try {
@@ -1140,6 +1185,23 @@ export const uploadFile = async (
         milestoneId: data.milestoneId || null,
         status: "UPLOADED",
       },
+      include: {
+        uploader: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+        milestone: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+          },
+        },
+      },
     });
 
     const fileVersion = await prisma.fileVersion.create({
@@ -1148,9 +1210,10 @@ export const uploadFile = async (
         versionNumber: 1,
         storageKey: data.url,
         fileName: data.fileName,
-        fileSizeBytes: BigInt(data.fileSizeBytes),
+        fileSizeBytes: BigInt(data.fileSizeBytes || 0),
         uploadedById: session.user.id,
         agencyId: user.agencyId,
+        changeNote: "Initial upload",
       },
     });
 
@@ -1166,16 +1229,218 @@ export const uploadFile = async (
         agencyId: user.agencyId,
         projectId,
         actorUserId: session.user.id,
-        action: `uploaded file: ${data.fileName}`,
+        action: `uploaded ${data.fileType.startsWith("link") ? "link" : "file"}: ${data.fileName}`,
         entityType: "FILE",
         entityId: file.id,
       },
     });
 
     revalidatePath(`/dashboard/projects/${projectId}/files`);
-    return { success: true, file };
+
+    const serializedFile = {
+      ...file,
+      fileVersions: [
+        {
+          id: fileVersion.id,
+          versionNumber: 1,
+          storageKey: data.url,
+          fileName: data.fileName,
+          fileSizeBytes: Number(fileVersion.fileSizeBytes),
+          changeNote: "Initial upload",
+          createdAt: fileVersion.createdAt,
+          uploadedBy: {
+            name: file.uploader.name,
+          },
+        },
+      ],
+    };
+
+    return { success: true, file: serializedFile };
   } catch (error) {
     console.error("Failed to upload file:", error);
     return { error: "Failed to upload file" };
+  }
+};
+
+export const addFileVersion = async (
+  fileId: string,
+  projectId: string,
+  data: {
+    url: string;
+    fileName?: string;
+    fileSizeBytes?: number;
+    changeNote?: string;
+  }
+) => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { agencyId: true },
+  });
+  if (!user?.agencyId) return { error: "Agency not found" };
+
+  const file = await prisma.file.findFirst({
+    where: { id: fileId, projectId, agencyId: user.agencyId },
+    include: {
+      fileVersions: {
+        orderBy: { versionNumber: "desc" },
+      },
+    },
+  });
+  if (!file) return { error: "File not found" };
+
+  const size = data.fileSizeBytes || 0;
+  if (size > 0) {
+    const storageCheck = await checkStorageLimit(user.agencyId, size);
+    if (!storageCheck.allowed) return { error: storageCheck.error };
+  }
+
+  const nextVersionNumber = (file.fileVersions[0]?.versionNumber || file.fileVersions.length || 0) + 1;
+  const newFileName = data.fileName || file.fileName;
+
+  try {
+    const version = await prisma.fileVersion.create({
+      data: {
+        fileId,
+        versionNumber: nextVersionNumber,
+        storageKey: data.url,
+        fileName: newFileName,
+        fileSizeBytes: BigInt(size),
+        uploadedById: session.user.id,
+        agencyId: user.agencyId,
+        changeNote: data.changeNote || `Updated to version ${nextVersionNumber}`,
+      },
+      include: {
+        uploadedBy: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    await prisma.file.update({
+      where: { id: fileId },
+      data: {
+        url: data.url,
+        fileName: newFileName,
+        currentVersionId: version.id,
+        updatedAt: new Date(),
+      },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        agencyId: user.agencyId,
+        projectId,
+        actorUserId: session.user.id,
+        action: `updated v${nextVersionNumber} for: ${newFileName}`,
+        entityType: "FILE",
+        entityId: fileId,
+      },
+    });
+
+    revalidatePath(`/dashboard/projects/${projectId}/files`);
+
+    return {
+      success: true,
+      version: {
+        id: version.id,
+        versionNumber: version.versionNumber,
+        storageKey: version.storageKey,
+        fileName: version.fileName,
+        fileSizeBytes: Number(version.fileSizeBytes),
+        changeNote: version.changeNote,
+        createdAt: version.createdAt,
+        uploadedBy: {
+          name: version.uploadedBy.name,
+        },
+      },
+      newUrl: data.url,
+    };
+  } catch (error) {
+    console.error("Failed to add file version:", error);
+    return { error: "Failed to create new version" };
+  }
+};
+
+export const deleteFile = async (fileId: string, projectId: string) => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { agencyId: true },
+  });
+  if (!user?.agencyId) return { error: "Agency not found" };
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: { id: fileId, projectId, agencyId: user.agencyId },
+    });
+    if (!file) return { error: "File not found" };
+
+    // Unlink any messages that point to this file
+    await prisma.message.updateMany({
+      where: { fileId },
+      data: { fileId: null },
+    });
+
+    // Delete file versions
+    await prisma.fileVersion.deleteMany({
+      where: { fileId },
+    });
+
+    // Delete file
+    await prisma.file.delete({
+      where: { id: fileId },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        agencyId: user.agencyId,
+        projectId,
+        actorUserId: session.user.id,
+        action: `deleted file: ${file.fileName}`,
+        entityType: "FILE",
+        entityId: fileId,
+      },
+    });
+
+    revalidatePath(`/dashboard/projects/${projectId}/files`);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete file:", error);
+    return { error: "Failed to delete file" };
+  }
+};
+
+export const updateFileStatus = async (
+  fileId: string,
+  projectId: string,
+  status: "UPLOADED" | "UNDER_REVIEW" | "APPROVED" | "REVISION_REQUESTED"
+) => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { agencyId: true },
+  });
+  if (!user?.agencyId) return { error: "Agency not found" };
+
+  try {
+    await prisma.file.updateMany({
+      where: { id: fileId, projectId, agencyId: user.agencyId },
+      data: { status },
+    });
+
+    revalidatePath(`/dashboard/projects/${projectId}/files`);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update status:", error);
+    return { error: "Failed to update status" };
   }
 };
