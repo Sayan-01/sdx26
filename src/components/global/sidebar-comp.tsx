@@ -108,7 +108,7 @@ export function SidebarComp({
         <div className="">
           <Link
             href="/"
-            className={`flex items-center p-2 justify-start rounded-xl`}
+            className={`flex items-center py-2 pl-0.5 justify-start rounded-xl`}
           >
             <div className="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-zinc-700 text-lg bg-zinc-800 text-zinc-400">
               <Layers size={18} />
@@ -118,7 +118,7 @@ export function SidebarComp({
               <p className="px-3 text-black dark:text-zinc-400 text-xs">For Modern Agencies</p>
             </div>
           </Link>
-          <p className="text-xs pl-2 py-2 font-medium text-neutral-500 dark:text-zinc-400 mt-3">Menu</p>
+          <p className="text-xs pl-1 py-2 font-medium text-neutral-500 dark:text-zinc-400 mt-3">Menu</p>
         </div>
         <nav className=" overflow-y-auto px-0.5 relative mb-auto">
           <ul className="space-y-1 ">

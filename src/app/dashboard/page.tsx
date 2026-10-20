@@ -8,6 +8,7 @@ import DashboardHeading from "./_components/dashboard-heading";
 import DashboardCard from "./_components/dashboard-card";
 import { getDashboardData } from "./actions";
 import { formatDistanceToNow } from "date-fns";
+import { ActivityLog } from "./_components/activity-section";
 
 export default async function DashboardPage() {
   const result = await getDashboardData();
@@ -26,23 +27,6 @@ export default async function DashboardPage() {
       ? { label: "Payment Pending", value: `$${fetchedStats.pendingPayments.toLocaleString()}`, icon: <DollarSign className="h-4 w-4" />, color: "text-rose-500", bg: "bg-rose-500/10" }
       : { label: "My Tasks Due", value: fetchedStats.assignedTasks.toString(), icon: <Clock className="h-4 w-4" />, color: "text-indigo-500", bg: "bg-indigo-500/10" },
   ];
-
-  const getActivityIconAndColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "file":
-        return { icon: <FileBox className="h-4 w-4" />, color: "text-blue-500", bg: "bg-blue-500/10" };
-      case "payment":
-        return { icon: <DollarSign className="h-4 w-4" />, color: "text-rose-500", bg: "bg-rose-500/10" };
-      case "approval":
-      case "milestone":
-        return { icon: <CheckCircle2 className="h-4 w-4" />, color: "text-emerald-500", bg: "bg-emerald-500/10" };
-      case "team":
-      case "member":
-        return { icon: <Users className="h-4 w-4" />, color: "text-amber-500", bg: "bg-amber-500/10" };
-      default:
-        return { icon: <Activity className="h-4 w-4" />, color: "text-indigo-500", bg: "bg-indigo-500/10" };
-    }
-  };
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
@@ -151,47 +135,7 @@ export default async function DashboardPage() {
           </div>
         </DashboardCard>
 
-        {/* Activity Log */}
-        <DashboardCard
-          title="Activity Log"
-          link="/dashboard/activity"
-          className="flex-1 flex flex-col justify-between overflow-hidden min-h-0"
-        >
-          <div className="divide-y divide-zinc-800/60 overflow-y-auto flex-1 box-1">
-            {activities.length === 0 ? (
-              <div className="p-8 text-center text-sm text-zinc-500">No activity yet.</div>
-            ) : (
-              activities.map((item) => {
-                const style = getActivityIconAndColor(item.type);
-                return (
-                  <div
-                    key={item.id}
-                    className="flex gap-4 px-6 min-h-[90px] items-center hover:bg-zinc-900/50 transition-colors group border-b border-b-dashboard-border"
-                  >
-                    <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-dashboard-border/30", style.bg, style.color)}>{style.icon}</div>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm text-zinc-300 group-hover:text-white transition-colors leading-snug line_2">{item.text}</p>
-                      <p className="text-sm text-zinc-500 font-medium flex items-center gap-1.5">
-                        <Clock className="h-3 w-3" />
-                        {formatDistanceToNow(new Date(item.time), { addSuffix: true })}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-          <div className="p-6 border-t border-dashboard-border/60 bg-zinc-900/20 mt-auto">
-            <Link href="/dashboard/activity">
-              <Button
-                variant="outline"
-                className="w-full font-medium border-dashboard-border hover:bg-zinc-800/50 text-zinc-400 hover:text-white h-9.5"
-              >
-                View All Activity
-              </Button>
-            </Link>
-          </div>
-        </DashboardCard>
+        <ActivityLog activities={activities} />
       </div>
     </div>
   );

@@ -50,15 +50,7 @@ export async function getDashboardData() {
           ],
         };
 
-    const [
-      activeProjectsCount,
-      pendingApprovalsCount,
-      completedMilestonesCount,
-      pendingPaymentsResult,
-      assignedTasksCount,
-      recentProjects,
-      activityLogs,
-    ] = await Promise.all([
+    const [activeProjectsCount, pendingApprovalsCount, completedMilestonesCount, pendingPaymentsResult, assignedTasksCount, recentProjects, activityLogs] = await Promise.all([
       prisma.project.count({
         where: { ...projectFilter, status: "ACTIVE" },
       }),
@@ -136,9 +128,7 @@ export async function getDashboardData() {
 
     const formattedProjects = recentProjects.map((project) => {
       const totalMilestones = project.milestones.length;
-      const completedMilestones = project.milestones.filter(
-        (m) => m.status === "APPROVED" || m.status === "PAID",
-      ).length;
+      const completedMilestones = project.milestones.filter((m) => m.status === "APPROVED" || m.status === "PAID").length;
       const progress = totalMilestones === 0 ? 0 : Math.round((completedMilestones / totalMilestones) * 100);
 
       return {
