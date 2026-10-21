@@ -37,7 +37,7 @@ model Subscription {
   stripeSubscriptionId String?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
-  agency               Agency             @relation(fields: [agencyId], references: [id])
+  agency               Agency             @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   plan                 Plan               @relation(fields: [planId], references: [id])
 
   @@map("subscriptions")
@@ -89,7 +89,7 @@ model User {
   messages                Message[]
   projectMemberships      ProjectMember[]
   teamMembers             TeamMember[]
-  agency                  Agency?          @relation("AgencyUsers", fields: [agencyId], references: [id], onDelete: Cascade)
+  agency                  Agency?          @relation("AgencyUsers", fields: [agencyId], references: [id], onDelete: SetNull)
   fileVersions            FileVersion[]
   invitationsSent         Invitation[]     @relation("InvitedBy")
   notifications           Notification[]   @relation("UserNotifications")
@@ -111,7 +111,7 @@ model Invitation {
   status      InviteStatus     @default(PENDING)
   createdAt   DateTime    @default(now())
   agency      Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  invitedBy   User        @relation("InvitedBy", fields: [invitedById], references: [id])
+  invitedBy   User        @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
 
   @@unique([agencyId, email])
   @@map("invitations")
@@ -124,8 +124,8 @@ model TeamMember {
   role        TeamRole @default(TEAM)
   designation String?
   joinedAt    DateTime @default(now())
-  agency      Agency   @relation(fields: [agencyId], references: [id])
-  user        User     @relation(fields: [userId], references: [id])
+  agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([agencyId, userId])
 }
@@ -138,8 +138,8 @@ model ProjectMember {
   role        ProjectMemberRole @default(MEMBER)
   addedAt     DateTime          @default(now())
   designation String?
-  project     Project           @relation(fields: [projectId], references: [id])
-  user        User              @relation(fields: [userId], references: [id])
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, userId])
 }
@@ -163,8 +163,8 @@ model Project {
   notifications  Notification[]
   onboardingItem OnboardingItem[]
   changeRequests ChangeRequest[]
-  agency         Agency           @relation(fields: [agencyId], references: [id])
-  client         Client           @relation(fields: [clientId], references: [id])
+  agency         Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  client         Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
   tasks          Task[]
 
   @@map("projects")
@@ -206,9 +206,9 @@ model OnboardingItem {
   updatedAt    DateTime         @updatedAt
   userId       String?
   project      Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  reviewedBy   User?            @relation("ReviewedBy", fields: [reviewedById], references: [id])
-  uploadedBy   Client?          @relation("UploadedBy", fields: [uploadedById], references: [id])
-  user         User?            @relation(fields: [userId], references: [id])
+  reviewedBy   User?            @relation("ReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+  uploadedBy   Client?          @relation("UploadedBy", fields: [uploadedById], references: [id], onDelete: SetNull)
+  user         User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("onboarding_items")
 }
@@ -227,7 +227,7 @@ model Milestone {
   updatedAt   DateTime        @updatedAt
   files       File[]
   messages    Message[]
-  project       Project         @relation(fields: [projectId], references: [id])
+  project       Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
   payments      Payment?
   tasks         Task[]
   changeRequest ChangeRequest?
@@ -249,8 +249,8 @@ model File {
   currentVersionId String?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
-  milestone        Milestone?    @relation(fields: [milestoneId], references: [id])
-  project          Project       @relation(fields: [projectId], references: [id])
+  milestone        Milestone?    @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  project          Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
   uploader         User          @relation(fields: [uploaderId], references: [id])
   messages         Message[]
   fileVersions     FileVersion[]
@@ -268,12 +268,12 @@ model Message {
   senderUserId   String?
   senderClientId String?
   userId         String?
-  file           File?      @relation(fields: [fileId], references: [id])
-  milestone      Milestone? @relation(fields: [milestoneId], references: [id])
-  project        Project    @relation(fields: [projectId], references: [id])
-  senderClient   Client?    @relation("ClientMessages", fields: [senderClientId], references: [id])
-  senderUser     User?      @relation("UserMessages", fields: [senderUserId], references: [id])
-  user           User?      @relation(fields: [userId], references: [id])
+  file           File?      @relation(fields: [fileId], references: [id], onDelete: SetNull)
+  milestone      Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  project        Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  senderClient   Client?    @relation("ClientMessages", fields: [senderClientId], references: [id], onDelete: SetNull)
+  senderUser     User?      @relation("UserMessages", fields: [senderUserId], references: [id], onDelete: SetNull)
+  user           User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model FileVersion {
@@ -328,9 +328,9 @@ model Notification {
   readAt            DateTime?
   createdAt         DateTime         @default(now())
   agency            Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  project           Project?         @relation(fields: [projectId], references: [id])
-  recipientClient   Client?          @relation("ClientNotifications", fields: [recipientClientId], references: [id])
-  recipientUser     User?            @relation("UserNotifications", fields: [recipientUserId], references: [id])
+  project           Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  recipientClient   Client?          @relation("ClientNotifications", fields: [recipientClientId], references: [id], onDelete: Cascade)
+  recipientUser     User?            @relation("UserNotifications", fields: [recipientUserId], references: [id], onDelete: Cascade)
 
   @@index([agencyId, recipientUserId, isRead])
   @@index([agencyId, recipientClientId, isRead])
@@ -350,11 +350,11 @@ model ActivityLog {
   entityId      String?
   createdAt     DateTime @default(now())
   userId        String?
-  actorClient   Client?  @relation("ActorClient", fields: [actorClientId], references: [id])
-  actorUser     User?    @relation("ActorUser", fields: [actorUserId], references: [id])
+  actorClient   Client?  @relation("ActorClient", fields: [actorClientId], references: [id], onDelete: SetNull)
+  actorUser     User?    @relation("ActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
   agency        Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  project       Project? @relation(fields: [projectId], references: [id])
-  user          User?    @relation(fields: [userId], references: [id])
+  project       Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model MagicLink {
@@ -366,8 +366,8 @@ model MagicLink {
   token       String    @unique
   expiresAt   DateTime
   usedAt      DateTime?
-  client      Client?   @relation(fields: [clientId], references: [id])
-  project     Project   @relation(fields: [projectId], references: [id])
+  client      Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Task {
@@ -381,7 +381,7 @@ model Task {
   assigneeId  String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   milestone   Milestone    @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
   project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
