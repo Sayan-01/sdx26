@@ -126,7 +126,7 @@ export function ActivityLog({
           asChild
           variant="ghost"
           size="sm"
-          className="group/btn h-7 gap-1 px-2.5 text-xs text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-white"
+          className="group/btn h-6.5 gap-1 px-2.5 text-xs text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-white"
         >
           <Link href="/dashboard/activity">
             View all
