@@ -17,7 +17,10 @@ export default async function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between">
-        <Logo fullName={true} />
+        <Logo
+          fullName={true}
+          className="sm:w-50.5"
+        />
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((l) => (
             <Link
@@ -29,7 +32,7 @@ export default async function Navbar() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:min-w-50.5 justify-end">
           {/* <ThemeToggle /> */}
 
           {session?.user ? (
