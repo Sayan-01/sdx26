@@ -26,7 +26,7 @@ export interface ActivityItem {
 }
 
 interface ActivityLogProps {
-  activities?: ActivityItem[] | null;
+  activities?: ActivityItem[];
   className?: string;
   title?: string;
 }
@@ -36,8 +36,6 @@ export function ActivityLog({
   className,
   title = "Recent Activity",
 }: ActivityLogProps) {
-  const safeActivities = Array.isArray(activities) ? activities : [];
-
   let hasOverflow = activities?.length >= 5;
 
   const getActivityConfig = (type: string = "") => {
@@ -117,8 +115,8 @@ export function ActivityLog({
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
           </span>
           <h2 className="text-sm font-medium tracking-tight text-zinc-200">{title}</h2>
-          {safeActivities.length > 0 && (
-            <span className="rounded-full border border-zinc-800 bg-zinc-900/80 px-2 py-0.5 text-[11px] font-medium tabular-nums text-zinc-400">{safeActivities.length}</span>
+          {activities.length > 0 && (
+            <span className="rounded-full border border-zinc-800 bg-zinc-900/80 px-2 py-0.5 text-[11px] font-medium tabular-nums text-zinc-400">{activities.length}</span>
           )}
         </div>
 
@@ -137,7 +135,7 @@ export function ActivityLog({
 
       {/* Feed List */}
       <div className="relative flex min-h-0 flex-1 flex-col">
-        {safeActivities.length === 0 ? (
+        {activities.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-500 shadow-inner">
               <Clock className="h-4 w-4" />
@@ -149,7 +147,7 @@ export function ActivityLog({
           <>
             <div className="flex-1 overflow-y-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <ul className="space-y-1">
-                {safeActivities.map((item) => {
+                {activities.map((item) => {
                   const config = getActivityConfig(item.type);
                   return (
                     <li
