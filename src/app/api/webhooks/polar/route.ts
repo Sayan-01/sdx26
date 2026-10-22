@@ -5,7 +5,7 @@ import { DEFAULT_LIMITS } from "@/lib/planLimits";
 export const POST = Webhooks({
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET || "",
   onPayload: async (event: any) => {
-    console.log("Polar webhook received event type:", event.type);
+    console.log("Polar webhook received event type:", event.type, "x", event);
 
     const type = event?.type;
     const subscriptionId = event?.data?.id; // subscription ID
@@ -73,11 +73,7 @@ export const POST = Webhooks({
           throw dbError;
         }
       }
-    } else if (
-      event.type === "subscription.created" ||
-      event.type === "subscription.updated" ||
-      event.type === "subscription.active"
-    ) {
+    } else if (event.type === "subscription.created" || event.type === "subscription.updated" || event.type === "subscription.active") {
       const subscription = event.data;
       const targetAgencyId = subscription.metadata?.agencyId || user.agencyId;
 
