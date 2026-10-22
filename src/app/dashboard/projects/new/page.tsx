@@ -60,10 +60,9 @@ export default function NewProjectPage() {
 
   if (isBasic) {
     return (
-      <div className="max-w-[440px] mx-auto min-h-[90vh] flex flex-col justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 px-4">
+      <div className="max-w-[440px] mx-auto h-full flex flex-col justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 px-4">
         <Card className="bg-[#19191b] border-dashboard-border overflow-hidden p-8 relative">
           {/* Subtle top indicator glow */}
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-purple-500/50 to-transparent" />
           
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shadow-inner">

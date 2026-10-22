@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Briefcase, Plus, Clock, CheckCircle2, ArrowUpRight, TrendingUp, DollarSign, ChevronRight, FileBox, Users, Activity } from "lucide-react";
+import { Briefcase, Plus, Clock, CheckCircle2, ArrowUpRight, TrendingUp, DollarSign, ChevronRight, FileBox, Users, Activity, Fingerprint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,18 @@ export default async function DashboardPage() {
   const result = await getDashboardData();
 
   if (result.error || !result.data) {
-    return <div className="p-6 text-red-500">{result.error}</div>;
+    return (
+      <div className="p-6 text-red-500 flex flex-col items-center justify-center h-full">
+        <p className="mb-4">{result.error}</p>
+        <Link href="/create-agency">
+          <Button className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-medium">
+            Please Create your Agency First
+            <Fingerprint className="h-4 w-4" strokeWidth={2.4}/>
+
+          </Button>
+        </Link>
+      </div>
+    );
   }
 
   const { stats: fetchedStats, recentProjects, activities, userName, isOwner } = result.data;

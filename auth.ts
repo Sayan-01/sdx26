@@ -65,7 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account?.provider === "google" || account?.provider === "github") {
         const { email, name, image } = user;
 
-        if (email && name && image) {
+        if (email) {
           const alreadyUser = await prisma.user.findUnique({
             where: { email },
             select: {
@@ -74,14 +74,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
           if (alreadyUser) {
             return true;
-          } else if (!alreadyUser) {
+          } else {
             await prisma.user.create({
               data: {
                 email,
-                name: name,
-                avatarUrl: image,
+                name: name || email.split("@")[0],
+                avatarUrl: image || null,
                 role: "OWNER",
-                agencyId: null
+                agencyId: null,
               },
             });
           }

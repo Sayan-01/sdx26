@@ -4,11 +4,11 @@ import { signIn, signOut, auth } from "../../auth";
 import prisma from "@/lib/db";
 
 export const Goo_login = async (callbackUrl?: string) => {
-  await signIn("google", { redirectTo: callbackUrl || "/dashboard" });
+  await signIn("google", { redirectTo: callbackUrl || "/create-agency" });
 };
 
 export const Git_login = async (callbackUrl?: string) => {
-  await signIn("github", { redirectTo: callbackUrl || "/dashboard" });
+  await signIn("github", { redirectTo: callbackUrl || "/create-agency" });
 };
 
 export const Sign_Out = async () => {
