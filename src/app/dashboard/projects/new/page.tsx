@@ -63,7 +63,7 @@ export default function NewProjectPage() {
       <div className="max-w-[440px] mx-auto h-full flex flex-col justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 px-4">
         <Card className="bg-[#19191b] border-dashboard-border overflow-hidden p-8 relative">
           {/* Subtle top indicator glow */}
-          
+
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shadow-inner">
               <Zap className="h-5 w-5" />
@@ -93,10 +93,17 @@ export default function NewProjectPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full pt-2">
-              <Button asChild className="w-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11 rounded-xl shadow-lg shadow-white/5 cursor-pointer order-2 sm:order-1 sm:flex-1">
+              <Button
+                asChild
+                className="w-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11 rounded-xl shadow-lg shadow-white/5 cursor-pointer order-2 sm:order-1 sm:flex-1"
+              >
                 <Link href="/#pricing">View Plans</Link>
               </Button>
-              <Button asChild variant="outline" className="w-full h-11 rounded-xl border-zinc-800 bg-transparent text-zinc-400 hover:text-white hover:bg-zinc-900 cursor-pointer order-1 sm:order-2 sm:flex-1">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full h-11 rounded-xl border-zinc-800 bg-transparent text-zinc-400 hover:text-white hover:bg-zinc-900 cursor-pointer order-1 sm:order-2 sm:flex-1"
+              >
                 <Link href="/dashboard/projects">Go Back</Link>
               </Button>
             </div>

@@ -29,7 +29,6 @@ const Page = () => {
   }, []);
   const planName = session?.user?.activePlan;
 
-
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0a0a0c] px-4 selection_color">
       {/* Premium ambient background glow */}
@@ -65,9 +64,7 @@ const Page = () => {
               <div className="mt-6 w-full rounded-2xl border border-zinc-900 bg-zinc-950/80 p-4 text-left">
                 <div className="flex items-center justify-between text-xs border-b border-zinc-900/60 pb-3">
                   <span className="text-zinc-500 font-medium uppercase tracking-wider">Account</span>
-                  <span className="text-zinc-400 font-mono truncate max-w-[200px]">
-                    {session?.user?.email || "Guest"}
-                  </span>
+                  <span className="text-zinc-400 font-mono truncate max-w-[200px]">{session?.user?.email || "Guest"}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs pt-3">
                   <span className="text-zinc-500 font-medium uppercase tracking-wider">Current Plan</span>
