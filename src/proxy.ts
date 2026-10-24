@@ -45,7 +45,7 @@ export default auth(async (req) => {
   }
 
   //S3: public route
-  const PUBLIC_ROUTES = ["/auth/login", "/auth/register", "/portal", "/api/auth", "/invite"];
+  const PUBLIC_ROUTES = ["/auth/login", "/auth/register", "/portal", "/api/auth", "/invite", "/api/webhook"];
   const isPublicRoute = pathname === "/" || PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 
   //S4: Authentication check
