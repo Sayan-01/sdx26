@@ -23,7 +23,8 @@ export default auth(async (req) => {
   if (subdomain && !pathname.startsWith("/api/internal") && !pathname.startsWith("/_next") && !pathname.includes(".")) {
     requestHeaders.set("x-agency-slug", subdomain);
     // get agencyId from subdomain
-    const resolveUrl = new URL(`/api/internal/resolve-tenant?slug=${subdomain}`, req.url);
+    const baseUrl = process.env.NEXT_PUBLIC_URL || `${url.protocol}//${domain}`;
+    const resolveUrl = new URL(`/api/internal/resolve-tenant?slug=${subdomain}`, baseUrl);
     try {
       const resolveRes = await fetch(resolveUrl.toString(), {
         headers: {

@@ -277,7 +277,7 @@ export default async function PortalDashboardPage({ params }: { params: Promise<
               <TrendingUp className="h-4 w-4 text-sky-400" />
               <span className="text-xs font-semibold text-zinc-300">Recent Project Updates</span>
             </div>
-            <span className="text-[10px] text-zinc-500">Real-time</span>
+            <span className="text-xs text-zinc-500">Real-time</span>
           </div>
 
           <div className="space-y-2.5 px-5">

@@ -141,15 +141,18 @@ export const POST = Webhooks({
             },
           });
 
-          // 5. Activity log
-          await prisma.activityLog.create({
-            data: {
-              agencyId: targetAgencyId,
-              action: `Subscription ${subStatus.toLowerCase()}: Plan set to ${cleanPlanName}`,
-              entityType: "PAYMENT",
-              entityId: subscription.id,
-            },
-          });
+          // 5. Activity log — only on subscription.active to avoid duplicates
+          // (Polar fires created + updated + active for one subscription activation)
+          if (event.type === "subscription.active") {
+            await prisma.activityLog.create({
+              data: {
+                agencyId: targetAgencyId,
+                action: `Subscription ${subStatus.toLowerCase()}: Plan set to ${cleanPlanName}`,
+                entityType: "PAYMENT",
+                entityId: subscription.id,
+              },
+            });
+          }
         } catch (dbError) {
           console.error("Subscription webhook database error:", dbError);
           throw dbError;

@@ -14,11 +14,10 @@ export default async function PortalLayout({ children, params }: { children: Rea
   const { token } = await params;
   const session = await getClientSession();
 
-  
   const headersList = await headers();
   const currentPath = headersList.get("x-pathname") || "";
   const entryPath = `/portal/${token}`;
-  
+
   if (session && session.token !== token) {
     if (currentPath !== entryPath && currentPath !== `${entryPath}/`) {
       redirect(entryPath);
@@ -130,13 +129,29 @@ export default async function PortalLayout({ children, params }: { children: Rea
       <div className="flex flex-col pt-[64px] md:pt-0 flex-1 relative overflow-auto border-l-2 border-dashed border-dashboard-border">
         {/* Unified Top Header */}
         <header className="border-b-2 border-dashed border-dashboard-border max-md:fixed top-0 z-40 flex items-center h-16 md:px-6 px-5 justify-between">
-          <div className="space-y-0.5 flex gap-4 items-center">
-            <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              Active Project • <span className="text-zinc-300">{project.client.company || project.client.name}</span>
-            </div>
-          </div>
-
+          {(() => {
+            const statusStyles: Record<string, { dot: string; badge: string }> = {
+              ACTIVE:    { dot: "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]",   badge: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400" },
+              PENDING:   { dot: "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]",     badge: "border-amber-500/20 bg-amber-500/10 text-amber-400" },
+              ON_HOLD:   { dot: "bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.5)]",    badge: "border-orange-500/20 bg-orange-500/10 text-orange-400" },
+              COMPLETED: { dot: "bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]",      badge: "border-blue-500/20 bg-blue-500/10 text-blue-400" },
+              ARCHIVED:  { dot: "bg-zinc-400 shadow-[0_0_8px_rgba(161,161,170,0.4)]",     badge: "border-zinc-500/20 bg-zinc-500/10 text-zinc-400" },
+            };
+            const s = statusStyles[project.status] ?? statusStyles["ACTIVE"];
+            return (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-zinc-200">
+                  <div className={`h-2 w-2 rounded-full animate-pulse ${s.dot} mt-0.5`} />
+                  {project.name}
+                </div>
+                <span className="text-zinc-600">/</span>
+                <span className="text-xs text-zinc-400">{project.client.company || project.client.name}</span>
+                <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${s.badge}`}>
+                  {project.status.replace("_", " ")}
+                </span>
+              </div>
+            );
+          })()}
           <div className="flex items-center gap-4">
             <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-[#19191b] border border-dashboard-border text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all relative">
               <Bell className="h-4 w-4" />
