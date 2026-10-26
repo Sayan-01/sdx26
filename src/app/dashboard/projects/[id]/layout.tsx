@@ -2,15 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Settings, Users, CheckSquare, Milestone, FileBox, Activity, MoreVertical, ExternalLink, AlertCircle, Briefcase, Loader2 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Settings, Users, CheckSquare, Milestone, FileBox, Activity, MoreVertical, ExternalLink, AlertCircle, Briefcase, Copy, Trash2, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { getProjectById } from "@server/projects";
 import UpdateStatus from "./_components/update-status";
+import { toast } from "sonner";
 
 export default function ProjectLayout({ children, params }: { children: React.ReactNode; params: Promise<{ id: string }> }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { id } = React.use(params);
   const [project, setProject] = React.useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -87,17 +90,56 @@ export default function ProjectLayout({ children, params }: { children: React.Re
           <Button
             variant="outline"
             className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 gap-2 font-medium"
+            asChild
           >
-            <ExternalLink className="h-4 w-4" />
-            Client Portal
+            <Link href={`/dashboard/projects/${id}/portal`}>
+              <ExternalLink className="h-4 w-4" />
+              Client Portal
+            </Link>
           </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 w-10"
-          >
-            <MoreVertical className="h-4 w-4 text-zinc-400" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-dashboard-border bg-[#151518] hover:bg-zinc-800 w-10 h-9"
+              >
+                <MoreVertical className="h-4 w-4 text-zinc-400" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-52 bg-[#151518] border-dashboard-border text-zinc-200"
+            >
+              <DropdownMenuLabel className="text-xs text-zinc-500 font-medium">Project Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-dashboard-border" />
+              <DropdownMenuItem
+                className="gap-2 cursor-pointer focus:bg-zinc-800 focus:text-zinc-100"
+                onClick={() => {
+                  navigator.clipboard.writeText(id);
+                  toast.success("Project ID copied!");
+                }}
+              >
+                <Copy className="h-4 w-4 text-zinc-400" />
+                Copy Project ID
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="gap-2 cursor-pointer focus:bg-zinc-800 focus:text-zinc-100"
+                onClick={() => router.push(`/dashboard/projects/${id}/portal`)}
+              >
+                <LayoutDashboard className="h-4 w-4 text-zinc-400" />
+                Manage Client Portal
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-dashboard-border" />
+              <DropdownMenuItem
+                className="gap-2 cursor-pointer focus:bg-zinc-800 focus:text-zinc-100"
+                onClick={() => router.push(`/dashboard/projects/${id}/members`)}
+              >
+                <Users className="h-4 w-4 text-zinc-400" />
+                Manage Members
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

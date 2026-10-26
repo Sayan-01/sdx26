@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ExternalLink, RefreshCw, CheckCircle2, Copy, Send, Mail, Shield, Zap, Clock } from "lucide-react";
+import { ExternalLink, RefreshCw, CheckCircle2, Copy, Send, Mail, Shield, Zap, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -61,9 +61,9 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
             </div>
             <CardDescription className="text-zinc-500 text-xs">Each link is valid for 7 days. Once clicked, it creates a persistent 30-day session on the client's browser.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-10 relative z-10">
+          <CardContent className="space-y-6 relative z-10">
             {portalUrl ? (
-              <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 space-y-5 animate-in slide-in-from-bottom-2 duration-300">
+              <div className="p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 space-y-5 animate-in slide-in-from-bottom-2 duration-300">
                 <div>
                   <p className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] mb-3">Live Access Link</p>
                   <div className="flex items-center gap-2">
@@ -78,7 +78,15 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
                     </Button>
                   </div>
                 </div>
-
+                <div className="flex items-center gap-3 text-[11px] text-zinc-400 bg-black/20 p-4 rounded-xl border border-dashboard-border/30">
+                  <div className="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  </div>
+                  <p className="leading-relaxed">
+                    <span className="font-semibold text-amber-500">Important:</span> Do not open this link in another browser. It is exclusively for your client and can only be accessed through the
+                    browser where it was first opened.
+                  </p>
+                </div>  
                 <div className="flex items-center gap-3 text-[11px] text-zinc-400 bg-black/20 p-4 rounded-xl border border-dashboard-border/30">
                   <div className="h-8 w-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
                     <Mail className="h-4 w-4 text-emerald-500" />
@@ -114,15 +122,7 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
                   variant="ghost"
                   className="h-12 px-6 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl font-bold text-xs uppercase tracking-widest"
                   asChild
-                >
-                  <a
-                    href={portalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Test Link <ExternalLink className="ml-2 h-3.5 w-3.5" />
-                  </a>
-                </Button>
+                ></Button>
               )}
             </div>
           </CardContent>
@@ -153,9 +153,9 @@ export default function PortalClient({ projectId, initialPortalUrl }: { projectI
             </CardContent>
           </Card>
 
-          <div className="p-8 rounded-3xl bg-zinc-900 border border-dashboard-border shadow-2xl relative overflow-hidden group">
+          <div className="p-5 rounded-3xl bg-zinc-900 border border-dashboard-border shadow-2xl relative overflow-hidden group">
             <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-all duration-700" />
-            <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-5 font-mono">Helpful Tip</h4>
+            <h4 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 font-mono">Helpful Tip</h4>
             <p className="text-[13px] text-zinc-300 leading-relaxed font-medium">
               If your client loses access or their 30-day session expires, simply come back here to <span className="text-indigo-400">regenerate</span> their access.
             </p>
