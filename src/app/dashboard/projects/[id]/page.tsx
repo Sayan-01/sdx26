@@ -8,6 +8,7 @@ import { getProjectById } from "@server/projects";
 import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import DashboardCard from "../../_components/dashboard-card";
+import { ActivityLog } from "../../_components/activity-section";
 import CreateTaskModal from "./_components/create-task-modal";
 
 export default async function ProjectOverviewPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,6 +27,20 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
   const upcomingTasks = project.tasks;
   const activityLogs = project.activityLogs;
   const teamMembers = project.projectMembers;
+
+  const formattedActivities = activityLogs.map((log) => {
+    const actorName = log.actorUser?.name || log.actorClient?.name || "System";
+    let text = `${actorName} ${log.action}`;
+    if (log.metadata && typeof log.metadata === "object" && log.metadata !== null && "text" in log.metadata) {
+      text = (log.metadata as any).text;
+    }
+    return {
+      id: log.id,
+      text,
+      type: (log as any).entityType?.toLowerCase() || "activity",
+      time: log.createdAt,
+    };
+  });
 
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-500 h-full">
@@ -178,34 +193,11 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
 
         {/* Sidebar/Quick Actions Column */}
         <div className="flex flex-col gap-5">
-          <DashboardCard
-            title="Quick Activity"
-            link={`/dashboard/projects/${id}/activity`}
-          >
-            <div className="divide-y divide-zinc-800 overflow-y-auto flex-1 box">
-              {activityLogs.length > 0 ? (
-                activityLogs.map((log, i) => (
-                  <div
-                    key={log.id}
-                    className="flex gap-4 px-5 py-5 hover:bg-zinc-900/50 transition-colors group"
-                  >
-                    
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm text-zinc-300 group-hover:text-white transition-colors leading-snug">
-                        <span className="font-medium text-white">{log.actorUser?.name || log.actorClient?.name || "System"}</span> {log.action}
-                      </p>
-                      <p className="text-[12px] text-zinc-500 font-medium flex items-center gap-1.5">
-                        <Clock className="h-3 w-3" />
-                        {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-8 text-center text-zinc-600 text-sm italic">No recent activity.</div>
-              )}
-            </div>
-          </DashboardCard>
+          <ActivityLog
+            title="Recent Activity"
+            link={`/dashboard/activity`}
+            activities={formattedActivities}
+          />
 
           <DashboardCard title="Project Team">
             <div className="p-5">

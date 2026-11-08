@@ -7,6 +7,11 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "../../auth";
 import { Analytics } from "@vercel/analytics/next"
 
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
 const main = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -30,7 +35,7 @@ export default async function RootLayout({
       className="dark"
     >
       <body
-        className={` scroll-smooth w-full overflow-auto antialiased box selection_color bg-zinc-950 ${main.className}`}
+        className={` scroll-smooth w-full overflow-auto antialiased box selection_color bg-zinc-950 ${main.className} ${geistMono.variable}`}
         cz-shortcut-listen="true"
       >
         <NextTopLoader

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { auth } from "../../../auth";
 import Italic from "../global/italic";
 import { DashboardMock } from "./dashboard-preview";
@@ -56,9 +56,9 @@ export default async function HeroSection() {
             )}
             <Link
               href="#workflow"
-              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-5 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-2"
+              className="inline-flex items-center justify-center gap-2.5 rounded-md border border-border bg-surface px-5 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-2"
             >
-              <span className="sm:flex hidden">See </span>How It Works
+              <span className="sm:flex hidden"><Play size={16} fill="white"/> </span>How It Works
             </Link>
           </div>
         </div>

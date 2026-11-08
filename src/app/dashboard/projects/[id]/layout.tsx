@@ -145,7 +145,7 @@ export default function ProjectLayout({ children, params }: { children: React.Re
 
       {/* Modern Tabs */}
       <div className="border-b border-dashboard-border relative">
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1 overflow-x-auto overflow-y-hidden no-scrollbar">
           {tabs.map((tab) => {
             const isActive = pathname === tab.href;
             return (
