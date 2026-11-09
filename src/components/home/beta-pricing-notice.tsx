@@ -17,8 +17,6 @@ export default function BetaPricingNotice() {
 
   return (
     <div className="relative mt-14 ">
-      
-
       <div className="relative overflow-hidden rounded-[24px] border border-purple-500/30 bg-card/75 p-6 shadow-elevated backdrop-blur-xl sm:p-8 bg-linear-to-br from-purple-950/25 via-card/90 to-transparent">
         {/* Subtle decorative grid matching hero/CTA sections */}
         <div
@@ -52,15 +50,14 @@ export default function BetaPricingNotice() {
 
           {/* Test Card Credentials Box */}
           <div className="relative">
-            <div className="rounded-2xl border border-border/80 bg-surface/80 p-4 shadow-soft backdrop-blur-md aspect-16/10 lg:h-[240px]">
-              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+            <div className="rounded-2xl border border-purple-400/50 shadow-elevated bg-linear-to-bl from-purple-600/20 via-transparent to-transparent p-4 backdrop-blur-md aspect-16/10 lg:h-[240px]">
+              <div className="flex items-center justify-between border-b border-purple-400/50 pb-3">
                 <div className="flex items-center gap-2">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-purple-500/30 bg-purple-500/10 text-purple-400">
                     <CreditCard className="h-3.5 w-3.5" />
                   </div>
                   <span className="text-xs font-semibold tracking-wide text-foreground">Demo Card Credentials</span>
                 </div>
-
               </div>
 
               <div className="mt-3.5 grid grid-cols-2 gap-2.5 text-left">
@@ -73,7 +70,9 @@ export default function BetaPricingNotice() {
 
                 <div className="rounded-xl p-2.5 col-span-1">
                   <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Expires</div>
-                  <div className="mt-1 font-mono text-xs font-medium text-foreground select-all"><span className="max-sm:hidden">Any future date </span>(12/28)</div>
+                  <div className="mt-1 font-mono text-xs font-medium text-foreground select-all">
+                    <span className="max-sm:hidden">Any future date </span>(12/28)
+                  </div>
                 </div>
 
                 <div className="p-2.5">
