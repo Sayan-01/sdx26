@@ -5,6 +5,7 @@ import Link from "next/link";
 import Italic from "../global/italic";
 import Eyebrow from "../global/Eyebrow";
 import { polar } from "@/lib/polar";
+import BetaPricingNotice from "./beta-pricing-notice";
 
 
 const plans = [
@@ -61,7 +62,10 @@ export default async function PricingSection({ session }: { session: any | null 
           <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">Choose the plan that fits your agency's scale. No hidden fees.</p>
         </div>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        {/* Branded Beta Early Access Notice */}
+        <BetaPricingNotice />
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">
           {mergedPlans.map((p) => (
             <div
               key={p.name}
