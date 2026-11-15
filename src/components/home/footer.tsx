@@ -1,11 +1,32 @@
 import React from "react";
 import Link from "next/link";
 import Logo from "../global/logo";
+
 export default function Footer() {
   const cols = [
-    { title: "Product", links: ["Features", "Workflow", "Client Portal", "Security"] },
-    { title: "Company", links: ["About Us", "Blog", "Careers", "Contact"] },
-    { title: "Resources", links: ["Docs", "Changelog", "Community", "Status"] },
+    {
+      title: "Product",
+      links: [
+        { label: "Features", href: "/#capabilities" },
+        { label: "Workflow", href: "/#workflow" },
+        { label: "Pricing", href: "/#pricing" },
+        { label: "Client Portal", href: "/docs/client-portal-overview" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { label: "About Us", href: "/#about" },
+        { label: "Blog", href: "/blog" },
+        { label: "Contact", href: "/docs/contact" },
+      ],
+    },
+    {
+      title: "Resources",
+      links: [
+        { label: "Docs", href: "/docs" },
+      ],
+    },
   ];
 
   return (
@@ -26,13 +47,13 @@ export default function Footer() {
                   {c.title}
                 </div>
                 <ul className="mt-4 space-y-2.5">
-                  {c.links.map((l) => (
-                    <li key={l}>
+                  {c.links.map((item) => (
+                    <li key={item.label}>
                       <Link
-                        href="#"
+                        href={item.href}
                         className="text-sm text-foreground/80 transition-colors hover:text-foreground"
                       >
-                        {l}
+                        {item.label}
                       </Link>
                     </li>
                   ))}
@@ -43,11 +64,6 @@ export default function Footer() {
         </div>
         <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
           <span>© 2026 SDX26 Inc. All rights reserved.</span>
-          <div className="flex flex-wrap gap-5">
-            <Link href="#" className="hover:text-foreground">Privacy Policy</Link>
-            <Link href="#" className="hover:text-foreground">Terms of Service</Link>
-            <Link href="#" className="hover:text-foreground">Cookie Policy</Link>
-          </div>
         </div>
       </div>
     </footer>

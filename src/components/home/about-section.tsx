@@ -14,7 +14,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 export default function AboutSection() {
   return (
-    <section className="relative overflow-hidden bg-surface border-b border-border">
+    <section id="about" className="relative overflow-hidden bg-surface border-b border-border">
       {/* Elegant grid background pattern */}
       <div
         aria-hidden

@@ -8,9 +8,10 @@ import  Logo  from "../global/logo";
 export default async function Navbar() {
   const session = await auth();
   const links = [
-    { label: "Features", href: "#capabilities" },
-    { label: "Workflow", href: "#workflow" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Features", href: "/#capabilities" },
+    { label: "Workflow", href: "/#workflow" },
+    { label: "Pricing", href: "/#pricing" },
+    { label: "Blog", href: "/blog" },
     { label: "Docs", href: "/docs" },
   ];
 

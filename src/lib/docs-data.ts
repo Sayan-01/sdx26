@@ -618,4 +618,26 @@ export const DOCS_DATA: DocCategory[] = [
       },
     ],
   },
+  {
+    title: "Support",
+    items: [
+      {
+        title: "Contact",
+        slug: "contact",
+        description: "Get in touch with the SDX26 team for support, questions, and agency feedback.",
+        content: `
+          We're here to assist you with onboarding, technical support, and answering any questions about SDX26.
+
+          ## Contact Channels
+
+          - **Email**: Reach us directly at [support@sdx26.com](mailto:support@sdx26.com) for inquiries, assistance, or partnership questions.
+          - **Beta Feedback**: Have feedback or suggestions? Submit your thoughts through our [Early Access Feedback Form](https://forms.gle/ttHKzCp3gVMwNt7J7).
+          - **Response Time**: We usually respond within 24 hours on business days.
+
+          ## Agency Onboarding
+          Need help setting up custom domains, team seats, or migrating client data? Email our team with your agency details and we'll help get you set up.
+        `,
+      },
+    ],
+  },
 ];

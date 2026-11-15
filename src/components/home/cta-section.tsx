@@ -63,7 +63,7 @@ export default function CTASection() {
             <p className="mt-8 text-xs text-zinc-500 flex items-center justify-center gap-2 flex-wrap">
               <span>No credit card required</span>
               <span className="text-zinc-300">•</span>
-              <span>14-day free trial</span>
+              <span>Full free trial</span>
               <span className="text-zinc-300">•</span>
               <span>Setup in 2 minutes</span>
             </p>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Check } from "lucide-react";
 import Link from "next/link";
@@ -6,7 +5,6 @@ import Italic from "../global/italic";
 import Eyebrow from "../global/Eyebrow";
 import { polar } from "@/lib/polar";
 import BetaPricingNotice from "./beta-pricing-notice";
-
 
 const plans = [
   {
@@ -91,15 +89,20 @@ export default async function PricingSection({ session }: { session: any | null 
                 <span className="font-display text-5xl font-semibold tracking-tight text-foreground">{p.price}</span>
                 {p.cadence && <span className="text-sm font-medium text-muted-foreground">{p.cadence}</span>}
               </div>
-
-              <Link
-                href={session ? `/checkout?products=${p.product?.id || ""}&customerEmail=${session?.user?.email ?? ""}` : `/auth/login`}
-                className={`mt-8 inline-flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-px ${
-                  p.popular ? "bg-foreground text-background shadow-lg shadow-white/5" : "border border-border/80 bg-surface text-foreground hover:bg-surface-2"
-                }`}
-              >
-                {p.cta}
-              </Link>
+              {p.name === "Enterprise" ? (
+                <div className="mt-8 inline-flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-px border border-border/80 bg-surface text-foreground hover:bg-surface-2">
+                  Desable
+                </div>
+              ) : (
+                <Link
+                  href={session ? `/checkout?products=${p.product?.id || ""}&customerEmail=${session?.user?.email ?? ""}` : `/auth/login`}
+                  className={`mt-8 inline-flex items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-px ${
+                    p.popular ? "bg-foreground text-background shadow-lg shadow-white/5" : "border border-border/80 bg-surface text-foreground hover:bg-surface-2"
+                  }`}
+                >
+                  {p.cta}
+                </Link>
+              )}
 
               <div className="mt-8 h-px bg-border" />
 
@@ -126,4 +129,3 @@ export default async function PricingSection({ session }: { session: any | null 
     </section>
   );
 }
-
