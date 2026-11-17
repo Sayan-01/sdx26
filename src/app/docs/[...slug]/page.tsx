@@ -61,7 +61,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
 
         {/* Footer Navigation */}
         <div className="mt-20 pt-8 border-t border-zinc-800 flex items-center justify-between">
-            <p className="text-xs text-zinc-500 font-medium">Last updated: May 3, 2026</p>
+            <p className="text-xs text-zinc-500 font-medium">Last updated: Nov 18, 2026</p>
             <div className="flex items-center gap-4">
                 <button className="text-xs font-bold text-zinc-500 hover:text-white transition-colors">Edit this page</button>
                 <span className="w-1 h-1 rounded-full bg-zinc-800" />

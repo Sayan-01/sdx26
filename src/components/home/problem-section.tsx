@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Clock, CreditCard, Mail, MessageSquare } from "lucide-react";
+import { AlertTriangle, Clock, CreditCard, KeyRound, Mail, MessageSquare } from "lucide-react";
 import Italic from "../global/italic";
 import Eyebrow from "../global/Eyebrow";
 
@@ -59,21 +59,6 @@ export default function ProblemSection() {
               </p>
             </article>
           ))}
-          <div className="hidden bg-card p-7 lg:block">
-            <div className="flex h-full flex-col justify-between">
-              <div className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
-                <ArrowRight className="h-4 w-4" />
-              </div>
-              <div>
-                <h3 className="font-display text-base font-semibold text-foreground">
-                  There's a better way.
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  One workspace. Every project. Zero chaos.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

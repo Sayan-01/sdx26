@@ -5,6 +5,105 @@ interface DocContentRendererProps {
   content: string;
 }
 
+// Helper to process inline markdown: bold (**...**), inline code (`...`), links ([...](...)), and status badges ([STATUS:...])
+function renderInline(text: string): React.ReactNode {
+  if (!text) return null;
+
+  const regex = /(\[STATUS:\w+\]|\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/g;
+  const parts = text.split(regex);
+
+  if (parts.length === 1) {
+    if (text.includes("\n")) {
+      const subLines = text.split("\n");
+      return subLines.map((sub, sIdx) => (
+        <React.Fragment key={sIdx}>
+          {sIdx > 0 && <br />}
+          {sub}
+        </React.Fragment>
+      ));
+    }
+    return text;
+  }
+
+  return parts.map((part, index) => {
+    if (!part) return null;
+
+    // Status Badge: [STATUS:PAID]
+    const statusMatch = part.match(/^\[STATUS:(\w+)\]$/);
+    if (statusMatch) {
+      const status = statusMatch[1];
+      const variant =
+        status === "PAID" || status === "APPROVED" || status === "SUCCESS"
+          ? "success"
+          : status === "PENDING" || status === "IN_REVIEW" || status === "IN_PROGRESS"
+          ? "warning"
+          : status === "ERROR" || status === "REJECTED"
+          ? "error"
+          : "default";
+      return (
+        <Badge key={index} variant={variant as any}>
+          {status}
+        </Badge>
+      );
+    }
+
+    // Bold text: **text**
+    if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+      const innerText = part.slice(2, -2);
+      return (
+        <strong key={index} className="font-semibold text-white">
+          {renderInline(innerText)}
+        </strong>
+      );
+    }
+
+    // Inline code: `code`
+    if (part.startsWith("`") && part.endsWith("`") && part.length >= 2) {
+      const innerCode = part.slice(1, -1);
+      return (
+        <code
+          key={index}
+          className="bg-zinc-800 text-indigo-400 px-1.5 py-0.5 rounded font-mono text-[13px] border border-zinc-700/50"
+        >
+          {innerCode}
+        </code>
+      );
+    }
+
+    // Markdown Links: [text](href)
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (linkMatch) {
+      const linkText = linkMatch[1];
+      const linkHref = linkMatch[2];
+      const isExternal = linkHref.startsWith("http");
+      return (
+        <a
+          key={index}
+          href={linkHref}
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors font-medium"
+        >
+          {renderInline(linkText)}
+        </a>
+      );
+    }
+
+    // Plain text (with potential newlines)
+    if (part.includes("\n")) {
+      const subLines = part.split("\n");
+      return subLines.map((sub, sIdx) => (
+        <React.Fragment key={`${index}-${sIdx}`}>
+          {sIdx > 0 && <br />}
+          {sub}
+        </React.Fragment>
+      ));
+    }
+
+    return part;
+  });
+}
+
 export function DocContentRenderer({ content }: DocContentRendererProps) {
   // A simple way to render the documentation content with support for custom components
   // and basic markdown-like structures.
@@ -26,11 +125,11 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
     if (line.startsWith("## ")) {
       const text = line.replace("## ", "");
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
-      elements.push(<h2 key={i} id={id} className="text-2xl font-bold text-white mt-12 mb-6 tracking-tight">{text}</h2>);
+      elements.push(<h2 key={i} id={id} className="text-2xl font-bold text-white mt-12 mb-6 tracking-tight">{renderInline(text)}</h2>);
     } else if (line.startsWith("### ")) {
       const text = line.replace("### ", "");
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
-      elements.push(<h3 key={i} id={id} className="text-xl font-bold text-white mt-8 mb-4 tracking-tight">{text}</h3>);
+      elements.push(<h3 key={i} id={id} className="text-xl font-bold text-white mt-8 mb-4 tracking-tight">{renderInline(text)}</h3>);
     }
     
     // Unordered Lists
@@ -47,7 +146,7 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
           {items.map((item, idx) => (
             <li key={idx} className="text-zinc-400 text-sm flex gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-              <span>{item}</span>
+              <span className="leading-relaxed">{renderInline(item)}</span>
             </li>
           ))}
         </ul>
@@ -69,7 +168,7 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
             {items.map((item, idx) => (
               <li key={idx} className="text-zinc-400 text-sm flex gap-4">
                 <span className="w-6 h-6 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-bold text-white shrink-0">{idx + 1}</span>
-                <span className="leading-relaxed">{item}</span>
+                <span className="leading-relaxed">{renderInline(item)}</span>
               </li>
             ))}
           </ol>
@@ -94,7 +193,7 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
                 <tr className="bg-zinc-900/50 border-b border-zinc-800">
                   {rows[0].map((cell, idx) => (
                     <th key={idx} className="px-5 py-4 font-bold text-zinc-300 uppercase tracking-widest text-[10px]">
-                      {cell}
+                      {renderInline(cell)}
                     </th>
                   ))}
                 </tr>
@@ -104,7 +203,7 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
                   <tr key={idx} className="hover:bg-zinc-800/20 transition-colors">
                     {row.map((cell, cidx) => (
                       <td key={cidx} className="px-5 py-4 text-zinc-400 leading-relaxed font-medium">
-                        {cell}
+                        {renderInline(cell)}
                       </td>
                     ))}
                   </tr>
@@ -126,7 +225,7 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
         calloutContent += lines[i].trim().replace(/^>\s?/, "") + "\n";
         i++;
       }
-      elements.push(<Callout key={i} type={type}>{calloutContent.trim()}</Callout>);
+      elements.push(<Callout key={i} type={type}>{renderInline(calloutContent.trim())}</Callout>);
       continue;
     }
 
@@ -144,38 +243,11 @@ export function DocContentRenderer({ content }: DocContentRendererProps) {
 
     // Paragraphs with inline support
     else if (line) {
-      // Process inline elements: Badges, Bold, Code
-      const processInline = (text: string) => {
-        // Handle [STATUS:TYPE]
-        const statusMatch = text.match(/\[STATUS:(\w+)\]/);
-        if (statusMatch) {
-          const status = statusMatch[1];
-          const variant = (status === 'PAID' || status === 'APPROVED' || status === 'SUCCESS') ? 'success' : 
-                          (status === 'PENDING' || status === 'IN_REVIEW' || status === 'IN_PROGRESS') ? 'warning' : 
-                          (status === 'ERROR' || status === 'REJECTED') ? 'error' : 'default';
-          
-          const parts = text.split(statusMatch[0]);
-          return (
-            <>
-              {parts[0]}
-              <Badge variant={variant as any}>{status}</Badge>
-              {parts[1]}
-            </>
-          );
-        }
-
-        // Inline code blocks
-        if (text.includes("`")) {
-          const parts = text.split("`").map((part, idx) => 
-            idx % 2 === 1 ? <code key={idx} className="bg-zinc-800 text-indigo-400 px-1.5 py-0.5 rounded font-mono text-[13px]">{part}</code> : part
-          );
-          return <>{parts}</>;
-        }
-
-        return text;
-      };
-
-      elements.push(<p key={i} className="text-zinc-400 text-sm leading-relaxed my-6">{processInline(line)}</p>);
+      elements.push(
+        <p key={i} className="text-zinc-400 text-sm leading-relaxed my-6">
+          {renderInline(line)}
+        </p>
+      );
     }
 
     i++;

@@ -726,7 +726,7 @@ export default function MilestonesClient({
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
                             align="end"
-                            className="bg-[#19191b] border-dashboard-border text-zinc-200 text-xs"
+                            className="bg-[#19191b] border-dashboard-border text-zinc-200 text-xs w-max"
                           >
                             <DropdownMenuItem
                               onClick={() => setEditingMilestone(milestone)}
@@ -1038,7 +1038,7 @@ export default function MilestonesClient({
                                 !messageDrafts[milestone.id]?.trim()
                               }
                               onClick={() => handleSendMessage(milestone.id)}
-                              className="bg-indigo-600 hover:bg-indigo-700 text-white h-auto px-4 rounded-xl gap-1.5 self-end text-xs font-semibold"
+                              className="bg-indigo-600 hover:bg-indigo-700 text-white h-auto p-4 rounded-xl gap-1.5 self-end text-xs font-semibold"
                             >
                               {sendingMessage[milestone.id] ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
