@@ -35,13 +35,13 @@ export const sidebarNav: NavItem[] = [
 
 export const sidebarUtils: NavItem[] = [
   {
-    title: "Help & Support",
-    href: "/help",
+    title: "Docs & Support",
+    href: "/docs",
     icon: "HelpCircle",
   },
   {
-    title: "Logout",
-    href: "/logout",
+    title: "Feedback",
+    href: "https://forms.gle/ttHKzCp3gVMwNt7J7",
     icon: "LogOut",
   },
 ];
