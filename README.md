@@ -1,87 +1,115 @@
-# SDX26 — Client Collaboration & Project Hub for Agencies
+# SDX26 — Client Collaboration & Project Hub for Modern Agencies
 
-SDX26 is a unified collaboration workspace designed specifically for modern agencies and their clients. It brings project planning, asset collection, milestone approvals, team task management, and client communication into one clear, professional dashboard.
+<div align="center">
 
-Instead of juggling lost email threads, messy cloud storage folders, and scattered messaging apps, SDX26 gives agencies and clients a single shared source of truth.
+[![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-crimson.svg?style=for-the-badge)](./LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Prisma ORM](https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Polar Payments](https://img.shields.io/badge/Payments-Polar.sh-0052FF?style=for-the-badge)](https://polar.sh/)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+
+<p align="center">
+  <strong>A premium, white-label client collaboration portal and project management platform purpose-built for digital, creative, and software agencies.</strong>
+</p>
+
+<p align="center">
+  <a href="https://youtu.be/yL1gsl_b4oI"><strong>Watch Video Walkthrough ↗</strong></a> •
+  <a href="./LICENSE"><strong>License Terms</strong></a> •
+  <a href="#-core-system-modules"><strong>System Modules</strong></a> •
+  <a href="#-author--contact"><strong>Author & Contact</strong></a>
+</p>
+
+</div>
 
 ---
 
-## The Core Problem & The Solution
-
-### The Problem
-When creative, digital, and development agencies work with clients, communication often breaks down across too many disconnected tools:
-* Project requirements and brand assets get buried in email threads.
-* Clients struggle to know which stage a project is in or what needs their review.
-* Deliverable files get overwritten or confused without clear version history.
-* Getting formal client approval on milestones and payments feels disjointed and slow.
-
-### The Solution
-SDX26 simplifies the entire client lifecycle into an organized, stage-by-stage journey:
-* **One Dashboard for Agencies**: Full visibility over all active projects, team task assignments, pending reviews, and financial milestones.
-* **Frictionless Client Portal**: Clients access their dedicated project space securely via private links—no complex account setup required.
-* **Structured Stage Gating**: Work moves forward systematically through clear milestones, approval checkpoints, and task tracking.
+> [!IMPORTANT]
+> **PORTFOLIO & TECHNICAL EVALUATION NOTICE:**  
+> This public repository contains original work and proprietary software architecture by **Sayan Das**. It is published strictly for technical evaluation, code review, and hiring/recruitment consideration. Commercial use, reproduction, cloning, or public deployment is strictly prohibited under the [Proprietary & All Rights Reserved License](./LICENSE).
 
 ---
 
-## User Roles in the System
+## 🎯 The Core Problem & The Solution
 
-SDX26 is built around three distinct types of users, each with tailored views and permissions:
+### The Agency Chaos
+When creative, digital, and software engineering agencies work with clients, communication and operational momentum routinely fracture across disconnected tools:
+* **Asset Collection Delays**: Requirements, vector logos, brand palettes, and credentials get buried across multi-week email threads.
+* **Client Login Friction**: Clients abandon complex task-management platforms (Asana, ClickUp) due to password fatigue and revert to emailing attachments.
+* **Version Control Nightmares**: Deliverables get confused in a flurry of `"final_v2_FINAL_actual.png"` links scattered across Drive and WeTransfer.
+* **Uncontrolled Scope Creep**: Informal *"can you tweak this one small thing?"* requests eat into agency margins without formal approval or budget adjustments.
+* **Payment Uncertainty**: Releasing work before payment or waiting 30–60 days for invoices to clear causes severe cashflow lag.
+
+### The SDX26 Solution
+SDX26 standardizes the client collaboration lifecycle into a single, high-authority workspace:
+* **Executive Command Center**: A centralized agency view of active projects, sprint task breakdowns, pending sign-offs, and financial health.
+* **Frictionless Client Portal**: Clients access a dedicated, branded workspace via time-sensitive, passwordless **Magic Links**—no registration hurdles.
+* **In-Place Semantic Versioning**: Deliverables and staging links iterate in-place (`v1`, `v2`, `v3`) with change logs and zero duplicate clutter.
+* **Scope Creep Protection**: Bi-directional Change Request log that quantifies cost and timeline impacts and auto-converts approved requests into payable milestones.
+* **Milestone-Linked Payments**: Direct integration with **Polar.sh** ensures invoices and ad-hoc checkouts settle before deliverables are released.
+
+---
+
+## 👥 User Roles & Permission Hierarchy
+
+SDX26 enforces a hybrid Role-Based Access Control (RBAC) architecture separating administrative ownership from execution and client access:
 
 ```mermaid
 graph TD
-    Owner["Agency Owner"] -->|Full Control| Agency["Agency Workspace"]
-    Team["Team Members"] -->|Execute & Coordinate| Projects["Projects & Tasks"]
-    Client["Clients"] -->|Review & Approve| Portal["Client Portal"]
+    Owner["Agency Owner<br/>(Full Admin & Billing)"] -->|Manages| Agency["Agency Workspace"]
+    Team["Team Member<br/>(Designers / Developers)"] -->|Assigned To| Projects["Projects & Tasks"]
+    Client["Client Stakeholder<br/>(Passwordless Magic Link)"] -->|Reviews & Pays| Portal["Client Portal"]
     
     Agency --> Projects
     Projects <--> Portal
 ```
 
 ### 1. Agency Owner
-* Creates and brands the agency workspace.
-* Invites and manages team members and designations.
-* Oversees financial tracking, payments, and agency subscription plans.
-* Has full administrative permissions across all agency projects and client relationships.
+* Complete control over agency workspace, branding, logo, and custom slug (`agency-slug.milestack.com`).
+* Manages team invitations with plan seat limit enforcement (`Basic`, `Starter`, `Pro`, `Enterprise`).
+* Oversees financial metrics, milestone payment status, and Polar subscription billing.
+* Master administrative access across all projects, deliverables, and audit logs.
 
 ### 2. Team Member
-* Collaborates on assigned projects.
-* Creates, updates, and completes day-to-day project tasks.
-* Uploads deliverables, manages file revisions, and chats with team members and clients.
-* Moves milestones through work and review stages.
+* Accesses assigned client projects with specific designations (`DEVELOPER`, `DESIGNER`, `PROJECT_MANAGER`, etc.).
+* Creates, updates, prioritizes (`LOW`, `MEDIUM`, `HIGH`), and completes milestone tasks.
+* Uploads binary deliverables and live external links (Vercel previews, Figma, Loom).
+* Participates in milestone discussion threads and evaluates client onboarding uploads.
 
-### 3. Client
-* Accesses a clean, private client portal via an encrypted magic link.
-* Fills out the onboarding checklist by uploading requested assets (logos, guidelines, credentials).
-* Reviews completed milestones, previewing deliverables and leaving direct feedback.
-* Approves milestones so work can seamlessly transition into the next phase.
+### 3. Client Stakeholder
+* Instant access via secure 32-byte cryptographic Magic Links—zero password fatigue.
+* Submits required onboarding assets (logos, hosting logins, copy) with live verification states.
+* Inspects versioned deliverables and tests live staging environments.
+* Formally approves milestones, initiates out-of-scope change requests, and pays invoices via Polar checkout.
 
 ---
 
-## High-Level System Architecture & Flow
-
-The system is organized into three interconnected layers:
+## 🏛️ High-Level System Architecture
 
 ```mermaid
 graph LR
     subgraph Agency_Hub [Agency Hub]
         Dashboard["Overview Dashboard"]
-        ProjectWorkspace["Project Management"]
-        TeamHub["Team & Staff Management"]
-        SettingsHub["Agency Settings"]
+        ProjectWorkspace["Projects & Milestones"]
+        TeamHub["Team Roster & Roles"]
+        SettingsHub["Branding & Custom Slug"]
     end
 
     subgraph Collaboration_Engine [Collaboration Engine]
-        Milestones["Milestones & Stages"]
-        Tasks["Task Breakdown"]
-        Files["Asset & Version Control"]
-        Activity["Real-time Activity Log"]
+        Milestones["Milestone Engine"]
+        Tasks["Actionable Tasks"]
+        Files["Asset Version Control"]
+        Scope["Change Request System"]
+        Activity["Real-time Audit Log"]
     end
 
     subgraph Client_Experience [Client Experience]
-        MagicLink["Secure Magic Link"]
-        PortalView["Client Project Portal"]
-        OnboardingChecklist["Asset Collection"]
-        Approvals["Review & Sign-off"]
+        MagicLink["Cryptographic Magic Link"]
+        PortalView["White-label Client Portal"]
+        OnboardingChecklist["Asset Intake"]
+        Payments["Polar.sh Checkout"]
     end
 
     Agency_Hub --> Collaboration_Engine
@@ -90,101 +118,146 @@ graph LR
 
 ---
 
-## Step-by-Step System Journeys
+## 🔄 End-to-End Operational Workflows
 
-### 1. Agency Setup & Workspace Creation
-1. **Registration**: An agency leader signs up and claims their agency name and unique workspace link.
-2. **Branding & Profile**: The agency sets up its profile, website link, and company branding.
-3. **Staff Onboarding**: The owner sends team invitations by email. When team members accept, they join the agency directory with designated roles.
-
----
-
-### 2. Client & Project Kickoff
-1. **Add Client**: The agency registers a client profile with company details and contact information.
-2. **Create Project**: The agency launches a new project linked to that client, specifying deadlines and high-level goals.
-3. **Assign Team**: Relevant agency staff members are assigned to the project workspace.
-4. **Prepare Onboarding Checklist**: The agency defines the initial assets and information needed from the client (e.g., brand guidelines, vector logos, copy documents).
+### 1. Agency Setup & Team Onboarding
+1. **Workspace Claim**: The agency founder registers via NextAuth (Credentials or OAuth) and claims a unique agency slug.
+2. **White-Label Branding**: Agency profile, display name, and logo are configured in `/dashboard/settings`.
+3. **Seat-Governed Invitations**: The owner sends team invites from `/dashboard/team/invite`. The system enforces seat limits against the active plan, generates a 7-day cryptographic token, and provides a dual acceptance path for existing and new users at `/invite/[token]`.
 
 ---
 
-### 3. Client Portal Access & Asset Collection
-1. **Magic Link Generation**: SDX26 creates an encrypted, passwordless client access link.
-2. **Client Portal Entry**: The client opens their dedicated portal in any web browser without needing to remember a password.
-3. **Fulfilling Checklist**: The client views the required onboarding items, uploads files directly, and marks items complete.
-4. **Agency Verification**: The agency team inspects uploaded assets, approving them or requesting revisions.
+### 2. Project Kickoff & Client Onboarding
+1. **Project Creation**: Agency registers a client profile and launches a project with deadlines and milestones.
+2. **Automated Magic Link**: A secure, single-use token is generated (`expiresAt: 7 days`) and automatically dispatched to the client's email.
+3. **Checklist Fulfillment**: The client opens their portal (`/portal/[token]/onboarding`) and uploads required assets.
+4. **Agency Verification**: Agency reviewers mark items as [STATUS:APPROVED] or [STATUS:REJECTED], advancing the kickoff progress bar.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Agency as Agency Team
     participant System as SDX26 Platform
-    actor Client as Client
+    actor Client as Client Stakeholder
     
-    Agency->>System: Create Project & Define Checklist
-    System->>Client: Send Secure Portal Link
-    Client->>System: Access Client Portal
-    Client->>System: Upload Assets to Checklist
-    System->>Agency: Notify: New Assets Uploaded
-    Agency->>System: Review & Accept Assets
+    Agency->>System: Create Project & Define Milestones
+    System->>Client: Send Automated Magic Link
+    Client->>System: Verify Token & Establish 30-Day Session
+    Client->>System: Upload Assets to Onboarding Checklist
+    System->>Agency: Notify: Onboarding Items Ready
+    Agency->>System: Review & Approve Assets
 ```
 
 ---
 
-### 4. Milestone Execution & Task Workflow
-Projects are organized into sequential milestones representing key project chapters (e.g., Discovery, UI Design, Development, Launch).
-
-1. **Breakdown into Tasks**: Each milestone contains individual tasks assigned to team members with priorities and deadlines.
-2. **Progress Computation**: As tasks are marked complete, the milestone progress bar updates automatically.
-3. **Deliverable Uploads**: The agency team attaches deliverable files directly to the active milestone.
-4. **Internal & External Discussion**: Team members and clients exchange notes and feedback right where the work lives.
+### 3. Milestone Execution, Tasks & Contextual Discussions
+Projects progress through sequential milestones (e.g., *Phase 1: Discovery*, *Phase 2: UI Design*, *Phase 3: Production Build*):
 
 ```mermaid
 graph TD
-    Start["Milestone: Pending"] --> InProgress["In Progress"]
-    InProgress --> TasksComplete["Team Completes Tasks & Uploads Deliverables"]
-    TasksComplete --> InReview["In Review (Client Notification)"]
-    InReview -->|Feedback Needed| InProgress
-    InReview -->|Client Sign-off| Approved["Approved"]
-    Approved --> Paid["Paid / Completed"]
+    Start["Milestone: PENDING"] --> InProgress["IN_PROGRESS (Sprint Execution)"]
+    InProgress --> TasksDone["Tasks Completed & Deliverables Linked"]
+    TasksDone --> InReview["IN_REVIEW (Client Notification)"]
+    InReview -->|Client Revision Request| InProgress
+    InReview -->|Client Sign-off| Approved["APPROVED"]
+    Approved --> Paid["PAID (Polar Checkout Settled)"]
 ```
 
----
-
-### 5. Review, Approval & Payment Verification
-1. **Submit for Review**: When work on a milestone is ready, the agency changes the status to `In Review`.
-2. **Client Notification**: The client receives an alert to inspect the new deliverable files.
-3. **Feedback or Sign-Off**: 
-   * If revisions are requested, notes are added and the team continues refinement.
-   * If approved, the client signs off on the milestone.
-4. **Payment Tracking**: Once signed off, financial milestones can be recorded as settled, unlocking the subsequent milestone in the sequence.
+* **Actionable Tasks**: Internal sprint tasks with priorities (`LOW`, `MEDIUM`, `HIGH`) and assignee avatars remain private to agency staff.
+* **Discussion & Feedback**: Pinned message streams on each milestone allow clients and developers to communicate in context (`Ctrl + Enter` to send), eliminating WhatsApp or email sprawl.
 
 ---
 
-## Core System Modules
+### 4. Semantic File Versioning & Deliverable Previews
+* **Dual Deliverable Types**: Supports both binary assets (PDFs, ZIPs, SVGs) and external staging links (Vercel, Figma, Loom, GitHub PRs).
+* **Zero Storage Cost for Links**: External staging and prototype links consume 0 MB of agency storage quota.
+* **In-Place Versioning**: Click `+ New Version` to increment (`v1` ➔ `v2` ➔ `v3`) with mandatory change notes, preserving a complete audit trail without file clutter.
 
-| Module | What It Does | Who Uses It |
+---
+
+### 5. Scope Creep Protection & Change Requests
+When clients request additional features outside the agreed project scope:
+1. **Request Submission**: Client submits an idea in `/portal/[token]/scope` ([STATUS:SUBMITTED]).
+2. **Agency Review**: Agency assesses the item in `/dashboard/projects/[id]/scope`, assigns pricing (e.g., `$850`), and sets timeline impact (e.g., `+3 days`).
+3. **Client Sign-off**: Client reviews the proposal ([STATUS:PENDING_CLIENT_APPROVAL]) and clicks **Approve**.
+4. **Atomic Milestone Conversion**: SDX26 executes a Prisma transaction that auto-generates a new payable milestone and updates the request to [STATUS:CONVERTED].
+
+---
+
+### 6. Milestone Checkout & Polar.sh Payments
+1. **Ad-Hoc Session Generation**: When a milestone is approved, SDX26 invokes the `@polar-sh/sdk` to construct a custom checkout session with milestone metadata.
+2. **Frictionless Payment**: Client pays via Credit Card, Apple Pay, or Google Pay.
+3. **Webhook Reconciliation**: Polar triggers `/api/webhook/polar`, verifying the signature and updating the milestone to [STATUS:PAID], immediately unlocking final source deliverables.
+
+---
+
+## 📦 Core System Modules
+
+| Module | What It Does | Target Audience |
 | :--- | :--- | :--- |
-| **Executive Dashboard** | High-level summary of active projects, pending milestones, task counts, and live agency activity. | Agency Owners & Staff |
-| **Project Workspace** | Central command center for an individual project: status, team assignments, files, and milestones. | Agency Team & Clients |
-| **Milestone Engine** | Stage-by-stage progression system tracking deliverables, deadlines, review status, and financial amounts. | Agency Team & Clients |
-| **Task Ledger** | Fine-grained to-do items inside each milestone with assignees, priorities, and instant completion toggles. | Agency Team Members |
-| **Client Portal** | Dedicated external interface tailored specifically for clients to submit assets, review work, and approve stages. | Clients |
-| **Digital Asset Manager** | File repository grouped by project and milestone, complete with version tracking and clean download links. | Agency Team & Clients |
-| **Live Activity Stream** | Real-time audit trail recording uploads, status changes, reviews, and comments across all agency operations. | Agency Owners & Staff |
-| **Agency Settings** | Administrative panel for team roles, agency details, security preferences, and subscription tier management. | Agency Owners |
+| **Executive Dashboard** | Active projects, pending sign-offs, milestone completion velocity, and pending receivables. | Agency Owners & Staff |
+| **Project Workspace** | Central command hub for milestones, internal task ledgers, files, and client communication. | Agency Team Members |
+| **Milestone Engine** | Stage-gated progression tracking deliverables, due dates, review states, and payout amounts. | Agency Team & Clients |
+| **Task Ledger** | Fine-grained tasks within milestones with priorities (`LOW`, `MEDIUM`, `HIGH`) and assignees. | Agency Team Members |
+| **Client Portal** | Dedicated white-label interface for asset intake, deliverable testing, and formal approvals. | Client Stakeholders |
+| **Asset Manager** | Deliverables repository supporting binary files and staging links with in-place `v1`..`v3` versioning. | Agency Team & Clients |
+| **Scope Log** | Formal Change Request engine calculating cost/timeline impacts and auto-converting into milestones. | Agency Team & Clients |
+| **Activity Stream** | Immutable chronological audit trail recording logins, approvals, uploads, and payments. | Agency Owners & Staff |
+| **Agency Settings** | Administrative configuration for custom workspace slug, logo, team permissions, and plans. | Agency Owners |
 
 ---
 
-## Design Principles Behind SDX26
+## 🛠️ Technical Stack & Implementation Highlights
 
-1. **Radical Simplicity for Clients**
-   Clients should never feel overwhelmed by internal agency complexity. They get a focused, clean environment highlighting exactly what requires their attention right now.
+### Core Framework & Runtime
+* **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions, Dynamic Subdomain Rewrites)
+* **UI Library**: [React 19](https://react.dev/) (Server Components, Optimistic Updates)
+* **Language**: [TypeScript 5](https://www.typescriptlang.org/) (Strict typing, End-to-End type safety)
+* **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with OKLCH color palettes & [Lucide Icons](https://lucide.dev/)
+* **Component Primitives**: [Radix UI](https://www.radix-ui.com/) & [shadcn/ui](https://ui.shadcn.com/)
 
-2. **Stage-Gated Accountability**
-   By organizing projects around clear milestones rather than endless back-and-forth chats, both parties agree on expectations before moving on to the next phase.
+### Database & Security
+* **Database & ORM**: PostgreSQL via [Neon Serverless](https://neon.tech/) & [Prisma ORM 7](https://www.prisma.io/)
+* **Dual-Session Architecture**:
+  * **Agency Staff**: NextAuth.js (Auth.js v5) with secure session tokens for dashboard routes.
+  * **Client Stakeholders**: Stateless, cryptographic [Jose JWT](https://github.com/panva/jose) (`client_session`) valid for 30 days, completely isolated from administrative cookies.
+* **Tenant Isolation**: Edge middleware resolving `x-agency-id` from subdomains (`agency-slug.milestack.com`) paired with composite database query filtering.
 
-3. **Frictionless Collaboration**
-   Eliminating login hurdles for clients through secure links increases client responsiveness and prevents project bottlenecks.
+### Payments & Infrastructure
+* **Payment Processing**: [Polar.sh SDK](https://polar.sh/) (Ad-hoc checkouts, webhooks, automated reconciliation)
+* **File & Asset Handling**: [UploadThing](https://uploadthing.com/) & S3-compatible cloud storage metering
+* **Email Delivery**: [Nodemailer](https://nodemailer.com/) with transactional Magic Link dispatch
 
-4. **Single Source of Truth**
-   Every decision, deliverable, approved item, and payment record is stored in context with its respective project, preventing miscommunication and disputes.
+---
+
+## ⚖️ License & Intellectual Property Notice
+
+```
+Copyright (c) 2024–2026 Sayan Das. All rights reserved.
+PROPRIETARY & ALL RIGHTS RESERVED LICENSE (PORTFOLIO & TECHNICAL EVALUATION ONLY)
+```
+
+This repository and its underlying source code, database architecture, workflows, and documentation are the proprietary intellectual property of **Sayan Das**.
+
+### Permitted Uses:
+* Prospective employers, recruiters, engineering managers, and technical evaluators are granted permission to browse, read, inspect, and evaluate this codebase solely for the purpose of assessing the author's technical competence, system design capabilities, and engineering qualifications for employment or contract roles.
+* Non-commercial, private local cloning solely for code review and interview evaluation.
+
+### Strictly Prohibited:
+* **No Commercial Use**: You may not copy, clone, distribute, sublicense, modify, or deploy any portion of this codebase to create, operate, or power any commercial SaaS product, agency portal, or competing software service.
+* **No Redistribution**: You may not republish, mirror, or redistribute this software, in source or binary form, without express prior written consent from the author.
+* **No Unauthorized Deployment**: Hosting or running this software for third-party commercial services is strictly forbidden.
+
+For licensing inquiries or commercial permissions, please contact the author directly.
+
+---
+
+## 👨‍💻 Author & Contact
+
+**Sayan Das**  
+*Fullstack Engineer & Software Architect*
+
+* **GitHub**: [@Sayan-01](https://github.com/Sayan-01)
+* **Repository**: [https://github.com/Sayan-01/sdx26](https://github.com/Sayan-01/sdx26)
+* **Email**: [sayandas61668@gmail.com](mailto:sayandas61668@gmail.com)
+* **Demo Walkthrough**: [Watch Product Video](https://youtu.be/yL1gsl_b4oI)
