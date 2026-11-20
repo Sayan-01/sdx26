@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@imagekit/next": "^2.1.6",
+    "@imagekit/nodejs": "^7.15.0",
     "@polar-sh/nextjs": "^0.9.5",
     "@polar-sh/sdk": "^0.47.1",
     "@prisma/adapter-pg": "^7.8.0",

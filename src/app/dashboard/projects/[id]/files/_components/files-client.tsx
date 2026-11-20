@@ -70,6 +70,24 @@ import { formatDistanceToNow, format } from "date-fns";
 import DashboardCard from "@/app/dashboard/_components/dashboard-card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { 
+  uploadToImageKit, 
+  IMAGEKIT_MAX_FILE_SIZE_BYTES,
+  formatFileSize as formatIkFileSize
+} from "@/lib/imagekit-client";
+
+function getVersionDisplayUrl(storageKey?: string, fallbackUrl?: string): string {
+  if (!storageKey) return fallbackUrl || "#";
+  try {
+    if (storageKey.startsWith("{")) {
+      const parsed = JSON.parse(storageKey);
+      return parsed.url || fallbackUrl || "#";
+    }
+  } catch {
+    // fallback
+  }
+  return storageKey || fallbackUrl || "#";
+}
 
 interface MilestoneOption {
   id: string;
@@ -205,6 +223,7 @@ export default function FilesClient({
   const [linkUrl, setLinkUrl] = useState("");
   const [versionNote, setVersionNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // New Version Modal State
@@ -231,6 +250,7 @@ export default function FilesClient({
     setSelectedMilestoneId("none");
     setLinkUrl("");
     setVersionNote("");
+    setUploadProgress(null);
     setUploadTab("FILE");
     setIsUploadModalOpen(true);
   };
@@ -238,6 +258,10 @@ export default function FilesClient({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > IMAGEKIT_MAX_FILE_SIZE_BYTES) {
+        toast.error(`File size (${formatIkFileSize(file.size)}) exceeds ImageKit free-tier limit of 25MB.`);
+        return;
+      }
       setSelectedFileObj(file);
       if (!customTitle) {
         setCustomTitle(file.name);
@@ -254,36 +278,51 @@ export default function FilesClient({
         return;
       }
 
+      if (selectedFileObj.size > IMAGEKIT_MAX_FILE_SIZE_BYTES) {
+        toast.error(`File size (${formatIkFileSize(selectedFileObj.size)}) exceeds ImageKit free-tier limit of 25MB.`);
+        return;
+      }
+
       setIsSubmitting(true);
-      const toastId = toast.loading(`Uploading ${selectedFileObj.name}...`);
+      setUploadProgress(0);
+      const toastId = toast.loading(`Uploading ${selectedFileObj.name} to ImageKit...`);
 
       try {
-        const simulatedUrl = `https://milestack-uploads.s3.amazonaws.com/projects/${projectId}/${Date.now()}-${selectedFileObj.name}`;
         const milestoneToPass = selectedMilestoneId === "none" ? undefined : selectedMilestoneId;
+
+        // Upload to ImageKit with progress tracking
+        const uploadResult = await uploadToImageKit(selectedFileObj, {
+          projectId,
+          folder: `/projects/${projectId}`,
+          onProgress: (pct) => setUploadProgress(pct),
+        });
 
         const res = await uploadFile(projectId, {
           fileName: customTitle.trim() || selectedFileObj.name,
-          fileType: selectedFileObj.type || "application/octet-stream",
+          fileType: selectedFileObj.type || uploadResult.fileType || "application/octet-stream",
           fileSizeBytes: selectedFileObj.size,
-          url: simulatedUrl,
+          url: uploadResult.url,
           milestoneId: milestoneToPass,
+          fileId: uploadResult.fileId,
+          filePath: uploadResult.filePath,
         });
 
         if (res.success && res.file) {
           const newMappedFile = mapRawFile(res.file);
           setFiles(prev => [newMappedFile, ...prev]);
           setStorageUsed(prev => prev + selectedFileObj.size);
-          toast.success("File uploaded successfully!", { id: toastId });
+          toast.success("File uploaded successfully to ImageKit!", { id: toastId });
           setIsUploadModalOpen(false);
           router.refresh();
         } else {
           toast.error(res.error || "Failed to upload file", { id: toastId });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
-        toast.error("An error occurred during upload", { id: toastId });
+        toast.error(err?.message || "An error occurred during upload", { id: toastId });
       } finally {
         setIsSubmitting(false);
+        setUploadProgress(null);
       }
     } else {
       // LINK UPLOAD
@@ -327,9 +366,9 @@ export default function FilesClient({
         } else {
           toast.error(res.error || "Failed to add link", { id: toastId });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
-        toast.error("An error occurred", { id: toastId });
+        toast.error(err?.message || "An error occurred", { id: toastId });
       } finally {
         setIsSubmitting(false);
       }
@@ -341,6 +380,7 @@ export default function FilesClient({
     setNewVersionUrl(file.isLink ? file.fileUrl : "");
     setNewVersionFile(null);
     setNewVersionNote("");
+    setUploadProgress(null);
     setIsNewVersionModalOpen(true);
   };
 
@@ -350,33 +390,58 @@ export default function FilesClient({
 
     let targetUrl = activeFileForVersion.fileUrl;
     let size = 0;
-
-    if (activeFileForVersion.isLink) {
-      if (!newVersionUrl.trim()) {
-        toast.error("Please enter a valid URL for the new version");
-        return;
-      }
-      targetUrl = newVersionUrl.trim();
-      if (!targetUrl.startsWith("http://") && !targetUrl.startsWith("https://")) {
-        targetUrl = `https://${targetUrl}`;
-      }
-    } else {
-      if (!newVersionFile) {
-        toast.error("Please select an updated file");
-        return;
-      }
-      targetUrl = `https://milestack-uploads.s3.amazonaws.com/projects/${projectId}/v${activeFileForVersion.version + 1}-${newVersionFile.name}`;
-      size = newVersionFile.size;
-    }
+    let fileId: string | undefined = undefined;
+    let filePath: string | undefined = undefined;
 
     setIsSubmittingVersion(true);
+    setUploadProgress(null);
     const toastId = toast.loading(`Publishing v${activeFileForVersion.version + 1}...`);
 
     try {
+      if (activeFileForVersion.isLink) {
+        if (!newVersionUrl.trim()) {
+          toast.error("Please enter a valid URL for the new version", { id: toastId });
+          setIsSubmittingVersion(false);
+          return;
+        }
+        targetUrl = newVersionUrl.trim();
+        if (!targetUrl.startsWith("http://") && !targetUrl.startsWith("https://")) {
+          targetUrl = `https://${targetUrl}`;
+        }
+      } else {
+        if (!newVersionFile) {
+          toast.error("Please select an updated file", { id: toastId });
+          setIsSubmittingVersion(false);
+          return;
+        }
+
+        if (newVersionFile.size > IMAGEKIT_MAX_FILE_SIZE_BYTES) {
+          toast.error(`File size (${formatIkFileSize(newVersionFile.size)}) exceeds ImageKit free-tier limit of 25MB.`, { id: toastId });
+          setIsSubmittingVersion(false);
+          return;
+        }
+
+        setUploadProgress(0);
+        // Upload new version directly to ImageKit
+        const uploadResult = await uploadToImageKit(newVersionFile, {
+          projectId,
+          folder: `/projects/${projectId}/versions`,
+          onProgress: (pct) => setUploadProgress(pct),
+        });
+
+        targetUrl = uploadResult.url;
+        size = newVersionFile.size;
+        fileId = uploadResult.fileId;
+        filePath = uploadResult.filePath;
+      }
+
       const res = await addFileVersion(activeFileForVersion.id, projectId, {
         url: targetUrl,
+        fileName: newVersionFile ? newVersionFile.name : undefined,
         fileSizeBytes: size,
         changeNote: newVersionNote.trim() || `Updated to version ${activeFileForVersion.version + 1}`,
+        fileId,
+        filePath,
       });
 
       if (res.success && res.version) {
@@ -405,11 +470,12 @@ export default function FilesClient({
       } else {
         toast.error(res.error || "Failed to add version", { id: toastId });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error("Error creating version", { id: toastId });
+      toast.error(err?.message || "Error creating version", { id: toastId });
     } finally {
       setIsSubmittingVersion(false);
+      setUploadProgress(null);
     }
   };
 
@@ -813,7 +879,7 @@ export default function FilesClient({
                         </DropdownMenuItem>
                         
                         {!file.isLink && (
-                          <a href={file.fileUrl} download className="w-full">
+                          <a href={`/api/projects/${projectId}/files/${file.id}/download`} download className="w-full">
                             <DropdownMenuItem className="gap-2">
                               <Download className="size-3.5" />
                               <span>Download</span>
@@ -892,6 +958,7 @@ export default function FilesClient({
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileSelect}
+                  accept="*/*"
                   className="hidden"
                 />
 
@@ -911,10 +978,25 @@ export default function FilesClient({
                   ) : (
                     <div className="space-y-1">
                       <div className="text-xs font-medium text-zinc-200">Click to select file or drag &amp; drop</div>
-                      <div className="text-[10px] text-zinc-500">PDF, PNG, JPG, ZIP, RAR, or DOC up to 50MB</div>
+                      <div className="text-[10px] text-zinc-500">Images, PDFs, Docs, Archives, Videos, or Code up to 25MB</div>
                     </div>
                   )}
                 </div>
+
+                {uploadProgress !== null && (
+                  <div className="space-y-1.5 p-3 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-zinc-400">Uploading to ImageKit...</span>
+                      <span className="text-emerald-400 font-mono font-medium">{uploadProgress}%</span>
+                    </div>
+                    <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150 ease-out"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-zinc-300">Asset Title</label>
@@ -1043,13 +1125,41 @@ export default function FilesClient({
               </div>
             ) : (
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">Select Replacement File</label>
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-medium text-zinc-300">Select Replacement File</label>
+                  <span className="text-[10px] text-zinc-500">Max 25MB</span>
+                </div>
                 <Input
                   type="file"
-                  onChange={(e) => setNewVersionFile(e.target.files?.[0] || null)}
+                  accept="*/*"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f && f.size > IMAGEKIT_MAX_FILE_SIZE_BYTES) {
+                      toast.error(`File size (${formatIkFileSize(f.size)}) exceeds ImageKit limit of 25MB.`);
+                      e.target.value = "";
+                      setNewVersionFile(null);
+                      return;
+                    }
+                    setNewVersionFile(f || null);
+                  }}
                   required
                   className="bg-zinc-900 border-zinc-800 text-xs rounded-lg mt-1.5"
                 />
+              </div>
+            )}
+
+            {uploadProgress !== null && (
+              <div className="space-y-1.5 p-3 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-zinc-400">Uploading new version to ImageKit...</span>
+                  <span className="text-emerald-400 font-mono font-medium">{uploadProgress}%</span>
+                </div>
+                <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                  <div 
+                    className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
               </div>
             )}
 
@@ -1136,16 +1246,28 @@ export default function FilesClient({
                     </div>
                   </div>
 
-                  <a 
-                    href={v.storageKey || activeFileForHistory?.fileUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="outline" size="sm" className="h-7 text-[11px] border-zinc-700 hover:bg-zinc-800 gap-1">
-                      <ExternalLink className="size-3" />
-                      Open
-                    </Button>
-                  </a>
+                  <div className="flex items-center gap-1.5">
+                    <a 
+                      href={getVersionDisplayUrl(v.storageKey, activeFileForHistory?.fileUrl)} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="outline" size="sm" className="h-7 text-[11px] border-zinc-700 hover:bg-zinc-800 gap-1">
+                        <ExternalLink className="size-3" />
+                        Open
+                      </Button>
+                    </a>
+                    {activeFileForHistory && !activeFileForHistory.isLink && (
+                      <a 
+                        href={`/api/projects/${projectId}/files/${activeFileForHistory.id}/download?versionId=${v.id}`} 
+                        download
+                      >
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0 border-zinc-700 hover:bg-zinc-800 text-zinc-300" title="Download version">
+                          <Download className="size-3" />
+                        </Button>
+                      </a>
+                    )}
+                  </div>
                 </div>
               ))
             )}

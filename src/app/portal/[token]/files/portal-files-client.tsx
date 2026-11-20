@@ -84,7 +84,8 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
       fileUrl: activeUrl,
       iconBg: styles.bg,
       iconColor: styles.color,
-      isLink: isLinkType
+      isLink: isLinkType,
+      projectId: file.projectId
     };
   });
 
@@ -204,7 +205,7 @@ export default function PortalFilesClient({ token, rawFiles }: { token: string; 
                       </a>
                     )}
                     {file.fileUrl && !file.isLink && (
-                      <a href={file.fileUrl} download>
+                      <a href={file.projectId ? `/api/projects/${file.projectId}/files/${file.id}/download` : file.fileUrl} download>
                         <Button
                           variant="ghost"
                           size="icon"

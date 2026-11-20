@@ -11,6 +11,7 @@ import { uploadPortalOnboardingItem } from "@server/onboarding";
 import { toast } from "sonner";
 import DashboardHeading from "@/app/dashboard/_components/dashboard-heading";
 import DashboardCard from "@/app/dashboard/_components/dashboard-card";
+import { uploadToImageKit, IMAGEKIT_MAX_FILE_SIZE_BYTES, formatFileSize } from "@/lib/imagekit-client";
 
 interface OnboardingItem {
   id: string;
@@ -60,6 +61,9 @@ export default function PortalOnboardingClient({ initialItems }: PortalOnboardin
   const [extraDialogOpen, setExtraDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<OnboardingItem | null>(null);
   const [fileUrl, setFileUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadTab, setUploadTab] = useState<"FILE" | "URL">("FILE");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"ALL" | "ACTION_REQUIRED" | "IN_REVIEW" | "APPROVED">("ALL");
@@ -108,22 +112,63 @@ export default function PortalOnboardingClient({ initialItems }: PortalOnboardin
   const handleOpenUpload = (item: OnboardingItem) => {
     setSelectedItem(item);
     setFileUrl(item.fileUrl || "");
+    setSelectedFile(null);
+    setUploadProgress(null);
+    setUploadTab(item.fileUrl ? "URL" : "FILE");
     setUploadDialogOpen(true);
   };
 
   const handleUpload = async () => {
-    if (!selectedItem || !fileUrl.trim()) {
-      toast.error("Please provide a valid URL or link");
-      return;
+    if (!selectedItem) return;
+
+    let finalUrl = fileUrl.trim();
+
+    if (uploadTab === "FILE") {
+      if (!selectedFile) {
+        toast.error("Please select a file to upload");
+        return;
+      }
+
+      if (selectedFile.size > IMAGEKIT_MAX_FILE_SIZE_BYTES) {
+        toast.error(`File size (${formatFileSize(selectedFile.size)}) exceeds 25MB limit.`);
+        return;
+      }
+
+      setIsSubmitting(true);
+      setUploadProgress(0);
+      const toastId = toast.loading(`Uploading ${selectedFile.name} to ImageKit...`);
+
+      try {
+        const uploadRes = await uploadToImageKit(selectedFile, {
+          projectId: selectedItem.projectId || "",
+          folder: `/onboarding/${selectedItem.projectId || "portal"}`,
+          onProgress: (pct) => setUploadProgress(pct),
+        });
+
+        finalUrl = uploadRes.url;
+        toast.success("File uploaded to ImageKit!", { id: toastId });
+      } catch (uploadErr: any) {
+        console.error(uploadErr);
+        toast.error(uploadErr?.message || "File upload failed", { id: toastId });
+        setIsSubmitting(false);
+        setUploadProgress(null);
+        return;
+      }
+    } else {
+      if (!finalUrl) {
+        toast.error("Please provide a valid URL or link");
+        return;
+      }
+      setIsSubmitting(true);
     }
 
-    setIsSubmitting(true);
     try {
-      const res = await uploadPortalOnboardingItem(selectedItem.id, fileUrl.trim());
+      const res = await uploadPortalOnboardingItem(selectedItem.id, finalUrl);
       if (res.success && res.item) {
         setItems((prev) => prev.map((i) => (i.id === selectedItem.id ? { ...i, ...res.item } : i)));
         setUploadDialogOpen(false);
         setFileUrl("");
+        setSelectedFile(null);
         setSelectedItem(null);
         toast.success("Resource submitted for agency review!");
       } else {
@@ -133,6 +178,7 @@ export default function PortalOnboardingClient({ initialItems }: PortalOnboardin
       toast.error("Something went wrong while submitting. Please try again.");
     } finally {
       setIsSubmitting(false);
+      setUploadProgress(null);
     }
   };
 
@@ -447,37 +493,112 @@ export default function PortalOnboardingClient({ initialItems }: PortalOnboardin
         open={uploadDialogOpen}
         onOpenChange={setUploadDialogOpen}
       >
-        <DialogContent className="bg-[#19191b] border-dashboard-border text-white">
+        <DialogContent className="bg-[#19191b] border-dashboard-border text-white sm:max-w-[460px]">
           <DialogHeader>
             <DialogTitle>Provide Resource: {selectedItem?.label}</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-400">
+              Upload an asset directly or provide an external link to share with your agency.
+            </DialogDescription>
           </DialogHeader>
-          <div className="py-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="file-url">Link to Resource (URL)</Label>
-              <Input
-                id="file-url"
-                placeholder="Google Drive link, Figma link, etc."
-                value={fileUrl}
-                onChange={(e) => setFileUrl(e.target.value)}
-                className="bg-[#151518]"
-              />
-              <p className="text-[10px] text-zinc-500 italic">Note: In production, this would be a file upload. For now, please provide a URL.</p>
-            </div>
+
+          {/* Tab Switcher */}
+          <div className="flex p-1 bg-zinc-900 rounded-xl border border-zinc-800 mt-1">
+            <button
+              type="button"
+              onClick={() => setUploadTab("FILE")}
+              className={cn(
+                "flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer",
+                uploadTab === "FILE"
+                  ? "bg-zinc-800 text-white shadow-xs"
+                  : "text-zinc-400 hover:text-zinc-200"
+              )}
+            >
+              <Upload className="size-3.5" />
+              Upload File
+            </button>
+            <button
+              type="button"
+              onClick={() => setUploadTab("URL")}
+              className={cn(
+                "flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer",
+                uploadTab === "URL"
+                  ? "bg-zinc-800 text-white shadow-xs"
+                  : "text-zinc-400 hover:text-zinc-200"
+              )}
+            >
+              <Globe className="size-3.5" />
+              Provide URL
+            </button>
+          </div>
+
+          <div className="py-2 space-y-4">
+            {uploadTab === "FILE" ? (
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="onboarding-file" className="text-xs font-medium text-zinc-300">Choose File</Label>
+                    <span className="text-[10px] text-zinc-500">Max 25MB</span>
+                  </div>
+                  <Input
+                    id="onboarding-file"
+                    type="file"
+                    accept="*/*"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f && f.size > IMAGEKIT_MAX_FILE_SIZE_BYTES) {
+                        toast.error(`File size (${formatFileSize(f.size)}) exceeds 25MB limit.`);
+                        e.target.value = "";
+                        setSelectedFile(null);
+                        return;
+                      }
+                      setSelectedFile(f || null);
+                    }}
+                    className="bg-[#151518] border-zinc-800 text-xs"
+                  />
+                </div>
+
+                {uploadProgress !== null && (
+                  <div className="space-y-1.5 p-3 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-zinc-400">Uploading to ImageKit...</span>
+                      <span className="text-emerald-400 font-mono font-medium">{uploadProgress}%</span>
+                    </div>
+                    <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150 ease-out"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="file-url" className="text-xs font-medium text-zinc-300">Link to Resource (URL)</Label>
+                <Input
+                  id="file-url"
+                  placeholder="https://drive.google.com/... or https://figma.com/..."
+                  value={fileUrl}
+                  onChange={(e) => setFileUrl(e.target.value)}
+                  className="bg-[#151518] border-zinc-800 text-xs font-mono"
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setUploadDialogOpen(false)}
-              className="border-dashboard-border"
+              className="border-dashboard-border text-xs"
             >
               Cancel
             </Button>
             <Button
               onClick={handleUpload}
               disabled={isSubmitting}
-              className="bg-white text-zinc-950 hover:bg-zinc-200"
+              className="bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold"
             >
-              {isSubmitting ? "Submitting..." : "Submit Resource"}
+              {isSubmitting ? "Submitting..." : uploadTab === "FILE" ? "Upload & Submit" : "Submit Link"}
             </Button>
           </DialogFooter>
         </DialogContent>

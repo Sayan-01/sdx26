@@ -6,6 +6,7 @@ import { auth } from "../auth";
 import { getAgencyLimits, checkStorageLimit } from "@/lib/planLimits";
 import { revalidatePath } from "next/cache";
 import { MilestoneStatus, TaskStatus, TaskPriority } from "@/generated/prisma";
+import { deleteImageKitFile } from "@/lib/imagekit-server";
 
 export const getAllProjects = async () => {
   const session = await auth();
@@ -1148,6 +1149,8 @@ export const uploadFile = async (
     fileSizeBytes: number;
     url: string;
     milestoneId?: string;
+    fileId?: string;
+    filePath?: string;
   },
 ) => {
   const session = await auth();
@@ -1204,11 +1207,19 @@ export const uploadFile = async (
       },
     });
 
+    const storageKeyPayload = data.fileId
+      ? JSON.stringify({
+          fileId: data.fileId,
+          filePath: data.filePath || "",
+          url: data.url,
+        })
+      : data.url;
+
     const fileVersion = await prisma.fileVersion.create({
       data: {
         fileId: file.id,
         versionNumber: 1,
-        storageKey: data.url,
+        storageKey: storageKeyPayload,
         fileName: data.fileName,
         fileSizeBytes: BigInt(data.fileSizeBytes || 0),
         uploadedById: session.user.id,
@@ -1243,7 +1254,7 @@ export const uploadFile = async (
         {
           id: fileVersion.id,
           versionNumber: 1,
-          storageKey: data.url,
+          storageKey: storageKeyPayload,
           fileName: data.fileName,
           fileSizeBytes: Number(fileVersion.fileSizeBytes),
           changeNote: "Initial upload",
@@ -1270,6 +1281,8 @@ export const addFileVersion = async (
     fileName?: string;
     fileSizeBytes?: number;
     changeNote?: string;
+    fileId?: string;
+    filePath?: string;
   }
 ) => {
   const session = await auth();
@@ -1300,12 +1313,20 @@ export const addFileVersion = async (
   const nextVersionNumber = (file.fileVersions[0]?.versionNumber || file.fileVersions.length || 0) + 1;
   const newFileName = data.fileName || file.fileName;
 
+  const storageKeyPayload = data.fileId
+    ? JSON.stringify({
+        fileId: data.fileId,
+        filePath: data.filePath || "",
+        url: data.url,
+      })
+    : data.url;
+
   try {
     const version = await prisma.fileVersion.create({
       data: {
         fileId,
         versionNumber: nextVersionNumber,
-        storageKey: data.url,
+        storageKey: storageKeyPayload,
         fileName: newFileName,
         fileSizeBytes: BigInt(size),
         uploadedById: session.user.id,
@@ -1379,8 +1400,31 @@ export const deleteFile = async (fileId: string, projectId: string) => {
   try {
     const file = await prisma.file.findFirst({
       where: { id: fileId, projectId, agencyId: user.agencyId },
+      include: {
+        fileVersions: true,
+      },
     });
     if (!file) return { error: "File not found" };
+
+    // Clean up all physical assets from ImageKit
+    for (const v of file.fileVersions) {
+      try {
+        let ikFileId: string | null = null;
+        if (v.storageKey) {
+          if (v.storageKey.startsWith("{")) {
+            const parsed = JSON.parse(v.storageKey);
+            ikFileId = parsed.fileId || null;
+          } else if (!v.storageKey.startsWith("http")) {
+            ikFileId = v.storageKey;
+          }
+        }
+        if (ikFileId) {
+          await deleteImageKitFile(ikFileId);
+        }
+      } catch (delErr) {
+        console.warn("[deleteFile] Could not delete ImageKit asset:", delErr);
+      }
+    }
 
     // Unlink any messages that point to this file
     await prisma.message.updateMany({
