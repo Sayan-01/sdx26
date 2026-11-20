@@ -598,18 +598,19 @@ export default function FilesClient({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold text-foreground">Project Files &amp; Deliverables</h2>
-            <Badge variant="secondary" className="text-xs bg-muted/60 text-muted-foreground font-mono">
+            <Badge
+              variant="secondary"
+              className="text-xs bg-muted/60 text-muted-foreground font-mono"
+            >
               {files.length} Assets
             </Badge>
           </div>
-          <p className="text-sm text-zinc-400">
-            Manage project files, staging links, Figma deliverables, and version control.
-          </p>
+          <p className="text-sm text-zinc-400">Manage project files, staging links, Figma deliverables, and version control.</p>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button 
-            onClick={handleOpenUploadModal} 
+          <Button
+            onClick={handleOpenUploadModal}
             className="bg-white text-zinc-950 hover:bg-zinc-200 shadow-md gap-2 font-semibold text-xs h-9 px-4 rounded-xl cursor-pointer"
           >
             <Plus className="h-4 w-4" />
@@ -622,14 +623,10 @@ export default function FilesClient({
       {limits && (
         <div className="p-4 px-5 rounded-2xl bg-zinc-900/50 border border-dashboard-border flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1 shrink-0">
-            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-              Plan Storage Usage
-            </h4>
+            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Plan Storage Usage</h4>
             <p className="text-sm text-zinc-300 font-medium">
               Using <span className="text-white font-bold">{formatSize(storageUsed)}</span> of{" "}
-              <span className="text-white font-bold">
-                {limits.maxStorageGb >= 999999 ? "Unlimited" : `${limits.maxStorageGb} GB`}
-              </span>
+              <span className="text-white font-bold">{limits.maxStorageGb >= 999999 ? "Unlimited" : `${limits.maxStorageGb} GB`}</span>
               <span className="text-xs text-zinc-500 ml-2 font-normal">(External links do not count against storage)</span>
             </p>
           </div>
@@ -643,14 +640,11 @@ export default function FilesClient({
                     (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100 > 90
                       ? "bg-rose-500"
                       : (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100 > 75
-                      ? "bg-amber-500"
-                      : "bg-indigo-500"
+                        ? "bg-amber-500"
+                        : "bg-indigo-500",
                   )}
                   style={{
-                    width: `${Math.min(
-                      100,
-                      (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100
-                    )}%`,
+                    width: `${Math.min(100, (storageUsed / (limits.maxStorageGb * 1024 * 1024 * 1024)) * 100)}%`,
                   }}
                 />
               </div>
@@ -680,7 +674,10 @@ export default function FilesClient({
 
             {/* Milestone Filter Dropdown */}
             <div className="w-full sm:w-56 shrink-0">
-              <Select value={selectedMilestoneFilter} onValueChange={setSelectedMilestoneFilter}>
+              <Select
+                value={selectedMilestoneFilter}
+                onValueChange={setSelectedMilestoneFilter}
+              >
                 <SelectTrigger className="h-9 bg-[#151518] border-dashboard-border text-xs rounded-xl text-zinc-300">
                   <SelectValue placeholder="Filter by Milestone" />
                 </SelectTrigger>
@@ -688,8 +685,12 @@ export default function FilesClient({
                   <SelectItem value="ALL">All Milestones</SelectItem>
                   <SelectItem value="NO_MILESTONE">General (No Milestone)</SelectItem>
                   {milestones.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.orderIndex ? `#${m.orderIndex} ` : ""}{m.title}
+                    <SelectItem
+                      key={m.id}
+                      value={m.id}
+                    >
+                      {m.orderIndex ? `#${m.orderIndex} ` : ""}
+                      {m.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -706,9 +707,7 @@ export default function FilesClient({
                 onClick={() => setSelectedTypeFilter(type)}
                 className={cn(
                   "px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer",
-                  selectedTypeFilter === type
-                    ? "bg-zinc-800 text-white font-semibold shadow-xs"
-                    : "text-zinc-400 hover:text-zinc-200"
+                  selectedTypeFilter === type ? "bg-zinc-800 text-white font-semibold shadow-xs" : "text-zinc-400 hover:text-zinc-200",
                 )}
               >
                 {type === "ALL" ? "All" : type === "FILE" ? "Files" : type === "LINK" ? "Links" : type === "IMAGE" ? "Images" : "Docs"}
@@ -724,18 +723,18 @@ export default function FilesClient({
                 <FileBox className="h-7 w-7" />
               </div>
               <div className="font-semibold text-zinc-300 text-base">No deliverables or files yet</div>
-              <p className="text-xs text-zinc-500 max-w-sm">
-                Upload your first design deliverable, staging preview link, or specification document to share with the client.
-              </p>
-              <Button onClick={handleOpenUploadModal} variant="outline" className="mt-2 text-xs border-zinc-700 hover:bg-zinc-800">
+              <p className="text-xs text-zinc-500 max-w-sm">Upload your first design deliverable, staging preview link, or specification document to share with the client.</p>
+              <Button
+                onClick={handleOpenUploadModal}
+                variant="outline"
+                className="mt-2 text-xs border-zinc-700 hover:bg-zinc-800"
+              >
                 <Plus className="size-3.5 mr-1.5" />
                 Add First Asset
               </Button>
             </div>
           ) : filteredFiles.length === 0 ? (
-            <div className="p-8 text-center text-xs text-zinc-500">
-              No files or links match the search or filter criteria.
-            </div>
+            <div className="p-8 text-center text-xs text-zinc-500">No files or links match the search or filter criteria.</div>
           ) : (
             filteredFiles.map((file) => (
               <div
@@ -744,15 +743,21 @@ export default function FilesClient({
               >
                 {/* Left: Icon & Title & Metadata */}
                 <div className="flex items-start md:items-center gap-4 w-full md:w-auto min-w-0">
-                  <div className={cn("size-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-dashboard-border/50 transition-transform group-hover:scale-105", file.iconBg, file.iconColor)}>
+                  <div
+                    className={cn(
+                      "size-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-dashboard-border/50 transition-transform group-hover:scale-105",
+                      file.iconBg,
+                      file.iconColor,
+                    )}
+                  >
                     {getFileIcon(file.type)}
                   </div>
 
                   <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2.5">
-                      <a 
-                        href={file.fileUrl} 
-                        target="_blank" 
+                      <a
+                        href={file.fileUrl}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="font-semibold text-sm text-zinc-200 group-hover:text-white transition-colors truncate hover:underline flex items-center gap-1.5"
                       >
@@ -766,29 +771,20 @@ export default function FilesClient({
                         className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800/80 hover:bg-zinc-700/80 border border-dashboard-border/60 text-[10px] text-zinc-300 font-medium transition-colors cursor-pointer"
                         title="Click to view version history"
                       >
-                        <History className="size-2.5 text-zinc-400" />
-                        v{file.version}
+                        <History className="size-2.5 text-zinc-400" />v{file.version}
                       </button>
 
-                      {file.isLink && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/50 text-cyan-400 border border-cyan-800/50 font-mono">
-                          Link
-                        </span>
-                      )}
+                      {file.isLink && <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/50 text-cyan-400 border border-cyan-800/50 font-mono">Link</span>}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
-                      <span className="text-zinc-400 uppercase tracking-widest text-[10px] font-mono">
-                        {file.size}
-                      </span>
+                      <span className="text-zinc-400 uppercase tracking-widest text-[10px] font-mono">{file.size}</span>
                       <span className="size-1 rounded-full bg-zinc-700" />
-                      
+
                       {/* Milestone Badge */}
                       <span className="flex items-center gap-1 text-zinc-400">
                         <MilestoneIcon className="size-3 text-indigo-400" />
-                        <span className={file.milestoneId ? "text-zinc-300 font-medium" : "text-zinc-500"}>
-                          {file.milestone}
-                        </span>
+                        <span className={file.milestoneId ? "text-zinc-300 font-medium" : "text-zinc-500"}>{file.milestone}</span>
                       </span>
 
                       <span className="size-1 rounded-full bg-zinc-700" />
@@ -804,24 +800,27 @@ export default function FilesClient({
                   {/* Status Dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="cursor-pointer focus:outline-none">
-                        {getStatusBadge(file.status)}
-                      </button>
+                      <button className="cursor-pointer focus:outline-none">{getStatusBadge(file.status)}</button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-[#18191f] border-zinc-800 text-xs text-zinc-300">
-                      <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-zinc-500">
-                        Update Status
-                      </DropdownMenuLabel>
+                    <DropdownMenuContent
+                      align="end"
+                      className="bg-[#18191f] border-zinc-800 text-xs text-zinc-300 w-max"
+                    >
+                      <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-zinc-500">Update Status</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => handleStatusChange(file.id, "UPLOADED")}>
+                        <span className="size-1.5 rounded-full bg-indigo-400" />
                         Mark as Uploaded
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleStatusChange(file.id, "UNDER_REVIEW")}>
+                        <span className="size-1.5 rounded-full bg-indigo-400" />
                         Mark Under Review
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleStatusChange(file.id, "APPROVED")}>
+                        <span className="size-1.5 rounded-full bg-indigo-400" />
                         Mark as Approved
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleStatusChange(file.id, "REVISION_REQUESTED")}>
+                        <span className="size-1.5 rounded-full bg-indigo-400" />
                         Request Revision
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -830,7 +829,11 @@ export default function FilesClient({
                   {/* Quick Action Buttons */}
                   <div className="flex items-center gap-1">
                     {/* Open / Preview */}
-                    <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={file.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Button
                         variant="ghost"
                         size="icon"
@@ -864,22 +867,38 @@ export default function FilesClient({
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-[#18191f] border-zinc-800 text-xs text-zinc-300 w-44">
-                        <DropdownMenuItem onClick={() => handleCopyLink(file.fileUrl)} className="gap-2">
+                      <DropdownMenuContent
+                        align="end"
+                        className="bg-[#18191f] border-zinc-800 text-xs text-zinc-300 w-44"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => handleCopyLink(file.fileUrl)}
+                          className="gap-2"
+                        >
                           <Copy className="size-3.5" />
                           <span>Copy Link</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleOpenHistoryModal(file)} className="gap-2">
+                        <DropdownMenuItem
+                          onClick={() => handleOpenHistoryModal(file)}
+                          className="gap-2"
+                        >
                           <History className="size-3.5" />
                           <span>Version History</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleOpenNewVersionModal(file)} className="gap-2">
+                        <DropdownMenuItem
+                          onClick={() => handleOpenNewVersionModal(file)}
+                          className="gap-2"
+                        >
                           <Plus className="size-3.5" />
                           <span>Add New Version</span>
                         </DropdownMenuItem>
-                        
+
                         {!file.isLink && (
-                          <a href={`/api/projects/${projectId}/files/${file.id}/download`} download className="w-full">
+                          <a
+                            href={`/api/projects/${projectId}/files/${file.id}/download`}
+                            download
+                            className="w-full"
+                          >
                             <DropdownMenuItem className="gap-2">
                               <Download className="size-3.5" />
                               <span>Download</span>
@@ -888,8 +907,8 @@ export default function FilesClient({
                         )}
 
                         <DropdownMenuSeparator className="bg-zinc-800" />
-                        <DropdownMenuItem 
-                          onClick={() => handleOpenDeleteModal(file)} 
+                        <DropdownMenuItem
+                          onClick={() => handleOpenDeleteModal(file)}
                           className="gap-2 text-rose-400 focus:text-rose-300 focus:bg-rose-500/10"
                         >
                           <Trash2 className="size-3.5" />
@@ -908,16 +927,17 @@ export default function FilesClient({
       {/* ======================================================== */}
       {/* 1. UPLOAD ASSET & LINK MODAL */}
       {/* ======================================================== */}
-      <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
+      <Dialog
+        open={isUploadModalOpen}
+        onOpenChange={setIsUploadModalOpen}
+      >
         <DialogContent className="sm:max-w-[480px] bg-[#121318] border-zinc-800 text-zinc-200">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
               <Plus className="size-4 text-cyan-400" />
               Add Project Asset &amp; Deliverable
             </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-400">
-              Upload files or share preview links and assign them directly to project milestones.
-            </DialogDescription>
+            <DialogDescription className="text-xs text-zinc-400">Upload files or share preview links and assign them directly to project milestones.</DialogDescription>
           </DialogHeader>
 
           {/* Tab Switcher */}
@@ -927,9 +947,7 @@ export default function FilesClient({
               onClick={() => setUploadTab("FILE")}
               className={cn(
                 "flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer",
-                uploadTab === "FILE"
-                  ? "bg-zinc-800 text-white shadow-xs"
-                  : "text-zinc-400 hover:text-zinc-200"
+                uploadTab === "FILE" ? "bg-zinc-800 text-white shadow-xs" : "text-zinc-400 hover:text-zinc-200",
               )}
             >
               <Upload className="size-3.5" />
@@ -940,9 +958,7 @@ export default function FilesClient({
               onClick={() => setUploadTab("LINK")}
               className={cn(
                 "flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer",
-                uploadTab === "LINK"
-                  ? "bg-zinc-800 text-white shadow-xs"
-                  : "text-zinc-400 hover:text-zinc-200"
+                uploadTab === "LINK" ? "bg-zinc-800 text-white shadow-xs" : "text-zinc-400 hover:text-zinc-200",
               )}
             >
               <LinkIcon className="size-3.5" />
@@ -950,7 +966,10 @@ export default function FilesClient({
             </button>
           </div>
 
-          <form onSubmit={handleCreateAsset} className="space-y-4 mt-2">
+          <form
+            onSubmit={handleCreateAsset}
+            className="space-y-4 mt-2"
+          >
             {/* FILE TAB */}
             {uploadTab === "FILE" ? (
               <div className="space-y-3">
@@ -962,7 +981,7 @@ export default function FilesClient({
                   className="hidden"
                 />
 
-                <div 
+                <div
                   onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed border-zinc-700/80 hover:border-zinc-500 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-zinc-900/40 hover:bg-zinc-900/70"
                 >
@@ -990,7 +1009,7 @@ export default function FilesClient({
                       <span className="text-emerald-400 font-mono font-medium">{uploadProgress}%</span>
                     </div>
                     <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                      <div 
+                      <div
                         className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150 ease-out"
                         style={{ width: `${uploadProgress}%` }}
                       />
@@ -1013,7 +1032,10 @@ export default function FilesClient({
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-zinc-300">Link Type</label>
-                  <Select value={linkCategory} onValueChange={(val: any) => setLinkCategory(val)}>
+                  <Select
+                    value={linkCategory}
+                    onValueChange={(val: any) => setLinkCategory(val)}
+                  >
                     <SelectTrigger className="bg-zinc-900 border-zinc-800 text-xs rounded-lg text-zinc-200 h-10! mt-1.5">
                       <SelectValue />
                     </SelectTrigger>
@@ -1059,15 +1081,22 @@ export default function FilesClient({
                 </label>
                 <span className="text-[10px] text-zinc-500">Optional</span>
               </div>
-              <Select value={selectedMilestoneId} onValueChange={setSelectedMilestoneId}>
+              <Select
+                value={selectedMilestoneId}
+                onValueChange={setSelectedMilestoneId}
+              >
                 <SelectTrigger className="bg-zinc-900 border-zinc-800 text-xs rounded-lg text-zinc-200 h-10!">
                   <SelectValue placeholder="Select a milestone" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#18191f] border-zinc-800 text-xs text-zinc-200">
                   <SelectItem value="none">General Asset (No specific milestone)</SelectItem>
                   {milestones.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.orderIndex ? `Milestone #${m.orderIndex}: ` : ""}{m.title}
+                    <SelectItem
+                      key={m.id}
+                      value={m.id}
+                    >
+                      {m.orderIndex ? `Milestone #${m.orderIndex}: ` : ""}
+                      {m.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1098,20 +1127,26 @@ export default function FilesClient({
       {/* ======================================================== */}
       {/* 2. NEW VERSION MODAL */}
       {/* ======================================================== */}
-      <Dialog open={isNewVersionModalOpen} onOpenChange={setIsNewVersionModalOpen}>
+      <Dialog
+        open={isNewVersionModalOpen}
+        onOpenChange={setIsNewVersionModalOpen}
+      >
         <DialogContent className="sm:max-w-[460px] bg-[#121318] border-zinc-800 text-zinc-200">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
               <Plus className="size-4 text-emerald-400" />
               Publish New Version: {activeFileForVersion?.name}
             </DialogTitle>
-            
+
             <DialogDescription className="text-xs text-zinc-400 border-t border-zinc-700/80 pt-3 mt-2">
               Updating to <span className="text-white font-bold font-mono">v{(activeFileForVersion?.version || 1) + 1}</span>. Past versions remain saved in version history.
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmitNewVersion} className="space-y-4 mt-2">
+          <form
+            onSubmit={handleSubmitNewVersion}
+            className="space-y-4 mt-2"
+          >
             {activeFileForVersion?.isLink ? (
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-zinc-300">Updated Deliverable URL</label>
@@ -1155,7 +1190,7 @@ export default function FilesClient({
                   <span className="text-emerald-400 font-mono font-medium">{uploadProgress}%</span>
                 </div>
                 <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                  <div 
+                  <div
                     className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150 ease-out"
                     style={{ width: `${uploadProgress}%` }}
                   />
@@ -1200,44 +1235,35 @@ export default function FilesClient({
       {/* ======================================================== */}
       {/* 3. VERSION HISTORY MODAL */}
       {/* ======================================================== */}
-      <Dialog open={isHistoryModalOpen} onOpenChange={setIsHistoryModalOpen}>
+      <Dialog
+        open={isHistoryModalOpen}
+        onOpenChange={setIsHistoryModalOpen}
+      >
         <DialogContent className="sm:max-w-[500px] bg-[#121318] border-zinc-800 text-zinc-200">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
               <History className="size-4 text-indigo-400" />
               Version History: {activeFileForHistory?.name}
             </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-400">
-              Audit trail of every iteration and deliverable update.
-            </DialogDescription>
+            <DialogDescription className="text-xs text-zinc-400">Audit trail of every iteration and deliverable update.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1 box">
-            {(!activeFileForHistory?.fileVersions || activeFileForHistory.fileVersions.length === 0) ? (
-              <div className="text-center py-6 text-xs text-zinc-500">
-                Single version (v1) active. No past versions logged.
-              </div>
+            {!activeFileForHistory?.fileVersions || activeFileForHistory.fileVersions.length === 0 ? (
+              <div className="text-center py-6 text-xs text-zinc-500">Single version (v1) active. No past versions logged.</div>
             ) : (
               activeFileForHistory.fileVersions.map((v, idx) => (
-                <div 
-                  key={v.id || idx} 
+                <div
+                  key={v.id || idx}
                   className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-start justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">
-                        v{v.versionNumber}
-                      </span>
-                      {idx === 0 && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">
-                          Current Live
-                        </span>
-                      )}
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">v{v.versionNumber}</span>
+                      {idx === 0 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Current Live</span>}
                     </div>
-                    
-                    <p className="text-xs text-zinc-300 font-medium">
-                      {v.changeNote || "Standard version update"}
-                    </p>
+
+                    <p className="text-xs text-zinc-300 font-medium">{v.changeNote || "Standard version update"}</p>
 
                     <div className="flex items-center gap-2 text-[10px] text-zinc-500">
                       <span>By {v.uploadedBy?.name || "Team Member"}</span>
@@ -1247,22 +1273,31 @@ export default function FilesClient({
                   </div>
 
                   <div className="flex items-center gap-1.5">
-                    <a 
-                      href={getVersionDisplayUrl(v.storageKey, activeFileForHistory?.fileUrl)} 
-                      target="_blank" 
+                    <a
+                      href={getVersionDisplayUrl(v.storageKey, activeFileForHistory?.fileUrl)}
+                      target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button variant="outline" size="sm" className="h-7 text-[11px] border-zinc-700 hover:bg-zinc-800 gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-[11px] border-zinc-700 hover:bg-zinc-800 gap-1"
+                      >
                         <ExternalLink className="size-3" />
                         Open
                       </Button>
                     </a>
                     {activeFileForHistory && !activeFileForHistory.isLink && (
-                      <a 
-                        href={`/api/projects/${projectId}/files/${activeFileForHistory.id}/download?versionId=${v.id}`} 
+                      <a
+                        href={`/api/projects/${projectId}/files/${activeFileForHistory.id}/download?versionId=${v.id}`}
                         download
                       >
-                        <Button variant="outline" size="sm" className="h-7 w-7 p-0 border-zinc-700 hover:bg-zinc-800 text-zinc-300" title="Download version">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 w-7 p-0 border-zinc-700 hover:bg-zinc-800 text-zinc-300"
+                          title="Download version"
+                        >
                           <Download className="size-3" />
                         </Button>
                       </a>
@@ -1289,7 +1324,10 @@ export default function FilesClient({
       {/* ======================================================== */}
       {/* 4. DELETE ASSET MODAL */}
       {/* ======================================================== */}
-      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+      <Dialog
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+      >
         <DialogContent className="sm:max-w-[420px] bg-[#121318] border-zinc-800 text-zinc-200">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-rose-400 flex items-center gap-2">
